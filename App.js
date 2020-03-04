@@ -9,12 +9,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import BottomTabNavigator from './navigation/BottomTabNavigator';
 import useLinking from './navigation/useLinking';
 import QRScanner from './navigation/QRScanner';
-//import { createStackNavigator } from 'react-navigation';
 
-
-// const RootStack = createStackNavigator( {
-//   QRScanner: QRScanner
-// } )
 
 const Stack = createStackNavigator();
 
