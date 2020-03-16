@@ -18,6 +18,27 @@ export default function App(props) {
   const [initialNavigationState, setInitialNavigationState] = React.useState();
   const containerRef = React.useRef();
   const { getInitialState } = useLinking(containerRef);
+  var walletIsCreated=true;
+
+   function createWallet()
+   {
+    walletIsCreated=true;
+    fetch('https://api.streetcred.id/custodian/v1/api/wallets', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer dq6RoZ4gJWss_hRtGC_cyUBv66JwZhUbRRKukMPtv4o',
+        XStreetcredSubscriptionKey: '0c1596b315f84ac9a4de6810ef464411',
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+          "ownerName": "testMohammed"
+      }),
+    });
+
+   };
+   if(!walletIsCreated)
+   createWallet();
 
   // Load any resources or data that we need prior to rendering the app
   React.useEffect(() => {
