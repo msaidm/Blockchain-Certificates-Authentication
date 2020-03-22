@@ -1,29 +1,33 @@
 import React, { useState, useEffect,Component } from 'react';
-import { Text, View, StyleSheet, Button } from 'react-native';
+import { Text, View, StyleSheet, Button,Alert } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { ForceTouchGestureHandler } from 'react-native-gesture-handler';
 
 
 
-
-export default function QRScanner() {
+var invitationFromURL='d';
+export default function QRScanner({ navigation }) {
+  //const { navigation } = props
+  
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
+  const [hasError, setErrors] = useState(false);
+  const [wallets, setWallets] = useState({});
   var splitted;
   var userName='testMohammed'; // This will be changed will sign up page is ready 
-  var invitation='d';
   var userWalletID;
 
   useEffect(() => {
     (async () => {
       const { status } = await BarCodeScanner.requestPermissionsAsync();
       setHasPermission(status === 'granted');
+      fetchData();
     })();
   }, []);
 
-   const [hasError, setErrors] = useState(false);
-    const [wallets, setWallets] = useState({});
+   
     async function fetchData() {
+      
       const res = await  fetch('https://api.streetcred.id/custodian/v1/api/wallets', {
         method: 'GET',
         headers: {
@@ -33,17 +37,15 @@ export default function QRScanner() {
                 'Content-Type': 'application/json',
               }
       });
-      res
-        .json()
-        .then(res => setWallets(res))
-        .catch(err => setErrors(err));
+      res.json().then(res => setWallets(res))
+       
     }
   
-    useEffect(() => {
-      fetchData();
-    }, []);
+    // useEffect(() => { fetchData(); 
+    //  }, []);
+    //  console.log(wallets)
     
-    console.log(wallets)
+    
  
 
 
@@ -51,11 +53,19 @@ export default function QRScanner() {
 
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    //alert(`Bar code with type ${type} and data ${data} has been scanned!`);
     splitted = data.split('=');
-    invitation=splitted[1];
-    console.log('Invite  '+splitted[1]);
+    invitationFromURL=splitted[1];
+    //console.log('Invite  '+splitted[1]); 
+    navigation.push('HomeScreen', { text:invitationFromURL}); 
+    
+  
+    
+
+    
+    
   };
+    
   
 
   for (let index = 0; index < wallets.length; index++) {
@@ -64,12 +74,12 @@ export default function QRScanner() {
         userWalletID=wallets[index].walletId;
     
   }
-  console.log('ID=  '+userWalletID);
+  //console.log('ID=  '+userWalletID);
   
   function AcceptInvitation( walletID, invitation )
    {
-    
-    fetch('https://api.streetcred.id/custodian/v1/api/connections/invitation', {
+    var fetchURLForAcceptInvitaion='https://api.streetcred.id/custodian/v1/api/'+walletID+'/connections/invitation';
+    fetch(fetchURLForAcceptInvitaion, {
       method: 'POST',
       headers: {
         Authorization: 'Bearer dq6RoZ4gJWss_hRtGC_cyUBv66JwZhUbRRKukMPtv4o',
@@ -82,9 +92,20 @@ export default function QRScanner() {
           "invitation": invitation
       }),
     });
-    walletIsCreated=true;
+    
+      // alert(
+      //   'Connection request ',
+      //   'Ain shams wants to coonect with you',
+      //   [
+      //     {text: 'NO', onPress: () => console.warn('NO Pressed'), style: 'cancel'},
+      //     {text: 'YES', onPress: () => console.warn('YES Pressed')},
+      //   ]
+      // );
+    
 
    };
+
+   AcceptInvitation(userWalletID,invitationFromURL);
 
   if (hasPermission === null) {
     return <Text>Requesting for camera permission</Text>;
@@ -102,6 +123,8 @@ export default function QRScanner() {
       }}>
       <BarCodeScanner
         onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+        
+        
         style={StyleSheet.absoluteFillObject}
       />
 

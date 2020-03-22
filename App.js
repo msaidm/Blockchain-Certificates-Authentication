@@ -10,6 +10,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import BottomTabNavigator from './navigation/BottomTabNavigator';
 import useLinking from './navigation/useLinking';
 import QRScanner from './navigation/QRScanner';
+import HomeScreen from './screens/HomeScreen';
+
 //import listWallets from './components/listWallets.js'
 
 
@@ -118,6 +120,10 @@ export default function App(props) {
           <Stack.Navigator>
             <Stack.Screen name="Root" component={BottomTabNavigator} />
             <Stack.Screen name="QRScanner" component={QRScanner} />
+            <Stack.Screen name="HomeScreen" 
+            component={HomeScreen} 
+            initialParams={{ text: 'Ya Rab' }}
+            />
           </Stack.Navigator>
         </NavigationContainer>
       </View>
