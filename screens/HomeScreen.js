@@ -1,45 +1,43 @@
 import * as React from 'react';
-import { Image, Platform, StyleSheet, Text, TouchableOpacity, View, Button,Alert } from 'react-native';
+import { Image, Platform, StyleSheet, Text, TouchableOpacity, View, Button,Alert,AsyncStorage } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 //import { IconButton, Colors } from 'react-native-paper';
 import * as WebBrowser from 'expo-web-browser';
-
-
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
-
-
 //import { BarCodeScanner } from 'expo-barcode-scanner';
-
 import { MonoText } from '../components/StyledText';
 
 
-
-
-
-
 export default function HomeScreen({ route, navigation }) {
-  
-
- // const text = navigation.getParams ('text','nothing sent');
-  
-  const  text  = route.params?.text;
-  console.log(text+'Hii');
-  console.log('anan fel home');
-
-   
-  // Alert.alert(
-  //   'Alert Title',
-  //   'Alert message here...',
-  //   [
-  //     {text: 'YES', onPress: () => console.warn('YES Pressed')},
-  //     {text: 'NO', onPress: () => console.warn('NO Pressed'), style: 'cancel'},
-  //     ,
-  //   ]
-  // );
-  
-  return (
     
+  const [invitation, setInvitation] = React.useState(Array.from({length: 2},()=> Array.from({length: 2})));
+
+  React.useEffect(()=>
+  {
+     getUserId();
+    
+  },[]);
+
+    async function getUserId() {
+      var keys = ["invitationFromURL","Alert"]
+      try {
+        await AsyncStorage.multiGet(keys , (err, item) => 
+        {
+          setInvitation(item);
+        });
+      } catch (error) {
+        // Error retrieving data
+        console.log(error.message);
+      }
+    }  
+  console.log(invitation);
+  console.log(invitation[1][1]);
+
+
+
+
+  return (
     <View style={styles.container}>
       <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
         <View style={styles.welcomeContainer}>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect,Component } from 'react';
-import { Text, View, StyleSheet, Button,Alert } from 'react-native';
+import { Text, View, StyleSheet, Button,Alert,AsyncStorage } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { ForceTouchGestureHandler } from 'react-native-gesture-handler';
 
@@ -7,7 +7,6 @@ import { ForceTouchGestureHandler } from 'react-native-gesture-handler';
 
 var invitationFromURL='d';
 export default function QRScanner({ navigation }) {
-  //const { navigation } = props
   
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
@@ -41,32 +40,52 @@ export default function QRScanner({ navigation }) {
        
     }
   
-    // useEffect(() => { fetchData(); 
-    //  }, []);
-    //  console.log(wallets)
-    
-    
- 
-
-
-  
-
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
     //alert(`Bar code with type ${type} and data ${data} has been scanned!`);
     splitted = data.split('=');
     invitationFromURL=splitted[1];
-    //console.log('Invite  '+splitted[1]); 
-    navigation.push('HomeScreen', { text:invitationFromURL}); 
-    
-  
-    
 
+    const saveUserId = async (Key,invitationFromURL) => {
+      try {
+        await AsyncStorage.setItem(Key, invitationFromURL);
+      } catch (error) {
+        // Error retrieving data
+        console.log(error.message);
+      }
+    };
     
-    
+    saveUserId('invitationFromURL',invitationFromURL);
+
+
+    Alert.alert(
+      'Alert Title',
+      'Alert message here...',
+      [
+        {text: 'YES', onPress: () => 
+        {
+          saveUserId('Alert','Yes') 
+          // for (let index = 0; index < 10000; index++) {
+          //   console.log(index);
+          // }
+          navigation.navigate("Root");
+        }
+      },
+        {text: 'NO', onPress: () =>
+        {
+          saveUserId('Alert','No')
+          // for (let index = 0; index < 10000; index++) {
+          //   console.log(index);
+          // }
+          navigation.navigate("Root");
+        } 
+      }
+        
+      ]
+   );
+        
   };
     
-  
 
   for (let index = 0; index < wallets.length; index++) {
     
