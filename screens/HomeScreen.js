@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Image, Platform, StyleSheet, Text, TouchableOpacity, View, Button } from 'react-native';
+import { Image, Platform, StyleSheet, Text, TouchableOpacity, View, Button,Alert } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 //import { IconButton, Colors } from 'react-native-paper';
 import * as WebBrowser from 'expo-web-browser';
@@ -8,16 +8,35 @@ import * as WebBrowser from 'expo-web-browser';
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 
+
 //import { BarCodeScanner } from 'expo-barcode-scanner';
 
 import { MonoText } from '../components/StyledText';
-const Stack = createStackNavigator()
 
 
 
 
-export default function HomeScreen(props) {
-  const { navigation } = props
+
+
+export default function HomeScreen({ route, navigation }) {
+  
+
+ // const text = navigation.getParams ('text','nothing sent');
+  
+  const  text  = route.params?.text;
+  console.log(text+'Hii');
+  console.log('anan fel home');
+
+   
+  // Alert.alert(
+  //   'Alert Title',
+  //   'Alert message here...',
+  //   [
+  //     {text: 'YES', onPress: () => console.warn('YES Pressed')},
+  //     {text: 'NO', onPress: () => console.warn('NO Pressed'), style: 'cancel'},
+  //     ,
+  //   ]
+  // );
   
   return (
     
@@ -35,10 +54,6 @@ export default function HomeScreen(props) {
            
         </View>
         
-        
-      
-        
-
         <View style={styles.helpContainer}>
          
         </View>
