@@ -1,10 +1,10 @@
 {
-  "devToolsPort": 19002,
+  "devToolsPort": 19003,
   "expoServerPort": 19000,
   "packagerPort": 19001,
-  "packagerPid": 5467,
-  "expoServerNgrokUrl": "https://r8-t3t.anonymous.blockchain-certificates-authentication.exp.direct",
-  "packagerNgrokUrl": "https://packager.r8-t3t.anonymous.blockchain-certificates-authentication.exp.direct",
-  "ngrokPid": 5497,
+  "packagerPid": 2353,
+  "expoServerNgrokUrl": "https://au-qf9.anonymous.blockchain-certificates-authentication.exp.direct",
+  "packagerNgrokUrl": "https://packager.au-qf9.anonymous.blockchain-certificates-authentication.exp.direct",
+  "ngrokPid": 2379,
   "webpackServerPort": null
 }

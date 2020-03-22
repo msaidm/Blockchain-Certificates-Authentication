@@ -24,15 +24,8 @@ export default function App(props) {
   const [initialNavigationState, setInitialNavigationState] = React.useState();
   const containerRef = React.useRef();
   const { getInitialState } = useLinking(containerRef);
-  
-  
 
   
-
-  
-  
-  
-
    function createWallet()
    {
     
