@@ -1,19 +1,19 @@
-import React, { useState, useEffect,Component } from 'react';
-import { Text, View, StyleSheet, Button,Alert,AsyncStorage } from 'react-native';
+import React, { useState, useEffect, Component } from 'react';
+import { Text, View, StyleSheet, Button, Alert, AsyncStorage } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { ForceTouchGestureHandler } from 'react-native-gesture-handler';
 
+var invitationFromURL = ' ';
 
-
-var invitationFromURL='d';
 export default function QRScanner({ navigation }) {
-  
+
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [hasError, setErrors] = useState(false);
   const [wallets, setWallets] = useState({});
+  const [connections, setConnections] = useState({});
   var splitted;
-  var userName='testMohammed'; // This will be changed will sign up page is ready 
+  var userName = 'marina'; // This will be changed will sign up page is ready 
   var userWalletID;
 
   useEffect(() => {
@@ -24,107 +24,109 @@ export default function QRScanner({ navigation }) {
     })();
   }, []);
 
-   
-    async function fetchData() {
-      
-      const res = await  fetch('https://api.streetcred.id/custodian/v1/api/wallets', {
-        method: 'GET',
-        headers: {
-                Authorization: 'Bearer dq6RoZ4gJWss_hRtGC_cyUBv66JwZhUbRRKukMPtv4o',
-                XStreetcredSubscriptionKey: '0c1596b315f84ac9a4de6810ef464411',
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-              }
-      });
-      res.json().then(res => setWallets(res))
-       
-    }
-  
-  const handleBarCodeScanned = ({ type, data }) => {
-    setScanned(true);
-    //alert(`Bar code with type ${type} and data ${data} has been scanned!`);
-    splitted = data.split('=');
-    invitationFromURL=splitted[1];
 
-    const saveUserId = async (Key,invitationFromURL) => {
-      try {
-        await AsyncStorage.setItem(Key, invitationFromURL);
-      } catch (error) {
-        // Error retrieving data
-        console.log(error.message);
+  async function fetchData() {
+    const res = await fetch('https://api.streetcred.id/custodian/v1/api/wallets', {
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer dq6RoZ4gJWss_hRtGC_cyUBv66JwZhUbRRKukMPtv4o',
+        XStreetcredSubscriptionKey: '0c1596b315f84ac9a4de6810ef464411',
+        Accept: 'application/json',
+        "Content-Type": 'application/json',
       }
-    };
-    
-    saveUserId('invitationFromURL',invitationFromURL);
+    });
+    res.json().then(res => setWallets(res))
 
-
-    Alert.alert(
-      'Alert Title',
-      'Alert message here...',
-      [
-        {text: 'YES', onPress: () => 
-        {
-          saveUserId('Alert','Yes') 
-          // for (let index = 0; index < 10000; index++) {
-          //   console.log(index);
-          // }
-          navigation.navigate("Root");
-        }
-      },
-        {text: 'NO', onPress: () =>
-        {
-          saveUserId('Alert','No')
-          // for (let index = 0; index < 10000; index++) {
-          //   console.log(index);
-          // }
-          navigation.navigate("Root");
-        } 
-      }
-        
-      ]
-   );
-        
-  };
-    
-
-  for (let index = 0; index < wallets.length; index++) {
-    
-    if (wallets[index].name=="testMohammed")
-        userWalletID=wallets[index].walletId;
-    
   }
-  //console.log('ID=  '+userWalletID);
-  
-  function AcceptInvitation( walletID, invitation )
-   {
-    var fetchURLForAcceptInvitaion='https://api.streetcred.id/custodian/v1/api/'+walletID+'/connections/invitation';
-    fetch(fetchURLForAcceptInvitaion, {
+
+  async function acceptInvitation(walletID, Invitation) {
+    let data = new FormData();
+    data.append("invitation", Invitation);
+    var fetchURLForAcceptInvitaion = 'https://api.streetcred.id/custodian/v1/api/' + walletID + '/connections/invitation';
+    const res = await fetch(fetchURLForAcceptInvitaion, {
       method: 'POST',
       headers: {
         Authorization: 'Bearer dq6RoZ4gJWss_hRtGC_cyUBv66JwZhUbRRKukMPtv4o',
         XStreetcredSubscriptionKey: '0c1596b315f84ac9a4de6810ef464411',
         Accept: 'application/json',
-        'Content-Type': 'application/json',
+        'Content-Type': 'multipart/form-data',
       },
-      body: JSON.stringify({
-          "walletId": walletID,
-          "invitation": invitation
-      }),
+      body: data,
     });
-    
-      // alert(
-      //   'Connection request ',
-      //   'Ain shams wants to coonect with you',
-      //   [
-      //     {text: 'NO', onPress: () => console.warn('NO Pressed'), style: 'cancel'},
-      //     {text: 'YES', onPress: () => console.warn('YES Pressed')},
-      //   ]
-      // );
-    
+    res.json().then(res => setConnections(res))
+  }
 
-   };
 
-   AcceptInvitation(userWalletID,invitationFromURL);
+  function getWalletId() {
+    for (let index = 0; index < wallets.length; index++) {
+      if (wallets[index].name == userName)
+        userWalletID = wallets[index].walletId;
+    }
+    console.log(wallets)
+  }
+
+  const handleBarCodeScanned = ({ type, data }) => {
+    setScanned(true);
+    splitted = data.split('=');
+    invitationFromURL = splitted[1];
+
+    // const saveUserId = async (Key,invitationFromURL) => {
+    //   try {
+    //     await AsyncStorage.setItem(Key, invitationFromURL);
+    //   } catch (error) {
+    //     // Error retrieving data
+    //     console.log(error.message);
+    //   }
+    // };
+
+    //saveUserId('invitationFromURL',invitationFromURL);
+    Alert.alert(
+      'New Connection Request ',
+      'Do you want to connect?',
+      [
+        {
+          text: 'YES', onPress: () => {
+            //saveUserId('Alert','Yes') 
+            getWalletId();
+            acceptInvitation(userWalletID, invitationFromURL);
+            console.log(connections);
+            navigation.navigate("Root");
+          }
+        },
+        {
+          text: 'NO', onPress: () => {
+            //saveUserId('Alert', 'No')
+            navigation.navigate("Root");
+          }
+        }
+
+      ]
+    );
+
+  };
+
+
+  // async function getInvitation( walletID, invitation )
+  //  {
+  //    console.log(walletID+"inside" )
+  //    console.log(invitation+"inside")
+  //   var fetchURLForAcceptInvitaion='https://api.streetcred.id/custodian/v1/api/'+walletID+'/connections/invitation';
+  //   const res = await fetch(fetchURLForAcceptInvitaion, {
+  //     method: 'POST',
+  //     headers: {
+  //       Authorization: 'Bearer dq6RoZ4gJWss_hRtGC_cyUBv66JwZhUbRRKukMPtv4o',
+  //       XStreetcredSubscriptionKey: '0c1596b315f84ac9a4de6810ef464411',
+  //       Accept: 'application/json',
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify({
+  //         "walletId": walletID,
+  //         "invitation": invitation
+  //     }),
+  //   });
+  //   res.json().then(res => setConnections(res))
+  //  };
+
 
   if (hasPermission === null) {
     return <Text>Requesting for camera permission</Text>;
@@ -142,8 +144,8 @@ export default function QRScanner({ navigation }) {
       }}>
       <BarCodeScanner
         onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-        
-        
+
+
         style={StyleSheet.absoluteFillObject}
       />
 

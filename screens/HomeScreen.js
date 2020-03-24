@@ -31,8 +31,8 @@ export default function HomeScreen({ route, navigation }) {
         console.log(error.message);
       }
     }  
-  console.log(invitation);
-  console.log(invitation[1][1]);
+  // console.log(invitation);
+  // console.log(invitation[1][1]);
 
 
 
