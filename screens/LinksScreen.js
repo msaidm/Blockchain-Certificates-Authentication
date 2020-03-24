@@ -4,24 +4,37 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as WebBrowser from 'expo-web-browser';
 import { RectButton, ScrollView } from 'react-native-gesture-handler';
+import { NavigationContainer } from '@react-navigation/native';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
+const Tab = createMaterialTopTabNavigator();
 var walletID = "C44H0ImYvrWRpsBVcCHLfjU53UbPUNQiV";
 var connectionName;
 
-export default function LinksScreen() {
+function CredentialsScreen() {
+   return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+         <Text>Feed!</Text>
+      </View>
+   );
+}
 
-   var counter = 0;
+function ConnectionsScreen() {
 
    const [wallets, setWallets] = React.useState([]);
-   const [count, setCount] = React.useState(0);
-   const [connectionName, setConnectionName] = React.useState("loading...");
+   const [connectionName, setConnectionName] = React.useState("");
+
+   const setWalletsAndFetch = (wallets) => {
+      setWallets(wallets);
+      fetchConnections(wallets);
+   }
 
    React.useEffect(() => {
       (async () => {
          console.log("HELLOOO00");
          fetchConnections();
       })();
-   }, [wallets]);
+   }, [setWalletsAndFetch]);
 
    async function fetchConnections() {
 
@@ -34,11 +47,7 @@ export default function LinksScreen() {
          },
       });
       res.json().then(res => setWallets(res)).then(setConnectionName(wallets[0].name))
-      //const myRes = await res.json()
-      // if (!(typeof wallets === 'undefined')) {
-      //    console.log(wallets[0].name)
-      // }
-      // console.log(myRes)
+
    }
 
    return (
@@ -48,8 +57,8 @@ export default function LinksScreen() {
             label={connectionName}
             onPress={() => WebBrowser.openBrowserAsync('https://docs.expo.io')}
          />
-
-         {/* <OptionButton
+{/* 
+         <OptionButton
             icon="md-compass"
             label="Read the React Navigation documentation"
             onPress={() => WebBrowser.openBrowserAsync('https://reactnavigation.org')}
@@ -61,7 +70,91 @@ export default function LinksScreen() {
             onPress={() => WebBrowser.openBrowserAsync('https://forums.expo.io')}
             isLastOption
          /> */}
+
       </ScrollView>
+   );
+}
+
+function MyTabs() {
+   return (
+      <Tab.Navigator
+         initialRouteName="Credentials"
+         tabBarOptions={{
+            activeTintColor: '#e91e63',
+            labelStyle: { fontSize: 12 },
+            style: { backgroundColor: 'lavenderblush' },
+         }}
+      >
+         <Tab.Screen
+            name="Credentials"
+            component={CredentialsScreen}
+            options={{ tabBarLabel: 'Credentials' }}
+         />
+         <Tab.Screen
+            name="Connections"
+            component={ConnectionsScreen}
+            options={{ tabBarLabel: 'Connections' }}
+         />
+      </Tab.Navigator>
+   );
+}
+
+
+
+export default function LinksScreen() {
+
+   // const [wallets, setWallets] = React.useState([]);
+   // const [connectionName, setConnectionName] = React.useState("");
+
+   // const setWalletsAndFetch = (wallets) => {
+   //    setWallets(wallets);
+   //    fetchConnections(wallets);
+   // }
+
+   // React.useEffect(() => {
+   //    (async () => {
+   //       console.log("HELLOOO00");
+   //       fetchConnections();
+   //    })();
+   // }, [setWalletsAndFetch]);
+
+   // async function fetchConnections() {
+
+   //    const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/connections', {
+   //       method: 'GET',
+   //       headers: {
+   //          Authorization: 'Bearer dq6RoZ4gJWss_hRtGC_cyUBv66JwZhUbRRKukMPtv4o',
+   //          XStreetcredSubscriptionKey: '0c1596b315f84ac9a4de6810ef464411',
+   //          Accept: 'application/json',
+   //       },
+   //    });
+   //    res.json().then(res => setWallets(res)).then(setConnectionName(wallets[0].name))
+
+   // }
+
+   return (
+      <MyTabs />
+
+      // <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+      //    <OptionButton
+      //       icon="md-school"
+      //       label={connectionName}
+      //       onPress={() => WebBrowser.openBrowserAsync('https://docs.expo.io')}
+      //    />
+
+      //    <OptionButton
+      //       icon="md-compass"
+      //       label="Read the React Navigation documentation"
+      //       onPress={() => WebBrowser.openBrowserAsync('https://reactnavigation.org')}
+      //    />
+
+      //    <OptionButton
+      //       icon="ios-chatboxes"
+      //       label="Ask a question on the forums"
+      //       onPress={() => WebBrowser.openBrowserAsync('https://forums.expo.io')}
+      //       isLastOption
+      //    />
+      // </ScrollView>
    );
 }
 
