@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Header, Component } from 'react';
-import { StyleSheet, Text, View, FlatList } from 'react-native';
+import { StyleSheet, Text, View, FlatList,SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as WebBrowser from 'expo-web-browser';
 import { RectButton, ScrollView } from 'react-native-gesture-handler';
@@ -12,6 +12,7 @@ var walletID = "C44H0ImYvrWRpsBVcCHLfjU53UbPUNQiV";
 var connectionName;
 var connectionsArray = [""];
 var currArraySize = 0;
+
 
 function CredentialsScreen() {
    return (
@@ -26,7 +27,17 @@ function ConnectionsScreen() {
    const [wallets, setWallets] = React.useState([]);
    const [connectionName, setConnectionName] = React.useState("");
    const [arraySize, setArraySize] = React.useState(0);
+   var index=0;
+   const DATA=[];
+  
 
+   function Item({ title }) {
+      return (
+        <View style={styles.item}>
+          <Text style={styles.title}>{title}</Text>
+        </View>
+      );
+    }
 
    const setWalletsAndFetch = (wallets) => {
       setWallets(wallets);
@@ -41,7 +52,6 @@ function ConnectionsScreen() {
    }, [setWalletsAndFetch]);
 
    async function fetchConnections() {
-
       const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/connections', {
          method: 'GET',
          headers: {
@@ -52,25 +62,36 @@ function ConnectionsScreen() {
       });
       res.json().then(res => setWallets(res)).then(setConnectionName(wallets[0].name)).then(setArraySize(wallets.length))
       console.log(arraySize);
-      if (arraySize > currArraySize) {
-         currArraySize = arraySize;
+//      if (arraySize > currArraySize) {
+//         currArraySize = arraySize;
          for (let index = 0; index < arraySize; index++) {
-            connectionsArray = connectionsArray.concat(wallets[index].name)
+            const obj= {id:index, title:wallets[index].name};
+            DATA.push(obj);
+            //connectionsArray = connectionsArray.concat(wallets[index].name)
             console.log("index " + index)
          }
-      }
-      console.log(connectionsArray)
+//      }
+      console.log(DATA);
+      //console.log(connectionsArray)
    }
-
+   
    return (
-      <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-         <OptionButton
-            icon="md-school"
-            label={connectionName}
-            onPress={() => WebBrowser.openBrowserAsync('https://docs.expo.io')}
+      <SafeAreaView style={styles.container}>
+         <FlatList
+            data={DATA}
+            renderItem={({ item }) => <Item title={item.title} />}
+            keyExtractor={item => item.id}
          />
+      </SafeAreaView>
 
-         {/* <OptionButton
+//      <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+//         <OptionButton
+//            icon="md-school"
+//            label={connectionName}
+//           onPress={() => WebBrowser.openBrowserAsync('https://docs.expo.io')}
+//         />
+
+         /* <OptionButton
             icon="md-compass"
             label="Read the React Navigation documentation"
             onPress={() => WebBrowser.openBrowserAsync('https://reactnavigation.org')}
@@ -81,9 +102,10 @@ function ConnectionsScreen() {
             label="Ask a question on the forums"
             onPress={() => WebBrowser.openBrowserAsync('https://forums.expo.io')}
             isLastOption
-         /> */}
+         /> */
 
-      </ScrollView>
+     // </ScrollView>
+  // );
    );
 }
 
@@ -214,4 +236,15 @@ const styles = StyleSheet.create({
       alignSelf: 'flex-start',
       marginTop: 1,
    },
+   item: {
+      backgroundColor: '#f9c2ff',
+      padding: 20,
+      marginVertical: 8,
+      marginHorizontal: 16,
+    },
+    title: {
+      fontSize: 32,
+    },
 });
+
+ 
