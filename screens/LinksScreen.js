@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Header, Component } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as WebBrowser from 'expo-web-browser';
 import { RectButton, ScrollView } from 'react-native-gesture-handler';
@@ -10,6 +10,8 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 const Tab = createMaterialTopTabNavigator();
 var walletID = "C44H0ImYvrWRpsBVcCHLfjU53UbPUNQiV";
 var connectionName;
+var connectionsArray = [""];
+var currArraySize = 0;
 
 function CredentialsScreen() {
    return (
@@ -23,6 +25,8 @@ function ConnectionsScreen() {
 
    const [wallets, setWallets] = React.useState([]);
    const [connectionName, setConnectionName] = React.useState("");
+   const [arraySize, setArraySize] = React.useState(0);
+
 
    const setWalletsAndFetch = (wallets) => {
       setWallets(wallets);
@@ -46,8 +50,16 @@ function ConnectionsScreen() {
             Accept: 'application/json',
          },
       });
-      res.json().then(res => setWallets(res)).then(setConnectionName(wallets[0].name))
-
+      res.json().then(res => setWallets(res)).then(setConnectionName(wallets[0].name)).then(setArraySize(wallets.length))
+      console.log(arraySize);
+      if (arraySize > currArraySize) {
+         currArraySize = arraySize;
+         for (let index = 0; index < arraySize; index++) {
+            connectionsArray = connectionsArray.concat(wallets[index].name)
+            console.log("index " + index)
+         }
+      }
+      console.log(connectionsArray)
    }
 
    return (
@@ -57,8 +69,8 @@ function ConnectionsScreen() {
             label={connectionName}
             onPress={() => WebBrowser.openBrowserAsync('https://docs.expo.io')}
          />
-{/* 
-         <OptionButton
+
+         {/* <OptionButton
             icon="md-compass"
             label="Read the React Navigation documentation"
             onPress={() => WebBrowser.openBrowserAsync('https://reactnavigation.org')}
@@ -203,51 +215,3 @@ const styles = StyleSheet.create({
       marginTop: 1,
    },
 });
-
-
-// import React, { Component } from 'react'
-// import { View, Text } from 'react-native'
-
-// var walletID = "C44H0ImYvrWRpsBVcCHLfjU53UbPUNQiV"
-// let jsondata;  
-// let data = [];
-
-// class HttpExample extends Component {
-//    state = {
-//       data: ''
-//    }
-//    componentDidMount = () => {
-//       fetch('https://api.streetcred.id/custodian/v1/api/'+ walletID + '/connections', {
-//          method: 'GET',
-//          headers: {
-//           Authorization: 'Bearer dq6RoZ4gJWss_hRtGC_cyUBv66JwZhUbRRKukMPtv4o',
-//           XStreetcredSubscriptionKey: '0c1596b315f84ac9a4de6810ef464411',
-//           Accept: 'application/json',
-//           'Content-Type': 'application/json',
-//         },
-//       })
-//       .then((response) => response.json())
-//       .then((responseJson) => {
-//          console.log(responseJson);
-//          // jsondata = responseJson.values;
-//          this.setState({
-//             data: responseJson
-//          })
-//       })
-//       .catch((error) => {
-//          console.error(error);
-//       });
-//       console.log("HII "+ jsondata)
-//    }
-//    render() {
-//       return (
-//          <View>
-//             <Text>
-//                hi
-//                {this.state.data.Text}
-//             </Text>
-//          </View>
-//       )
-//    }
-// }
-// export default HttpExample
