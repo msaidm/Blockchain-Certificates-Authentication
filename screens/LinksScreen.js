@@ -9,20 +9,102 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import Constants from 'expo-constants';
 
 const Tab = createMaterialTopTabNavigator();
-var walletID = "C44H0ImYvrWRpsBVcCHLfjU53UbPUNQiV";
+
+FlatListItemSeparator = () => {
+   return (
+      <View
+         style={{
+            height: 1,
+            width: "100%",
+            backgroundColor: "#000",
+         }}
+      />
+   );
+}
+
 var connectionName;
 var connectionsArray = [""];
 var currArraySize = 0;
+var currArraySize2 = 0;
 
 function CredentialsScreen() {
+   var walletID = "Cwj31Hq5pNLcBjRZwCeaL5peopxRsEzEI";
+   
+   //var connectionID = "d418f248-33a4-428c-aff1-1eeb00079e52";
+
+   const [credentials, setCredentials] = React.useState([]);
+   const [arraySize2, setArraySize2] = React.useState(0);
+   const [values, setValues] = React.useState([]);
+
+   function Item({ title }) {
+      return (
+         <View style={styles.item}>
+            <Text style={styles.title}>{title}</Text>
+         </View>
+      );
+   }
+
+   const setCredentialsAndFetch = (credentials) => {
+      setCredentials(credentials);
+      fetchCredentials(credentials);
+   }
+
+   React.useEffect(() => {
+      (async () => {
+         console.log("HELLOOO0 2");
+         fetchCredentials();
+      })();
+   }, [setCredentialsAndFetch]);
+
+   // function add(arr, myID) {
+   //    const { length } = arr;
+   //    // const id = length + 1;
+   //    const found = arr.some(el => el.id === myID);
+   //    if (!found) arr.push({ myID, username: name });
+   //    return arr;
+   //  }
+
+   async function fetchCredentials() {
+      const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/credentials', {
+         method: 'GET',
+         headers: {
+            Authorization: 'Bearer dq6RoZ4gJWss_hRtGC_cyUBv66JwZhUbRRKukMPtv4o',
+            XStreetcredSubscriptionKey: '0c1596b315f84ac9a4de6810ef464411',
+            Accept: 'application/json',
+         },
+      });
+      res.json().then(res => setCredentials(res)).then(setArraySize2(credentials.length))
+      // console.log(arraySize2);
+
+      // if (arraySize2 > currArraySize2) {
+      //    console.log("hena")
+      //    currArraySize2 = arraySize2;
+      //    for (let index = 0; index < arraySize2; index++) {
+      //       const obj = { id: index, data: credentials[index].values[5]};
+
+      //       values.add(obj);
+      //       console.log("index " + index)
+      //    }
+      // }
+      console.log(credentials[0].values.GPA);
+   }
+
+
    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-         <Text>Feed!</Text>
-      </View>
+      <SafeAreaView style={styles.container}>
+         <FlatList
+            // data={values}
+            // renderItem={({ item }) => <Item title={item.data} />}
+            // keyExtractor={item => item.id}
+            // ItemSeparatorComponent={FlatListItemSeparator}
+         />
+      </SafeAreaView>
    );
 }
 
 function ConnectionsScreen() {
+
+   var walletID = "C44H0ImYvrWRpsBVcCHLfjU53UbPUNQiV";
 
    const [wallets, setWallets] = React.useState([]);
    const [connectionName, setConnectionName] = React.useState("");
@@ -39,18 +121,6 @@ function ConnectionsScreen() {
       );
    }
 
-   FlatListItemSeparator = () => {
-      return (
-        <View
-          style={{
-            height: 1,
-            width: "100%",
-            backgroundColor: "#000",
-          }}
-        />
-      );
-    }
-
    const setWalletsAndFetch = (wallets) => {
       setWallets(wallets);
       fetchConnections(wallets);
@@ -58,7 +128,7 @@ function ConnectionsScreen() {
 
    React.useEffect(() => {
       (async () => {
-         console.log("HELLOOO00");
+         // console.log("HELLOOO00");
          fetchConnections();
       })();
    }, [setWalletsAndFetch]);
@@ -73,16 +143,16 @@ function ConnectionsScreen() {
          },
       });
       res.json().then(res => setWallets(res)).then(setConnectionName(wallets[0].name)).then(setArraySize(wallets.length))
-      console.log(arraySize);
+      // console.log(arraySize);
       if (arraySize > currArraySize) {
          currArraySize = arraySize;
          for (let index = 0; index < arraySize; index++) {
             const obj = { id: index, title: wallets[index].name };
             DATA.push(obj);
-            console.log("index " + index)
+            // console.log("index " + index)
          }
       }
-      console.log(DATA);
+      // console.log(DATA);
    }
 
    return (
