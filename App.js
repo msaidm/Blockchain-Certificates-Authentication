@@ -12,6 +12,8 @@ import useLinking from './navigation/useLinking';
 import QRScanner from './navigation/QRScanner';
 import LinksScreen from "./screens/LinksScreen";
 import DetailsScreen from "./screens/DetailsScreen";
+import HomeScreen from './screens/HomeScreen';
+
 //import listWallets from './components/listWallets.js'
 
 
@@ -24,15 +26,8 @@ export default function App(props) {
   const [initialNavigationState, setInitialNavigationState] = React.useState();
   const containerRef = React.useRef();
   const { getInitialState } = useLinking(containerRef);
-  
-  
 
   
-
-  
-  
-  
-
    function createWallet()
    {
     
@@ -122,6 +117,10 @@ export default function App(props) {
             <Stack.Screen name="QRScanner" component={QRScanner} />
             <Stack.Screen name="Links" component={LinksScreen}/>
             <Stack.Screen name="Details" component={DetailsScreen}/>
+            <Stack.Screen name="HomeScreen" 
+            component={HomeScreen} 
+            initialParams={{ text: 'Ya Rab' }}
+            />
           </Stack.Navigator>
         </NavigationContainer>
       </View>
