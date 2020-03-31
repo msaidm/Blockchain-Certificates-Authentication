@@ -13,6 +13,7 @@ import QRScanner from './navigation/QRScanner';
 import LinksScreen from "./screens/LinksScreen";
 import DetailsScreen from "./screens/DetailsScreen";
 import HomeScreen from './screens/HomeScreen';
+import OfferList from './screens/OfferList';
 
 //import listWallets from './components/listWallets.js'
 
@@ -114,6 +115,7 @@ export default function App(props) {
         <NavigationContainer ref={containerRef} initialState={initialNavigationState}>
           <Stack.Navigator>
             <Stack.Screen name="Root" component={BottomTabNavigator} />
+            <Stack.Screen name="Offers" component={OfferList}/>
             <Stack.Screen name="QRScanner" component={QRScanner} />
             <Stack.Screen name="Links" component={LinksScreen}/>
             <Stack.Screen name="Details" component={DetailsScreen}/>

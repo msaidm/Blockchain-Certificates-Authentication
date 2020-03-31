@@ -90,7 +90,7 @@ export default function QRScanner({ navigation }) {
             getWalletId();
             acceptInvitation(userWalletID, invitationFromURL);
             console.log(connections);
-            navigation.navigate("Root");
+            navigation.navigate("Offers");
           }
         },
         {
