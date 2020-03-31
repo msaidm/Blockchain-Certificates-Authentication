@@ -48,16 +48,23 @@ function CredentialsScreen({ navigation }) {
    const [arraySize2, setArraySize2] = React.useState(0);
    const [values, setValues] = React.useState([]);
 
-   function Item({ title }) {
+
+   function Item({ objectt }) {
       return (
          <TouchableOpacity
-            onPress={() => navigation.navigate('Details')}
+            onPress={() => navigation.navigate('Details',
+            {
+               Item:objectt
+            //   itemName: title,
+            //   itemGPA: GPA,
+            //   itemYear: year
+            ,})}
             style={[
                styles.item,
                { backgroundColor:'#6e3b6e' },
             ]}
          >
-            <Text style={styles.title}>{title}</Text>
+            <Text style={styles.title}>My Transcript</Text>
          </TouchableOpacity>
       );
    }
@@ -101,15 +108,17 @@ function CredentialsScreen({ navigation }) {
       }
       // console.log(credentials[0].values.GPA);
    }
-
+   
 
    return (
       <SafeAreaView style={styles.container}>
          <FlatList
             data={values}
-            renderItem={({ item }) => <Item title={item.sname} />}
+            renderItem={({ item }) => <Item objectt={item} />}
+            //title={item.sname}  GPA={item.sgpa}  year= {item.syear}/>}
             keyExtractor={item => item.id.toString()}
             ItemSeparatorComponent={FlatListItemSeparator}
+           
          />
       </SafeAreaView>
    );
