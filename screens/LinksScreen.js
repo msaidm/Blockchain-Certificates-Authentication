@@ -106,7 +106,6 @@ function CredentialsScreen({ navigation }) {
             console.log(values)
          }
       }
-      export {credentials};
       // console.log(credentials[0].values.GPA);
    }
    
