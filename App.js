@@ -13,8 +13,8 @@ import QRScanner from './navigation/QRScanner';
 import LinksScreen from "./screens/LinksScreen";
 import DetailsScreen from "./screens/DetailsScreen";
 import HomeScreen from './screens/HomeScreen';
+import OfferDetailsScreen from './screens/OfferDetailsScreen';
 
-//import listWallets from './components/listWallets.js'
 
 
 const Stack = createStackNavigator();
@@ -117,6 +117,7 @@ export default function App(props) {
             <Stack.Screen name="QRScanner" component={QRScanner} />
             <Stack.Screen name="Links" component={LinksScreen}/>
             <Stack.Screen name="Details" component={DetailsScreen}/>
+            <Stack.Screen name="OfferDetails" component={OfferDetailsScreen}/>
             <Stack.Screen name="HomeScreen" 
             component={HomeScreen} 
             initialParams={{ text: 'Ya Rab' }}

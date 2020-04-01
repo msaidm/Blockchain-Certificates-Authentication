@@ -40,7 +40,7 @@ var currArraySize = 0;
 var currArraySize2 = 0;
 
 function CredentialsScreen({ navigation }) {
-   var walletID = "Cwj31Hq5pNLcBjRZwCeaL5peopxRsEzEI";
+   var walletID = "C44H0ImYvrWRpsBVcCHLfjU53UbPUNQiV";
 
    //var connectionID = "d418f248-33a4-428c-aff1-1eeb00079e52";
 

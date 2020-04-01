@@ -13,7 +13,7 @@ export default function QRScanner({ navigation }) {
   const [wallets, setWallets] = useState({});
   const [connections, setConnections] = useState({});
   var splitted;
-  var userName = 'marina'; // This will be changed will sign up page is ready 
+  var userName = 'MonicaAndMary'; // This will be changed will sign up page is ready 
   var userWalletID;
 
   useEffect(() => {
@@ -55,7 +55,26 @@ export default function QRScanner({ navigation }) {
     });
     res.json().then(res => setConnections(res))
   }
-
+  async function sendAcceptConnectionNotification() {
+    const res = await fetch('http://9f95dd58.ngrok.io/webhook', {
+    method: 'POST',
+    headers: {
+    Accept: 'application/json',
+    "Content-Type": 'application/json',
+    },
+    body: JSON.stringify({
+    "message_type": "new_connection",
+    "object_id": "dasdadsasdadasdaddasdtesssst",
+    "data": {
+    "param1": "value1",
+    "param2": "value2"
+    
+    }
+    }),
+    });
+    res.json().then(console.log(res))
+    
+    } 
 
   function getWalletId() {
     for (let index = 0; index < wallets.length; index++) {
@@ -90,6 +109,7 @@ export default function QRScanner({ navigation }) {
             getWalletId();
             acceptInvitation(userWalletID, invitationFromURL);
             console.log(connections);
+            sendAcceptConnectionNotification();
             navigation.navigate("Root");
           }
         },

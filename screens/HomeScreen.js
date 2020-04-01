@@ -1,61 +1,101 @@
 import * as React from 'react';
-import { Image, Platform, StyleSheet, Text, TouchableOpacity, View, Button,Alert,AsyncStorage } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
-//import { IconButton, Colors } from 'react-native-paper';
+import {Platform, StyleSheet, Text, TouchableOpacity, View, Button, FlatList, SafeAreaView } from 'react-native';
 import * as WebBrowser from 'expo-web-browser';
-import { NavigationContainer } from '@react-navigation/native'
-import { createStackNavigator } from '@react-navigation/stack'
-//import { BarCodeScanner } from 'expo-barcode-scanner';
-import { MonoText } from '../components/StyledText';
+import { Card } from 'react-native-elements';
+
+var currArraySize2 = 0;
 
 
 export default function HomeScreen({ route, navigation }) {
     
-  const [invitation, setInvitation] = React.useState(Array.from({length: 2},()=> Array.from({length: 2})));
+  const [credentials, setCredentials] = React.useState([]);
+  const [offeredCredentials,setOfferedCredentials] = React.useState([])
+  const [arraySize2, setArraySize2] = React.useState(0);
 
-  React.useEffect(()=>
-  {
-     getUserId();
-    
-  },[]);
+  var walletID = "C44H0ImYvrWRpsBVcCHLfjU53UbPUNQiV";
 
-    async function getUserId() {
-      var keys = ["invitationFromURL","Alert"]
-      try {
-        await AsyncStorage.multiGet(keys , (err, item) => 
+  FlatListItemSeparator = () => {
+    return (
+       <View
+          style={{
+             height: 1,
+             width: "100%",
+             backgroundColor: "#000",
+          }}
+       />
+    );
+ }
+
+  React.useEffect(() => {
+    (async () => {
+       fetchCredentials();
+    })();
+ }, [credentials]);
+
+  function Item({ objectt }) {
+    return (
+       <TouchableOpacity
+          onPress={() => navigation.navigate('OfferDetails',
+          {
+             Item:objectt
+          ,})}
+          style={[
+             styles.item,
+             { backgroundColor:'#ffffff' },
+          ]}        
+       >
+        <Card title="Credential Offer Details">
+            <Text style={styles.paragraph}>You have a new credential offer</Text>
+            <Text style={styles.paragraph}>Would you like to connect or refuse?</Text>
+        </Card>
+       </TouchableOpacity>
+    );
+ }
+
+ function add(arr,object) {
+     arr.push(object);
+  return arr;
+}
+  async function fetchCredentials() {
+    const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/credentials', {
+       method: 'GET',
+       headers: {
+          Authorization: 'Bearer dq6RoZ4gJWss_hRtGC_cyUBv66JwZhUbRRKukMPtv4o',
+          XStreetcredSubscriptionKey: '0c1596b315f84ac9a4de6810ef464411',
+          Accept: 'application/json',
+       },
+    });
+    res.json().then(res => setCredentials(res)).then(setArraySize2(credentials.length));
+
+    if (arraySize2 > currArraySize2) 
+    {
+      currArraySize2 = arraySize2;
+      for (let index = 0; index < arraySize2; index++) {
+        if(credentials[index].state=="Offered")
         {
-          setInvitation(item);
-        });
-      } catch (error) {
-        // Error retrieving data
-        console.log(error.message);
+          setOfferedCredentials(add(offeredCredentials, credentials[index]));
+
+         }
       }
-    }  
-  // console.log(invitation);
-  // console.log(invitation[1][1]);
+      
+    }
+       
+    }
+
+ 
 
 
 
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-        <View style={styles.welcomeContainer}>
-          <Image
-            source={
-              __DEV__
-                ? require('../assets/images/robot-dev.png')
-                : require('../assets/images/robot-prod.png')
-            }
-            style={styles.welcomeImage}
-          />
-           
-        </View>
-        
-        <View style={styles.helpContainer}>
-         
-        </View>
-      </ScrollView>
+      <SafeAreaView style={styles.container}>
+         <FlatList
+            data={offeredCredentials}
+            renderItem={({ item }) => <Item objectt={item} />}
+           // ItemSeparatorComponent={FlatListItemSeparator}
+         />
+      </SafeAreaView>
 
       <View style={styles.tabBarInfoContainer}>
         <Button
