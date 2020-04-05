@@ -40,7 +40,7 @@ var currArraySize = 0;
 var currArraySize2 = 0;
 
 function CredentialsScreen({ navigation }) {
-   var walletID = "C44H0ImYvrWRpsBVcCHLfjU53UbPUNQiV";
+   var walletID = "C2FNRchcvdq1c3dY9bvvAoE3RvxgrUnnS";
 
    //var connectionID = "d418f248-33a4-428c-aff1-1eeb00079e52";
 
@@ -76,7 +76,7 @@ function CredentialsScreen({ navigation }) {
 
    React.useEffect(() => {
       (async () => {
-         console.log("HELLOOO0 2");
+         // //console.log("HELLOOO0 2");
          fetchCredentials();
       })();
    }, [credentials]);
@@ -85,16 +85,16 @@ function CredentialsScreen({ navigation }) {
       const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/credentials', {
          method: 'GET',
          headers: {
-            Authorization: 'Bearer dq6RoZ4gJWss_hRtGC_cyUBv66JwZhUbRRKukMPtv4o',
-            XStreetcredSubscriptionKey: '0c1596b315f84ac9a4de6810ef464411',
+            Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
+            XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
             Accept: 'application/json',
          },
       });
       res.json().then(res => setCredentials(res)).then(setArraySize2(credentials.length))
-      console.log(arraySize2);
+      // //console.log(arraySize2);
 
       if (arraySize2 > currArraySize2) {
-         console.log("hena")
+         // //console.log("hena")
          currArraySize2 = arraySize2;
          for (let index = 0; index < arraySize2; index++) {
 
@@ -102,11 +102,11 @@ function CredentialsScreen({ navigation }) {
             //to add a credential and if condition
             const obj = { id: credentials[index].credentialId, sname: data.Name, sgpa: data.GPA, syear: data.Year }
             setValues(add(values, credentials[index].credentialId, obj));
-            console.log("index " + index)
-            console.log(values)
+            // //console.log("index " + index)
+            // //console.log(values)
          }
       }
-      // console.log(credentials[0].values.GPA);
+      // //console.log(credentials[0].values.GPA);
    }
    
 
@@ -126,7 +126,7 @@ function CredentialsScreen({ navigation }) {
 
 function ConnectionsScreen() {
 
-   var walletID = "C44H0ImYvrWRpsBVcCHLfjU53UbPUNQiV";
+   var walletID = "C2FNRchcvdq1c3dY9bvvAoE3RvxgrUnnS";
 
    const [wallets, setWallets] = React.useState([]);
    const [connectionName, setConnectionName] = React.useState("");
@@ -150,7 +150,7 @@ function ConnectionsScreen() {
 
    React.useEffect(() => {
       (async () => {
-         // console.log("HELLOOO00");
+         // //console.log("HELLOOO00");
          fetchConnections();
       })();
    }, [setWalletsAndFetch]);
@@ -159,13 +159,13 @@ function ConnectionsScreen() {
       const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/connections', {
          method: 'GET',
          headers: {
-            Authorization: 'Bearer dq6RoZ4gJWss_hRtGC_cyUBv66JwZhUbRRKukMPtv4o',
-            XStreetcredSubscriptionKey: '0c1596b315f84ac9a4de6810ef464411',
+            Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
+            XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
             Accept: 'application/json',
          },
       });
       res.json().then(res => setWallets(res)).then(setConnectionName(wallets[0].name)).then(setArraySize(wallets.length))
-      // console.log(arraySize);
+      // //console.log(arraySize);
       if (arraySize > currArraySize) {
          currArraySize = arraySize;
          for (let index = 0; index < arraySize; index++) {
@@ -174,7 +174,7 @@ function ConnectionsScreen() {
             ///to make the index with the connectionID
          }
       }
-      // console.log(DATA);
+      // //console.log(DATA);
    }
 
    return (

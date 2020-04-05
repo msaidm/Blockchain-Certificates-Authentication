@@ -2,35 +2,25 @@ import * as React from 'react';
 import {Platform, StyleSheet, Text, TouchableOpacity, View, Button, FlatList, SafeAreaView } from 'react-native';
 import * as WebBrowser from 'expo-web-browser';
 import { Card } from 'react-native-elements';
+    
 
 var currArraySize2 = 0;
 
 
 export default function HomeScreen({ route, navigation }) {
-    
+
+ 
+  var walletID = "C2FNRchcvdq1c3dY9bvvAoE3RvxgrUnnS";
   const [credentials, setCredentials] = React.useState([]);
-  const [offeredCredentials,setOfferedCredentials] = React.useState([])
-  const [arraySize2, setArraySize2] = React.useState(0);
+  const [offeredCredentials,setOfferedCredentials] = React.useState([]);
+  const [arraySize2, setArraySize2] = React.useState(0); 
 
-  var walletID = "C44H0ImYvrWRpsBVcCHLfjU53UbPUNQiV";
-
-  FlatListItemSeparator = () => {
-    return (
-       <View
-          style={{
-             height: 1,
-             width: "100%",
-             backgroundColor: "#000",
-          }}
-       />
-    );
- }
 
   React.useEffect(() => {
     (async () => {
        fetchCredentials();
     })();
- }, [credentials]);
+  });
 
   function Item({ objectt }) {
     return (
@@ -50,18 +40,20 @@ export default function HomeScreen({ route, navigation }) {
         </Card>
        </TouchableOpacity>
     );
- }
+  }
 
- function add(arr,object) {
-     arr.push(object);
-  return arr;
-}
+ function add(array,object) {
+     array.push(object);
+  return array;
+  }
+
+
   async function fetchCredentials() {
     const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/credentials', {
        method: 'GET',
        headers: {
-          Authorization: 'Bearer dq6RoZ4gJWss_hRtGC_cyUBv66JwZhUbRRKukMPtv4o',
-          XStreetcredSubscriptionKey: '0c1596b315f84ac9a4de6810ef464411',
+        Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
+        XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
           Accept: 'application/json',
        },
     });
@@ -70,30 +62,42 @@ export default function HomeScreen({ route, navigation }) {
     if (arraySize2 > currArraySize2) 
     {
       currArraySize2 = arraySize2;
-      for (let index = 0; index < arraySize2; index++) {
+      for (let index = 0; index < arraySize2; index++) 
+      {
         if(credentials[index].state=="Offered")
         {
           setOfferedCredentials(add(offeredCredentials, credentials[index]));
-
-         }
-      }
-      
+        }
+      }  
+    }
+    console.log(offeredCredentials)
+    for (let index = 0; index < arraySize2; index++) 
+    {
+      if(credentials[index].state=="Issued")
+        {
+          for (let index2 = 0; index2 < offeredCredentials.length; index2++) {
+              if(offeredCredentials[index2].credentialId == credentials[index].credentialId)
+              {
+                console.log("here")
+                offeredCredentials.splice(index2,1)
+               
+              }
+          }
+          
+        }
     }
        
-    }
+  }
 
  
-
-
-
 
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.container}>
          <FlatList
             data={offeredCredentials}
+            extraData={offeredCredentials.length}
             renderItem={({ item }) => <Item objectt={item} />}
-           // ItemSeparatorComponent={FlatListItemSeparator}
          />
       </SafeAreaView>
 

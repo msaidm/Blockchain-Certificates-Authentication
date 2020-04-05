@@ -13,7 +13,7 @@ export default function QRScanner({ navigation }) {
   const [wallets, setWallets] = useState({});
   const [connections, setConnections] = useState({});
   var splitted;
-  var userName = 'MonicaAndMary'; // This will be changed will sign up page is ready 
+  var userName = 'marina'; // This will be changed will sign up page is ready 
   var userWalletID;
 
   useEffect(() => {
@@ -29,8 +29,8 @@ export default function QRScanner({ navigation }) {
     const res = await fetch('https://api.streetcred.id/custodian/v1/api/wallets', {
       method: 'GET',
       headers: {
-        Authorization: 'Bearer dq6RoZ4gJWss_hRtGC_cyUBv66JwZhUbRRKukMPtv4o',
-        XStreetcredSubscriptionKey: '0c1596b315f84ac9a4de6810ef464411',
+        Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
+        XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
         Accept: 'application/json',
         "Content-Type": 'application/json',
       }
@@ -46,8 +46,8 @@ export default function QRScanner({ navigation }) {
     const res = await fetch(fetchURLForAcceptInvitaion, {
       method: 'POST',
       headers: {
-        Authorization: 'Bearer dq6RoZ4gJWss_hRtGC_cyUBv66JwZhUbRRKukMPtv4o',
-        XStreetcredSubscriptionKey: '0c1596b315f84ac9a4de6810ef464411',
+        Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
+        XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
         Accept: 'application/json',
         'Content-Type': 'multipart/form-data',
       },
@@ -56,7 +56,7 @@ export default function QRScanner({ navigation }) {
     res.json().then(res => setConnections(res))
   }
   async function sendAcceptConnectionNotification() {
-    const res = await fetch('http://9f95dd58.ngrok.io/webhook', {
+    const res = await fetch('http://4b7e124a.ngrok.io/webhook', {
     method: 'POST',
     headers: {
     Accept: 'application/json',
@@ -72,7 +72,7 @@ export default function QRScanner({ navigation }) {
     }
     }),
     });
-    res.json().then(console.log(res))
+    res.json().then(console.log(JSON.stringify(res)))
     
     } 
 
@@ -81,7 +81,7 @@ export default function QRScanner({ navigation }) {
       if (wallets[index].name == userName)
         userWalletID = wallets[index].walletId;
     }
-    console.log(wallets)
+    // console.log(wallets)
   }
 
   const handleBarCodeScanned = ({ type, data }) => {
@@ -108,7 +108,7 @@ export default function QRScanner({ navigation }) {
             //saveUserId('Alert','Yes') 
             getWalletId();
             acceptInvitation(userWalletID, invitationFromURL);
-            console.log(connections);
+            // console.log(connections);
             sendAcceptConnectionNotification();
             navigation.navigate("Root");
           }

@@ -5,12 +5,12 @@ import { Card } from 'react-native-elements';
 
 export default function OfferDetailsScreen({route , navigation}) {
   const {Item} = route.params;
-  console.log(Item.credentialId);
-  var walletID = "C44H0ImYvrWRpsBVcCHLfjU53UbPUNQiV";
+  //console.log(Item.credentialId);
+  var walletID = "C2FNRchcvdq1c3dY9bvvAoE3RvxgrUnnS";
 
 
   async function sendAcceptOfferNotification() {
-    const res = await fetch('http://9f95dd58.ngrok.io/webhook', {
+    const res = await fetch('http://4b7e124a.ngrok.io/webhook', {
     method: 'POST',
     headers: {
     Accept: 'application/json',
@@ -20,7 +20,7 @@ export default function OfferDetailsScreen({route , navigation}) {
       "message_type": "credential_request"
     }),
     });
-    res.json().then(console.log(res))
+    res.json().then(console.log(JSON.stringify(res)))
     
     } 
 
@@ -30,8 +30,8 @@ export default function OfferDetailsScreen({route , navigation}) {
       const res = await fetch(fetchURLForAcceptInvitaion, {
       method: 'POST',
       headers: {
-        Authorization: 'Bearer dq6RoZ4gJWss_hRtGC_cyUBv66JwZhUbRRKukMPtv4o',
-        XStreetcredSubscriptionKey: '0c1596b315f84ac9a4de6810ef464411',
+        Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
+        XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
         Accept: 'application/json',
         "Content-Type": 'application/json',
       },
