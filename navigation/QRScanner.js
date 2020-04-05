@@ -56,25 +56,25 @@ export default function QRScanner({ navigation }) {
     res.json().then(res => setConnections(res))
   }
   async function sendAcceptConnectionNotification() {
-    const res = await fetch('http://4b7e124a.ngrok.io/webhook', {
-    method: 'POST',
-    headers: {
-    Accept: 'application/json',
-    "Content-Type": 'application/json',
-    },
-    body: JSON.stringify({
-    "message_type": "new_connection",
-    "object_id": "dasdadsasdadasdaddasdtesssst",
-    "data": {
-    "param1": "value1",
-    "param2": "value2"
-    
-    }
-    }),
+    const res = await fetch('http://fa6e7fb7.ngrok.io/webhook', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        "Content-Type": 'application/json',
+      },
+      body: JSON.stringify({
+        "message_type": "new_connection",
+        "object_id": "dasdadsasdadasdaddasdtesssst",
+        "data": {
+          "param1": "value1",
+          "param2": "value2"
+
+        }
+      }),
     });
     res.json().then(console.log(JSON.stringify(res)))
-    
-    } 
+
+  }
 
   function getWalletId() {
     for (let index = 0; index < wallets.length; index++) {

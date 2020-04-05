@@ -70,7 +70,7 @@ export default function HomeScreen({ route, navigation }) {
         }
       }  
     }
-    console.log(offeredCredentials)
+    // console.log(offeredCredentials)
     for (let index = 0; index < arraySize2; index++) 
     {
       if(credentials[index].state=="Issued")

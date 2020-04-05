@@ -8,7 +8,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Constants from 'expo-constants';
-import DetailsScreen from './DetailsScreen';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -53,18 +52,19 @@ function CredentialsScreen({ navigation }) {
       return (
          <TouchableOpacity
             onPress={() => navigation.navigate('Details',
-            {
-               Item:objectt
-            //   itemName: title,
-            //   itemGPA: GPA,
-            //   itemYear: year
-            ,})}
+               {
+                  Item: objectt
+                  //   itemName: title,
+                  //   itemGPA: GPA,
+                  //   itemYear: year
+                  ,
+               })}
             style={[
                styles.item,
-               { backgroundColor:'#6e3b6e' },
+               { backgroundColor: '#dcdcdc' },
             ]}
          >
-            <Text style={styles.title}>My Transcript</Text>
+            <Text style={styles.title}>{objectt.type}</Text>
          </TouchableOpacity>
       );
    }
@@ -94,21 +94,30 @@ function CredentialsScreen({ navigation }) {
       // //console.log(arraySize2);
 
       if (arraySize2 > currArraySize2) {
-         // //console.log("hena")
+         console.log("size: " + arraySize2)
          currArraySize2 = arraySize2;
          for (let index = 0; index < arraySize2; index++) {
+            const state = credentials[index].state
+            if (state == "Issued") {
+               const data = credentials[index].values
+               //to add a credential and if condition
+               const obj = { id: credentials[index].credentialId, sname: data.Name, sgpa: data.GPA, syear: data.Year, type: data.Type }
+               // console.log(obj)
+               setValues(add(values, credentials[index].credentialId, obj));
+               // //console.log("index " + index)
+               console.log(values)
+            }
 
-            const data = credentials[index].values
-            //to add a credential and if condition
-            const obj = { id: credentials[index].credentialId, sname: data.Name, sgpa: data.GPA, syear: data.Year }
-            setValues(add(values, credentials[index].credentialId, obj));
-            // //console.log("index " + index)
-            // //console.log(values)
+            else {
+
+            }
+
+
          }
       }
       // //console.log(credentials[0].values.GPA);
    }
-   
+
 
    return (
       <SafeAreaView style={styles.container}>
@@ -118,7 +127,7 @@ function CredentialsScreen({ navigation }) {
             //title={item.sname}  GPA={item.sgpa}  year= {item.syear}/>}
             keyExtractor={item => item.id.toString()}
             ItemSeparatorComponent={FlatListItemSeparator}
-           
+
          />
       </SafeAreaView>
    );
