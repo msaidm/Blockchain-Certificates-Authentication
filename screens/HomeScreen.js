@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Platform, StyleSheet, Text, TouchableOpacity, View, Button, FlatList, SafeAreaView } from 'react-native';
+import {Platform, StyleSheet, Text, TouchableOpacity, View, Button, FlatList, SafeAreaView,Image } from 'react-native';
 import * as WebBrowser from 'expo-web-browser';
 import { Card } from 'react-native-elements';
     
@@ -10,24 +10,29 @@ var currArraySize2 = 0;
 export default function HomeScreen({ route, navigation }) {
 
  
-  var walletID = "C2FNRchcvdq1c3dY9bvvAoE3RvxgrUnnS";
+  var walletID = "CrtAMYWLD5ZdkowDdHreNz9goN3kLDsUC";
   const [credentials, setCredentials] = React.useState([]);
   const [offeredCredentials,setOfferedCredentials] = React.useState([]);
   const [arraySize2, setArraySize2] = React.useState(0); 
+  const [connectionDetailsArray, setConnectionDetailsArray] = React.useState(); 
+  const [connectionDataArray, setConnectionDataArray] = React.useState([]);
+  const [connectionDetailsArraySize, setConnectionDetailsArraySize] = React.useState(0);
 
 
   React.useEffect(() => {
     (async () => {
        fetchCredentials();
     })();
-  });
+  },[credentials]);
 
-  function Item({ objectt }) {
+  function Item({ title, url,credentialId }) {
     return (
        <TouchableOpacity
           onPress={() => navigation.navigate('OfferDetails',
           {
-             Item:objectt
+             img : url , 
+             name : title,
+             credentialId:credentialId
           ,})}
           style={[
              styles.item,
@@ -35,8 +40,11 @@ export default function HomeScreen({ route, navigation }) {
           ]}        
        >
         <Card title="Credential Offer Details">
-            <Text style={styles.paragraph}>You have a new credential offer</Text>
-            <Text style={styles.paragraph}>Would you like to connect or refuse?</Text>
+        <View style={styles.item}>
+          <Image source={{ uri: url }} style={styles.image} />
+            <Text style={styles.title}>{title}</Text> 
+         </View>   
+         <Text style={styles.paragraph}>You have a new credential offer</Text>  
         </Card>
        </TouchableOpacity>
     );
@@ -48,6 +56,15 @@ export default function HomeScreen({ route, navigation }) {
   }
 
 
+  function addConnectionDetails(arr, myID, object) {
+    // const { length } = arr;
+    // const id = length + 1;
+    const found = arr.some(el => el.id == myID);
+    if (!found) {
+       arr.push(object);
+    }
+    return arr;
+ }
   async function fetchCredentials() {
     const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/credentials', {
        method: 'GET',
@@ -70,7 +87,29 @@ export default function HomeScreen({ route, navigation }) {
         }
       }  
     }
-    // console.log(offeredCredentials)
+    
+    for (let index = 0; index < offeredCredentials.length; index++)
+    {   
+      
+     let tempConnectionID= offeredCredentials[index].connectionId;
+     const res = await fetch('https://api.streetcred.id/custodian/v1/api/'+walletID+'/connections/'+tempConnectionID, {
+       method: 'GET',
+       headers: {
+        Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
+        XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
+          Accept: 'application/json',
+       },
+    });
+    res.json().then(res => setConnectionDetailsArray(res));
+    //console.log(offeredCredentials);
+   // console.log(connectionDetailsArray);
+    console.log(connectionDetailsArray.connectionId);
+    const obj = { id: connectionDetailsArray.connectionId,credentialId:offeredCredentials[index].credentialId, title: connectionDetailsArray.name, image: connectionDetailsArray.imageUrl };    
+    setConnectionDataArray(addConnectionDetails(connectionDataArray,obj.id,obj)); 
+    //console.log(connectionDataArray);
+    }
+  
+    
     for (let index = 0; index < arraySize2; index++) 
     {
       if(credentials[index].state=="Issued")
@@ -95,9 +134,8 @@ export default function HomeScreen({ route, navigation }) {
     <View style={styles.container}>
       <SafeAreaView style={styles.container}>
          <FlatList
-            data={offeredCredentials}
-            extraData={offeredCredentials.length}
-            renderItem={({ item }) => <Item objectt={item} />}
+            data={connectionDataArray}
+            renderItem={({ item }) => <Item  title={item.title} url={item.image} credentialId={item.credentialId} />}
          />
       </SafeAreaView>
 
@@ -234,4 +272,25 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#2e78b7',
   },
+  title: {
+    fontSize: 20,
+    padding: 5,
+    
+ },
+ item: {
+  backgroundColor: '#ff00ff00',
+  padding: 5,
+  marginVertical: 8,
+  marginHorizontal: 16,
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+},
+ image: {
+    width: 50,
+    height: 50,
+    borderRadius: 50 / 2,
+    overflow: "hidden",
+    // borderWidth: 3,
+    // borderColor: "black"
+ },
 });

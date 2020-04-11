@@ -1,16 +1,18 @@
 import * as React from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, Text, View, Button,Image } from 'react-native';
 import { Card } from 'react-native-elements';
 
 
 export default function OfferDetailsScreen({ route, navigation }) {
-  const { Item } = route.params;
+  const { name } = route.params;
+  const { img } = route.params;
+  const { credentialId } = route.params;
   //console.log(Item.credentialId);
-  var walletID = "C2FNRchcvdq1c3dY9bvvAoE3RvxgrUnnS";
+  var walletID = "CrtAMYWLD5ZdkowDdHreNz9goN3kLDsUC";
 
 
   async function sendAcceptOfferNotification() {
-    const res = await fetch('http://fa6e7fb7.ngrok.io/webhook', {
+    const res = await fetch('http://6bc37d06.ngrok.io/webhook', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -53,14 +55,15 @@ export default function OfferDetailsScreen({ route, navigation }) {
   return (
     <View>
       <Card title="Credential Offer Details">
-        <Text style={styles.paragraph}>
-          You have a new credential offer. {"\n"}
-          Would you like to connect or refuse?
-              </Text>
+      <View style={styles.item}>
+          <Image source={{ uri: img }} style={styles.image} />
+            <Text style={styles.title}>{name}</Text> 
+         </View>   
+         <Text style={styles.paragraph}>You have a new credential offer</Text>  
         <View style={styles.alternativeLayoutButtonContainer}>
           <Button
             title="Accept"
-            onPress={() => acceptButton(walletID, Item.credentialId)}
+            onPress={() => acceptButton(walletID, credentialId)}
           />
           <Button
             title="Decline"
@@ -88,6 +91,27 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#34495e',
   },
+  title: {
+    fontSize: 20,
+    padding: 5,
+    
+ },
+ item: {
+  backgroundColor: '#ff00ff00',
+  padding: 5,
+  marginVertical: 8,
+  marginHorizontal: 16,
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+},
+ image: {
+    width: 50,
+    height: 50,
+    borderRadius: 50 / 2,
+    overflow: "hidden",
+    // borderWidth: 3,
+    // borderColor: "black"
+ },
   alternativeLayoutButtonContainer: {
     margin: 20,
     flexDirection: 'row',
