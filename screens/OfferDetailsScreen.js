@@ -12,7 +12,7 @@ export default function OfferDetailsScreen({ route, navigation }) {
 
 
   async function sendAcceptOfferNotification() {
-    const res = await fetch('http://6bc37d06.ngrok.io/webhook', {
+    const res = await fetch('http://43a14804.ngrok.io/webhook', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -42,13 +42,13 @@ export default function OfferDetailsScreen({ route, navigation }) {
       }),
     })
     sendAcceptOfferNotification();
-    navigation.navigate("Home");
+    navigation.navigate("Root");
   }
 
 
   function declineButton() {
 
-    navigation.navigate("Home");
+    navigation.navigate("Root");
   }
 
 
