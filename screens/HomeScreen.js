@@ -11,7 +11,6 @@ var currArraySize2 = 0;
 
 
 export default function HomeScreen({ route, navigation }) {
-  const forceUpdate = useForceUpdate();
 
  
   var walletID = "CrtAMYWLD5ZdkowDdHreNz9goN3kLDsUC";
@@ -21,7 +20,7 @@ export default function HomeScreen({ route, navigation }) {
   const [connectionDetailsArray, setConnectionDetailsArray] = React.useState([]); 
   //const [connectionDataArray, setConnectionDataArray] = React.useState([]);
   const [connectionDetailsArraySize, setConnectionDetailsArraySize] = React.useState(0);
-  const [count, setCount] = React.useState(0);
+  const [count, setCount] = React.useState(false);
   const [offeredCredentialsArraySize,setOfferedCredentialsArraySize] = React.useState(0);
   var connectionDataArray=[{
     // id:"test",
@@ -114,7 +113,7 @@ export default function HomeScreen({ route, navigation }) {
              { backgroundColor:'#ffffff' },
           ]}        
        >
-        <Card title="Credential Offer Details">
+        <Card title="Credential Offer">
         <View style={styles.item}>
           <Image source={{ uri: url }} style={styles.image} />
             <Text style={styles.title}>{title}</Text> 
@@ -262,31 +261,53 @@ export default function HomeScreen({ route, navigation }) {
               {
                 //console.log("here")
                 offeredCredentials.splice(index2,1)
-                credentials.splice(index,1)
+                setOfferedCredentialsArraySize(offeredCredentials.length);
               }
           }
           
         }
     }
+    if(offeredCredentialsArraySize>0){
+      setCount(true)
+    }
+    else
+      setCount(false)  
+
+    console.log(count)
+    console.log(offeredCredentialsArraySize)
   }
 
-  return (
-    <View style={styles.container}>
-      <SafeAreaView style={styles.container}>
-         <FlatList
-            data={connectionDataArray}
-            keyExtractor={item => item.id}
-            extraData={offeredCredentialsArraySize}
-            initialNumToRender={1}
-            
-            renderItem={({ item }) =>  <Item  title={item.title} url={item.image} credentialId={item.credentialId}  />}
-         />
-      </SafeAreaView>
 
-      <View style={styles.tabBarInfoContainer}>
-        <Button
-        title="SCAN CODE" type="outline" onPress={() => navigation.navigate('QRScanner')} /> 
-      </View>
+  return (
+    <View style={styles.container}>    
+    {count ?
+        (
+          <SafeAreaView style={styles.container}>
+            <FlatList
+                data={connectionDataArray}
+                keyExtractor={item => item.id}
+                extraData={offeredCredentialsArraySize}
+                initialNumToRender={1}
+                
+                renderItem={({ item }) =>  <Item  title={item.title} url={item.image} credentialId={item.credentialId}  />}
+            />
+          </SafeAreaView>)
+        :
+          (<View style={styles.welcomeContainer}> 
+             <Image
+            source={
+              __DEV__
+                ? require('../assets/images/barcode.png')
+                : require('../assets/images/robot-prod.png')
+            }
+            style={styles.welcomeImage}
+          />
+          </View>)
+    }
+       <View style={styles.tabBarInfoContainer}>
+            <Button 
+            title="SCAN CODE" type="outline" onPress={() => navigation.navigate('QRScanner')} /> 
+       </View>
     </View>
   );
 }
@@ -350,10 +371,10 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   welcomeImage: {
-    width: 100,
-    height: 80,
+    width: 150,
+    height: 180,
     resizeMode: 'contain',
-    marginTop: 3,
+    marginTop: 100,
     marginLeft: -10,
   },
   getStartedContainer: {
