@@ -12,7 +12,29 @@ import * as Font from 'expo-font';
 import arrow from '../assets/images/simple-down-arrow.png';
 
 
+function useInterval(callback, delay) {
+   const savedCallback = React.useRef();
+
+   // Remember the latest function.
+   React.useEffect(() => {
+      savedCallback.current = callback;
+   }, [callback]);
+
+   // Set up the interval.
+   React.useEffect(() => {
+      function tick() {
+         savedCallback.current();
+      }
+      if (delay !== null) {
+         let id = setInterval(tick, delay);
+         return () => clearInterval(id);
+      }
+   }, [delay]);
+}
+
+
 const Tab = createMaterialTopTabNavigator();
+const waitFor = 5000;
 
 FlatListItemSeparator = () => {
    return (
@@ -80,11 +102,16 @@ function CredentialsScreen({ navigation }) {
       );
    }
 
-   React.useEffect(() => {
-      (async () => {
-         fetchCredentials();
-      })();
-   }, [credentials]);
+   // React.useEffect(() => {
+   //    (async () => {
+   //       fetchCredentials();
+   //    })();
+   // }, [credentials]);
+
+   useInterval(() => {
+      // Your custom logic here
+      fetchCredentials();
+   }, waitFor);
 
    async function fetchCredentials() {
       const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/credentials', {
@@ -115,7 +142,6 @@ function CredentialsScreen({ navigation }) {
          }
       }
    }
-
 
    return (
       <SafeAreaView style={styles.container}>
@@ -150,17 +176,10 @@ function ConnectionsScreen() {
       );
    }
 
-   const setWalletsAndFetch = (wallets) => {
-      setWallets(wallets);
-      fetchConnections(wallets);
-   }
-
-   React.useEffect(() => {
-      (async () => {
-         // //console.log("HELLOOO00");
-         fetchConnections();
-      })();
-   }, [setWalletsAndFetch]);
+   useInterval(() => {
+      // Your custom logic here
+      fetchConnections();
+   }, waitFor);
 
    async function fetchConnections() {
 
