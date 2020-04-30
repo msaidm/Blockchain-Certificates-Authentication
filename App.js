@@ -13,8 +13,8 @@ import QRScanner from './navigation/QRScanner';
 import LinksScreen from "./screens/LinksScreen";
 import DetailsScreen from "./screens/DetailsScreen";
 import HomeScreen from './screens/HomeScreen';
+import OfferDetailsScreen from './screens/OfferDetailsScreen';
 
-//import listWallets from './components/listWallets.js'
 
 
 const Stack = createStackNavigator();
@@ -34,8 +34,8 @@ export default function App(props) {
     fetch('https://api.streetcred.id/custodian/v1/api/wallets', {
       method: 'POST',
       headers: {
-        Authorization: 'Bearer dq6RoZ4gJWss_hRtGC_cyUBv66JwZhUbRRKukMPtv4o',
-        XStreetcredSubscriptionKey: '0c1596b315f84ac9a4de6810ef464411',
+        Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
+        XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
@@ -58,11 +58,11 @@ export default function App(props) {
       
   //Delete
   //     var fetchURLForDellet='https://api.streetcred.id/custodian/v1/api/wallets?walletId=';
-  //     console.log(fetchURLForDellet)
+  //     //console.log(fetchURLForDellet)
       
   //     for (let index = 0; index < wallets.length; index++) {
   //       fetchURLForDellet='https://api.streetcred.id/custodian/v1/api/wallets?walletId='+wallets[index].walletId;
-  //       console.log(fetchURLForDellet) 
+  //       //console.log(fetchURLForDellet) 
       
   //     fetch(fetchURLForDellet, {
   //     method: 'DELETE',
@@ -117,6 +117,7 @@ export default function App(props) {
             <Stack.Screen name="QRScanner" component={QRScanner} />
             <Stack.Screen name="Links" component={LinksScreen}/>
             <Stack.Screen name="Details" component={DetailsScreen}/>
+            <Stack.Screen name="OfferDetails" component={OfferDetailsScreen}/>
             <Stack.Screen name="HomeScreen" 
             component={HomeScreen} 
             initialParams={{ text: 'Ya Rab' }}

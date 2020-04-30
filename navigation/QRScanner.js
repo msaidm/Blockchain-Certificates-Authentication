@@ -13,7 +13,7 @@ export default function QRScanner({ navigation }) {
   const [wallets, setWallets] = useState({});
   const [connections, setConnections] = useState({});
   var splitted;
-  var userName = 'marina'; // This will be changed will sign up page is ready 
+  var userName = 'WalletNew'; // This will be changed will sign up page is ready 
   var userWalletID;
 
   useEffect(() => {
@@ -29,8 +29,8 @@ export default function QRScanner({ navigation }) {
     const res = await fetch('https://api.streetcred.id/custodian/v1/api/wallets', {
       method: 'GET',
       headers: {
-        Authorization: 'Bearer dq6RoZ4gJWss_hRtGC_cyUBv66JwZhUbRRKukMPtv4o',
-        XStreetcredSubscriptionKey: '0c1596b315f84ac9a4de6810ef464411',
+        Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
+        XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
         Accept: 'application/json',
         "Content-Type": 'application/json',
       }
@@ -46,23 +46,43 @@ export default function QRScanner({ navigation }) {
     const res = await fetch(fetchURLForAcceptInvitaion, {
       method: 'POST',
       headers: {
-        Authorization: 'Bearer dq6RoZ4gJWss_hRtGC_cyUBv66JwZhUbRRKukMPtv4o',
-        XStreetcredSubscriptionKey: '0c1596b315f84ac9a4de6810ef464411',
+        Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
+        XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
         Accept: 'application/json',
         'Content-Type': 'multipart/form-data',
       },
       body: data,
     });
     res.json().then(res => setConnections(res))
+    console.log(res.json.toString)
   }
+  async function sendAcceptConnectionNotification() {
+    const res = await fetch('http://7e5c97fa.ngrok.io/webhook', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        "Content-Type": 'application/json',
+      },
+      body: JSON.stringify({
+        "message_type": "new_connection",
+        "object_id": "dasdadsasdadasdaddasdtesssst",
+        "data": {
+          "param1": "value1",
+          "param2": "value2"
 
+        }
+      }),
+    });
+    res.json().then(console.log(JSON.stringify(res)))
+
+  }
 
   function getWalletId() {
     for (let index = 0; index < wallets.length; index++) {
       if (wallets[index].name == userName)
         userWalletID = wallets[index].walletId;
     }
-    console.log(wallets)
+    // console.log(wallets)
   }
 
   const handleBarCodeScanned = ({ type, data }) => {
@@ -89,7 +109,8 @@ export default function QRScanner({ navigation }) {
             //saveUserId('Alert','Yes') 
             getWalletId();
             acceptInvitation(userWalletID, invitationFromURL);
-            console.log(connections);
+            // console.log(connections);
+            sendAcceptConnectionNotification();
             navigation.navigate("Root");
           }
         },

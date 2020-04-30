@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Header, Component } from 'react';
-import { StyleSheet, Text, View, FlatList, SafeAreaView, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, FlatList, SafeAreaView, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as WebBrowser from 'expo-web-browser';
 import { RectButton, ScrollView } from 'react-native-gesture-handler';
@@ -8,9 +8,33 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Constants from 'expo-constants';
-import DetailsScreen from './DetailsScreen';
+import * as Font from 'expo-font';
+import arrow from '../assets/images/simple-down-arrow.png';
+
+
+function useInterval(callback, delay) {
+   const savedCallback = React.useRef();
+
+   // Remember the latest function.
+   React.useEffect(() => {
+      savedCallback.current = callback;
+   }, [callback]);
+
+   // Set up the interval.
+   React.useEffect(() => {
+      function tick() {
+         savedCallback.current();
+      }
+      if (delay !== null) {
+         let id = setInterval(tick, delay);
+         return () => clearInterval(id);
+      }
+   }, [delay]);
+}
+
 
 const Tab = createMaterialTopTabNavigator();
+const waitFor = 5000;
 
 FlatListItemSeparator = () => {
    return (
@@ -18,11 +42,12 @@ FlatListItemSeparator = () => {
          style={{
             height: 1,
             width: "100%",
-            backgroundColor: "#000",
+            backgroundColor: "darkgray",
          }}
       />
    );
 }
+
 
 function add(arr, myID, object) {
    // const { length } = arr;
@@ -38,9 +63,10 @@ var connectionName;
 var connectionsArray = [""];
 var currArraySize = 0;
 var currArraySize2 = 0;
+var connectionsData = [];
 
 function CredentialsScreen({ navigation }) {
-   var walletID = "Cwj31Hq5pNLcBjRZwCeaL5peopxRsEzEI";
+   var walletID = "CrtAMYWLD5ZdkowDdHreNz9goN3kLDsUC";
 
    //var connectionID = "d418f248-33a4-428c-aff1-1eeb00079e52";
 
@@ -50,75 +76,81 @@ function CredentialsScreen({ navigation }) {
 
 
    function Item({ objectt }) {
+      var img, title;
+      var connId = objectt.connID;
+      for (i = 0; i < connectionsData.length; i++) {
+         if (connectionsData[i].id == connId) {
+            img = connectionsData[i].image
+            title = connectionsData[i].title
+         }
+      }
       return (
          <TouchableOpacity
             onPress={() => navigation.navigate('Details',
-            {
-               Item:objectt
-            //   itemName: title,
-            //   itemGPA: GPA,
-            //   itemYear: year
-            ,})}
+               {
+                  Item: objectt,
+                  image: img,
+                  name: title,
+               })}
             style={[
                styles.item,
-               { backgroundColor:'#6e3b6e' },
             ]}
          >
-            <Text style={styles.title}>My Transcript</Text>
+            <Text style={styles.title}>{objectt.type}</Text>
+            <Image source={arrow} style={{ width: 20, height: 20, alignSelf: 'flex-end' }} />
          </TouchableOpacity>
       );
    }
 
-   const setCredentialsAndFetch = (credentials) => {
-      setCredentials(credentials);
-      fetchCredentials(credentials);
-   }
+   // React.useEffect(() => {
+   //    (async () => {
+   //       fetchCredentials();
+   //    })();
+   // }, [credentials]);
 
-   React.useEffect(() => {
-      (async () => {
-         console.log("HELLOOO0 2");
-         fetchCredentials();
-      })();
-   }, [credentials]);
+   useInterval(() => {
+      // Your custom logic here
+      fetchCredentials();
+   }, waitFor);
 
    async function fetchCredentials() {
       const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/credentials', {
          method: 'GET',
          headers: {
-            Authorization: 'Bearer dq6RoZ4gJWss_hRtGC_cyUBv66JwZhUbRRKukMPtv4o',
-            XStreetcredSubscriptionKey: '0c1596b315f84ac9a4de6810ef464411',
+            Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
+            XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
             Accept: 'application/json',
          },
       });
       res.json().then(res => setCredentials(res)).then(setArraySize2(credentials.length))
-      console.log(arraySize2);
+      // //console.log(arraySize2);
 
-      if (arraySize2 > currArraySize2) {
-         console.log("hena")
-         currArraySize2 = arraySize2;
-         for (let index = 0; index < arraySize2; index++) {
-
+      console.log("size: " + arraySize2)
+      currArraySize2 = arraySize2;
+      for (let index = 0; index < arraySize2; index++) {
+         const state = credentials[index].state
+         if (state == "Issued") {
             const data = credentials[index].values
             //to add a credential and if condition
-            const obj = { id: credentials[index].credentialId, sname: data.Name, sgpa: data.GPA, syear: data.Year }
+            const obj = { id: credentials[index].credentialId, sname: data.Name, sgpa: data.GPA, syear: data.Year, type: data.Type, connID: credentials[index].connectionId }
             setValues(add(values, credentials[index].credentialId, obj));
-            console.log("index " + index)
-            console.log(values)
+            // console.log(connectionsData)
+         }
+
+         else {
+
          }
       }
-      // console.log(credentials[0].values.GPA);
    }
-
 
    return (
       <SafeAreaView style={styles.container}>
          <FlatList
             data={values}
             renderItem={({ item }) => <Item objectt={item} />}
-            //title={item.sname}  GPA={item.sgpa}  year= {item.syear}/>}
             keyExtractor={item => item.id.toString()}
             ItemSeparatorComponent={FlatListItemSeparator}
-           
+
          />
       </SafeAreaView>
    );
@@ -126,7 +158,7 @@ function CredentialsScreen({ navigation }) {
 
 function ConnectionsScreen() {
 
-   var walletID = "C44H0ImYvrWRpsBVcCHLfjU53UbPUNQiV";
+   var walletID = "CrtAMYWLD5ZdkowDdHreNz9goN3kLDsUC";
 
    const [wallets, setWallets] = React.useState([]);
    const [connectionName, setConnectionName] = React.useState("");
@@ -135,53 +167,53 @@ function ConnectionsScreen() {
    var index = 0;
 
 
-   function Item({ title }) {
+   function Item({ title, url }) {
       return (
          <View style={styles.item}>
+            <Image source={{ uri: url }} style={styles.image} />
             <Text style={styles.title}>{title}</Text>
          </View>
       );
    }
 
-   const setWalletsAndFetch = (wallets) => {
-      setWallets(wallets);
-      fetchConnections(wallets);
-   }
-
-   React.useEffect(() => {
-      (async () => {
-         // console.log("HELLOOO00");
-         fetchConnections();
-      })();
-   }, [setWalletsAndFetch]);
+   useInterval(() => {
+      // Your custom logic here
+      fetchConnections();
+   }, waitFor);
 
    async function fetchConnections() {
+
+      await Font.loadAsync({
+         Josefin: require('../assets/fonts/JosefinSans-SemiBold.ttf'),
+      });
+
       const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/connections', {
          method: 'GET',
          headers: {
-            Authorization: 'Bearer dq6RoZ4gJWss_hRtGC_cyUBv66JwZhUbRRKukMPtv4o',
-            XStreetcredSubscriptionKey: '0c1596b315f84ac9a4de6810ef464411',
+            Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
+            XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
             Accept: 'application/json',
          },
       });
       res.json().then(res => setWallets(res)).then(setConnectionName(wallets[0].name)).then(setArraySize(wallets.length))
-      // console.log(arraySize);
       if (arraySize > currArraySize) {
          currArraySize = arraySize;
          for (let index = 0; index < arraySize; index++) {
-            const obj = { id: index, title: wallets[index].name };
-            setData(add(DATA, index, obj))
+            const credentialsData = wallets[index]
+            const obj = { id: credentialsData.connectionId, title: credentialsData.name, image: credentialsData.imageUrl };
+            setData(add(DATA, obj.id, obj))
+            connectionsData = add(connectionsData, obj.id, obj)
             ///to make the index with the connectionID
          }
       }
-      // console.log(DATA);
+      // //console.log(DATA);
    }
 
    return (
       <SafeAreaView style={styles.container}>
          <FlatList
             data={DATA}
-            renderItem={({ item }) => <Item title={item.title} />}
+            renderItem={({ item }) => <Item title={item.title} url={item.image} />}
             keyExtractor={item => item.id.toString()}
             ItemSeparatorComponent={FlatListItemSeparator}
          />
@@ -194,9 +226,9 @@ function MyTabs() {
       <Tab.Navigator
          initialRouteName="Credentials"
          tabBarOptions={{
-            activeTintColor: '#e91e63',
-            labelStyle: { fontSize: 12 },
-            style: { backgroundColor: 'lavenderblush' },
+            activeTintColor: 'royalblue',
+            labelStyle: { fontSize: 14 },
+            style: { backgroundColor: 'white' },
          }}
       >
          <Tab.Screen
@@ -294,9 +326,20 @@ const styles = StyleSheet.create({
       padding: 5,
       marginVertical: 8,
       marginHorizontal: 16,
+      flexDirection: 'row',
+      flexWrap: 'wrap',
    },
    title: {
-      fontSize: 22,
+      fontSize: 20,
+      padding: 5,
+      fontFamily: "Josefin",
+   },
+   image: {
+      width: 50,
+      height: 50,
+      borderRadius: 50 / 2,
+      overflow: "hidden",
+      // borderWidth: 3,
+      // borderColor: "black"
    },
 });
-
