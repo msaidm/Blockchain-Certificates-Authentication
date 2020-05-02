@@ -4,6 +4,7 @@ import * as WebBrowser from 'expo-web-browser';
 import { Card, SearchBar } from 'react-native-elements';
 import useAsyncEffect from 'use-async-effect';
 import useForceUpdate from 'use-force-update';
+import { WALLET_ID } from '../constants'
 
 
 var currArraySize2 = 0;
@@ -14,7 +15,8 @@ console.disableYellowBox = true;
 export default function HomeScreen({ route, navigation }) {
 
 
-  var walletID = "CrtAMYWLD5ZdkowDdHreNz9goN3kLDsUC";
+  // var walletID = "CrtAMYWLD5ZdkowDdHreNz9goN3kLDsUC";
+  var walletID = WALLET_ID;
   const [credentials, setCredentials] = React.useState([]);
   const [offeredCredentials, setOfferedCredentials] = React.useState([]);
   const [arraySize2, setArraySize2] = React.useState(0);

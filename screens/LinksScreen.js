@@ -11,6 +11,8 @@ import Constants from 'expo-constants';
 import * as Font from 'expo-font';
 import arrow from '../assets/images/simple-down-arrow.png';
 import { SearchBar } from 'react-native-elements';
+import { WALLET_ID } from '../constants'
+
 
 
 function useInterval(callback, delay) {
@@ -66,7 +68,7 @@ var currArraySize2 = 0;
 var connectionsData = [];
 
 function CredentialsScreen({ navigation }) {
-   var walletID = "CrtAMYWLD5ZdkowDdHreNz9goN3kLDsUC";
+   var walletID = WALLET_ID;
 
    //var connectionID = "d418f248-33a4-428c-aff1-1eeb00079e52";
 
@@ -89,6 +91,7 @@ function CredentialsScreen({ navigation }) {
 
          return itemData.indexOf(textData) > -1;
       });
+
       console.log("newData: ", newData)
 
       setValues(newData);
@@ -188,7 +191,7 @@ function CredentialsScreen({ navigation }) {
 
 function ConnectionsScreen() {
 
-   var walletID = "CrtAMYWLD5ZdkowDdHreNz9goN3kLDsUC";
+   var walletID = WALLET_ID;
 
    const [wallets, setWallets] = React.useState([]);
    const [connectionName, setConnectionName] = React.useState("");
