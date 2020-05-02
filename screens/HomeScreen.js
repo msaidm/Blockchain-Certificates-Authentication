@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { Platform, StyleSheet, Text, TouchableOpacity, View, Button, FlatList, SafeAreaView, Image } from 'react-native';
 import * as WebBrowser from 'expo-web-browser';
-import { Card } from 'react-native-elements';
+import { Card, SearchBar } from 'react-native-elements';
 import useAsyncEffect from 'use-async-effect';
 import useForceUpdate from 'use-force-update';
 
 
 var currArraySize2 = 0;
 //var data = [];
+console.disableYellowBox = true;
 
 
 export default function HomeScreen({ route, navigation }) {

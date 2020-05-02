@@ -10,6 +10,7 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import Constants from 'expo-constants';
 import * as Font from 'expo-font';
 import arrow from '../assets/images/simple-down-arrow.png';
+import { SearchBar } from 'react-native-elements';
 
 
 function useInterval(callback, delay) {
@@ -31,7 +32,6 @@ function useInterval(callback, delay) {
       }
    }, [delay]);
 }
-
 
 const Tab = createMaterialTopTabNavigator();
 const waitFor = 5000;
@@ -73,6 +73,26 @@ function CredentialsScreen({ navigation }) {
    const [credentials, setCredentials] = React.useState([]);
    const [arraySize2, setArraySize2] = React.useState(0);
    const [values, setValues] = React.useState([]);
+   const [searchText, setSearchText] = React.useState("");
+
+
+   searchFilterFunction = (text, arrayholder) => {
+      setSearchText(text);
+      console.log("arrayholder: ", arrayholder)
+      const newData = arrayholder.filter(function (item) {
+         //applying filter for the inserted text in search bar
+         const itemData = item.type ? item.type.toUpperCase() : ''.toUpperCase();
+         console.log("itemData: ", itemData)
+
+         const textData = text.toUpperCase();
+         console.log("textData: ", textData)
+
+         return itemData.indexOf(textData) > -1;
+      });
+      console.log("newData: ", newData)
+
+      setValues(newData);
+   };
 
 
    function Item({ objectt }) {
@@ -134,7 +154,7 @@ function CredentialsScreen({ navigation }) {
             //to add a credential and if condition
             const obj = { id: credentials[index].credentialId, sname: data.Name, sgpa: data.GPA, syear: data.Year, type: data.Type, connID: credentials[index].connectionId }
             setValues(add(values, credentials[index].credentialId, obj));
-            // console.log(connectionsData)
+            // console.log("values:", values)
          }
 
          else {
@@ -145,6 +165,16 @@ function CredentialsScreen({ navigation }) {
 
    return (
       <SafeAreaView style={styles.container}>
+         <SearchBar
+            lightTheme
+            round
+            onChangeText={text => searchFilterFunction(text, values)}
+            onClear={text => searchFilterFunction('', values)}
+            // autoCorrect={false}
+            value={searchText}
+            showLoading={false}
+            placeholder="Type Here..."
+         />
          <FlatList
             data={values}
             renderItem={({ item }) => <Item objectt={item} />}
@@ -297,7 +327,7 @@ const styles = StyleSheet.create({
    // },
    container: {
       flex: 1,
-      marginTop: Constants.statusBarHeight,
+      // marginTop: Constants.statusBarHeight,
    },
    contentContainer: {
       paddingTop: 15,
