@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Header, Component } from 'react';
-import { StyleSheet, Text, View, FlatList, SafeAreaView, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, Text, View, FlatList, SafeAreaView, TouchableOpacity, Image , TouchableHighlight, TouchableNativeFeedback, TouchableWithoutFeedback , Button, Alert  } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as WebBrowser from 'expo-web-browser';
 import { RectButton, ScrollView } from 'react-native-gesture-handler';
@@ -50,12 +50,20 @@ FlatListItemSeparator = () => {
    );
 }
 
+const deletablecred=0;
 
 function add(arr, myID, object) {
    // const { length } = arr;
    // const id = length + 1;
    const found = arr.some(el => el.id == myID);
-   if (!found) {
+
+   for (i=0;i<DeletedCreds.length ;i++)
+   {
+      if(myID==DeletedCreds[i])
+         deletablecred=1;
+      deletablecred=0;
+   }
+   if (!found && !deletablecred) {
       arr.push(object);
    }
    return arr;
@@ -76,6 +84,7 @@ function CredentialsScreen({ navigation }) {
    const [arraySize2, setArraySize2] = React.useState(0);
    const [values, setValues] = React.useState([]);
    const [searchText, setSearchText] = React.useState("");
+   const [DeletedCreds , setDeletedCreds]=React.useState([]);
 
 
    searchFilterFunction = (text, arrayholder) => {
@@ -115,6 +124,21 @@ function CredentialsScreen({ navigation }) {
                   image: img,
                   name: title,
                })}
+            onLongPress={()=> Alert.alert(
+               "Delete",
+               "Do you want to delete this credential?",
+               [
+                 {
+                   text: "Cancel",
+                   onPress: () => console.log("Cancel Pressed"),
+                   style: "cancel"
+                 },
+                 { text: "yes", onPress: () => setDeletedCreds(objectt.id) }
+               ],
+               { cancelable: false }
+             )
+
+            }
             style={[
                styles.item,
             ]}
