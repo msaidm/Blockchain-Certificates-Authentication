@@ -18,15 +18,21 @@ export default function HomeScreen({ route, navigation }) {
 
  
   var walletID = "C4GTBBcbBMDGunfKF7ySUCH8fHibB4VLZ";
+  //const [DetailsOfVer,setDetailsOfVer]= React.useState([]);
   const [credentials, setCredentials] = React.useState([]);
+  const [Verifications, setVerification] = React.useState([]);
   const [offeredCredentials,setOfferedCredentials] = React.useState([]);
+  const [requestedVerifications,setrequestedVerifications] = React.useState([]);
+  const [VerificationDetailsArray,setVerificationDetailsArray]= React.useState([]);
+  const [VerificationDetailsArraySize, setVerificationDetailsArraySize] = React.useState(0);
   const [arraySize2, setArraySize2] = React.useState(0); 
+  const [arraySizeVer, setArraySizeVer] = React.useState(0); 
   const [connectionDetailsArray, setConnectionDetailsArray] = React.useState([]); 
   //const [connectionDataArray, setConnectionDataArray] = React.useState([]);
   const [connectionDetailsArraySize, setConnectionDetailsArraySize] = React.useState(0);
   const [count, setCount] = React.useState(false);
   const [offeredCredentialsArraySize,setOfferedCredentialsArraySize] = React.useState(0);
-  
+  const [RequestedVerificationsArraySize, setRequestedVerificationsArraySize] = React.useState(0);
  // const obj = { id: connectionDetailsArray.connectionId,credentialId:offeredCredentials[index].credentialId, title: connectionDetailsArray.name, image: connectionDetailsArray.imageUrl }; 
  useInterval(() => {
   // Your custom logic here
@@ -35,16 +41,29 @@ export default function HomeScreen({ route, navigation }) {
     
       const data= await fetchCredentials();
       setCredentials(data);
+      const dataVer= await fetchVerifications();
+      console.log(dataVer);
+      console.log("HIIIIIIIII");
+      setVerification(dataVer);
+      setArraySizeVer(dataVer.length);
        //console.log(data.length+"so?")
-       setArraySize2(data.length);
-       details=await fetchOfferedCredentials(data);
+      setArraySize2(data.length);
+      details=await fetchOfferedCredentials(data);
+      let DetailsOfVer= await fetchRequestedVerifications(dataVer);
+      console.log("This is the detailsofver");
+      console.log(DetailsOfVer);
+      //setDetailsOfVer(await fetchRequestedVerifications(dataVer));
+      //console.log(DetailsOfVer);
        setConnectionDetailsArray(details);
+       setVerificationDetailsArray(DetailsOfVer);
        setConnectionDetailsArraySize(Object.keys(details).length);
+       setVerificationDetailsArraySize(Object.keys(DetailsOfVer).length);
     //fetchOfferedCredentials();
    //console.log("This should be printed after the fetch")
      } 
    fetchAllCredentials();
    removeIssuedCredential();
+   removeRequestedVerification();
     
   } catch (error) {
     
@@ -95,7 +114,7 @@ export default function HomeScreen({ route, navigation }) {
  
  
 
-  function Item({ title, url,credentialId }) {
+  function ItemC({ title, url,credentialId }) { //for credential items
     //console.log("render");
    
     
@@ -118,6 +137,34 @@ export default function HomeScreen({ route, navigation }) {
             <Text style={styles.title}>{title}</Text> 
          </View>   
          <Text style={styles.paragraph}>You have a new credential offer</Text>  
+        </Card>
+       </TouchableOpacity>
+    );
+  }
+
+  function Item({ title, url,verificationId,}) { //for verification items
+    //console.log("render");
+   
+    
+    return (
+       <TouchableOpacity
+          onPress={() => navigation.navigate('VerRequestDetails',
+          {
+             img : url , 
+             name : title,
+             credentialId:credentialId
+          ,})}
+          style={[
+             styles.item,
+             { backgroundColor:'#ffffff' },
+          ]}        
+       >
+        <Card title="Verification Request">
+        <View style={styles.item}>
+          <Image source={{ uri: url }} style={styles.image} />
+            <Text style={styles.title}>{title}</Text> 
+         </View>   
+         <Text style={styles.paragraph}>You are required to verify this information</Text>  
         </Card>
        </TouchableOpacity>
     );
@@ -195,7 +242,23 @@ export default function HomeScreen({ route, navigation }) {
   {
     try {
       // console.log(Object.keys(connectionDataArray).length+"size el obbj")
-      console.log(connectionDataArray)
+      //console.log(connectionDataArray)
+      console.log(VerificationDetailsArraySize);
+      if(VerificationDetailsArraySize>0)
+      {
+        
+      //console.log(offeredCredentials.length+"size gowa")
+      for (let index = 0; index < requestedVerifications.length; index++) {
+       // console.log("da gowa el for ");
+      //console.log(connectionDetailsArray.connectionId);
+      if( VerificationDetailsArray.connectionId !== null){
+      console.log("kda da5lt");
+      //setCount(false);
+      const obj = { id: VerificationDetailsArray.verificationId,verificationId:requestedVerifications[index].verificationId, title: VerificationDetailsArray.name, image: VerificationDetailsArray.imageUrl }; 
+      connectionDataArray=addConnectionDetails(connectionDataArray,obj.id,obj); 
+      //console.log(obj);
+      }
+  
       if(connectionDetailsArraySize>0)
       {
         //console.log("kda da5lt")
@@ -211,7 +274,11 @@ export default function HomeScreen({ route, navigation }) {
       }
       
     }
-    } catch (error) {
+  }
+  console.log(connectionDataArray);
+}
+}
+  catch (error) {
       console.log(error)
     }
 
@@ -250,6 +317,56 @@ export default function HomeScreen({ route, navigation }) {
 
  
   //fetchOfferedCredentials(data);
+  async function fetchVerifications() {
+    
+    const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/verifications', {
+       method: 'GET',
+       headers: {
+        Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
+        XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
+          Accept: 'application/json',
+       },
+    });
+    var ver = await res.json();
+    console.log(res.json());
+    console.log("betba3y tayeb???");
+            //setCredentials(cred);
+    
+   //console.log(count);
+   
+   return ver;   
+  }
+  async function fetchRequestedVerifications(dataVer)
+  { 
+    
+    // if(count<=5){
+    //   setCount(count +1);}
+    
+      currArraySizeVer= arraySizeVer ;
+      for (let index = 0; index < dataVer.length ; index++) 
+      {
+        if(dataVer[index].state=="Requested")
+        {
+          //console.log(data[index]+"dah mafrod crediial [index]");
+          
+          setrequestedVerifications(addConnectionDetails(requestedVerifications,dataVer[index].verificationId ,dataVer[index]));
+          let tempVerConnectionID= dataVer[index].connectionId;
+          const res = await fetch('https://api.streetcred.id/custodian/v1/api/'+walletID+'/connections/'+tempVerConnectionID, {
+            method: 'GET',
+            headers: {
+              Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
+              XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
+                Accept: 'application/json',
+            },
+          });
+          setOfferedCredentialsArraySize(offeredCredentials.length);
+          setRequestedVerificationsArraySize(requestedVerifications.length);
+         let DetailsOfVer= res.json();
+         return DetailsOfVer ;
+        }
+      }
+    
+  }
   
   function removeIssuedCredential(){
     var temArray=[]; 
@@ -278,7 +395,33 @@ export default function HomeScreen({ route, navigation }) {
     //console.log(count)
     //console.log(offeredCredentialsArraySize)
   }
-
+  function removeRequestedVerification(){
+    var tempArray=[]; 
+    setrequestedVerifications(tempArray);
+    for (let index = 0; index < arraySizeVer; index++) 
+    {
+      if(credentials[index].state=="Accepted")
+        {
+          for (let index3 = 0; index3 < connectionDataArray.length; index3++) {
+              if(connectionDataArray[index3].verificationId == Verifications[index].verificationId)
+              {
+                //console.log("here")
+                connectionDataArray.splice(index2,1)
+                setrequestedVerifications(requestedVerifications.length);
+              }
+          }
+          
+        }
+    }
+    if(connectionDataArray.length>0){
+      setCount(true)
+    }
+    else
+      setCount(false)  
+  
+    //console.log(count)
+    //console.log(offeredCredentialsArraySize)
+  }
 
   return (
     <View style={styles.container}>    
@@ -288,11 +431,20 @@ export default function HomeScreen({ route, navigation }) {
             <FlatList
                 data={connectionDataArray}
                 keyExtractor={item => item.id}
-                extraData={offeredCredentialsArraySize}
-                initialNumToRender={1}
+                //extraData={offeredCredentialsArraySize}
+                //initialNumToRender={1}
                 
-                renderItem={({ item }) =>  <Item  title={item.title} url={item.image} credentialId={item.credentialId}  />}
-            />
+                renderItem={({ item }) =>  
+                //if (item.title =='credentials')
+                //  {
+                //  <ItemC  title={item.title} url={item.image} credentialId={item.credentialId} />
+                //}
+                //else if(item.title =='verifications')
+                //  {
+                  <Item  title={item.title} url={item.image} verificationId={item.verificationId} />
+                //}
+              
+        }/>
           </SafeAreaView>)
         :
           (<View style={styles.welcomeContainer}> 
@@ -306,23 +458,14 @@ export default function HomeScreen({ route, navigation }) {
           />
           </View>)
     }
-     <View > 
-      <LinearGradient colors={['#4c669f', '#3b5998', '#192f6a']} style={styles.linearGradient}>
-      {/* <Ionicons style={styles.buttonText} name="md-qr-scanner" size={ICON_SIZE} color="white" /> */}
-          <Text style={styles.buttonText}   onPress={() => navigation.navigate('QRScanner')} >
-          Scan Code
-          </Text>
-
-      </LinearGradient>
-       
-            {/* <Button 
-            title="SCAN CODE" type="outline" onPress={() => navigation.navigate('QRScanner')} />  */}
+     <View  style={styles.tabBarInfoContainer}> 
+           <Button 
+            title="SCAN CODE" type="outline" onPress={() => navigation.navigate('QRScanner')} />  
        </View>
        
     </View>
   );
 }
-
 HomeScreen.navigationOptions = {
   header: null,
   
