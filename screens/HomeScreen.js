@@ -142,17 +142,17 @@ export default function HomeScreen({ route, navigation }) {
     );
   }
 
-  function Item({ title, url,verificationId,}) { //for verification items
+  function ItemV({ title, url,verificationId,}) { //for verification items
     //console.log("render");
    
     
     return (
        <TouchableOpacity
-          onPress={() => navigation.navigate('VerRequestDetails',
+          onPress={() => navigation.navigate('VerificationRequestDetails',
           {
              img : url , 
              name : title,
-             credentialId:credentialId
+             verificationId:verificationId
           ,})}
           style={[
              styles.item,
@@ -254,8 +254,8 @@ export default function HomeScreen({ route, navigation }) {
       if( VerificationDetailsArray.connectionId !== null){
       console.log("kda da5lt");
       //setCount(false);
-      const obj = { id: VerificationDetailsArray.verificationId,verificationId:requestedVerifications[index].verificationId, title: VerificationDetailsArray.name, image: VerificationDetailsArray.imageUrl }; 
-      connectionDataArray=addConnectionDetails(connectionDataArray,obj.id,obj); 
+      const objj = { id: VerificationDetailsArray.verificationId,verificationId:requestedVerifications[index].verificationId, title: VerificationDetailsArray.name, image: VerificationDetailsArray.imageUrl , type:'Verification' }; 
+      connectionDataArray=addConnectionDetails(connectionDataArray,objj.id,objj); 
       //console.log(obj);
       }
   
@@ -267,7 +267,7 @@ export default function HomeScreen({ route, navigation }) {
        // console.log("da gowa el for ");
       //console.log(connectionDetailsArray.connectionId);
       if( connectionDetailsArray.connectionId !== null){
-      const obj = { id: connectionDetailsArray.connectionId,credentialId:offeredCredentials[index].credentialId, title: connectionDetailsArray.name, image: connectionDetailsArray.imageUrl }; 
+      const obj = { id: connectionDetailsArray.connectionId,credentialId:offeredCredentials[index].credentialId, title: connectionDetailsArray.name, image: connectionDetailsArray.imageUrl , type:'Credential'}; 
       connectionDataArray=addConnectionDetails(connectionDataArray,obj.id,obj); 
       //console.log(obj);
       }
@@ -434,15 +434,17 @@ export default function HomeScreen({ route, navigation }) {
                 //extraData={offeredCredentialsArraySize}
                 //initialNumToRender={1}
                 
-                renderItem={({ item }) =>  
-                //if (item.title =='credentials')
-                //  {
-                //  <ItemC  title={item.title} url={item.image} credentialId={item.credentialId} />
-                //}
-                //else if(item.title =='verifications')
-                //  {
-                  <Item  title={item.title} url={item.image} verificationId={item.verificationId} />
-                //}
+                renderItem={({ item }) => { 
+                if (item.type =="Credential")
+                  { 
+                    return <ItemC  title={item.title} url={item.image} credentialId={item.credentialId} />;
+
+                }
+                else if(item.type =="Verification")
+                  {
+                    return <ItemV  title={item.title} url={item.image} verificationId={item.verificationId} />;
+                }
+              }
               
         }/>
           </SafeAreaView>)
