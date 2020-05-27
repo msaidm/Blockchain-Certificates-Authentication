@@ -76,7 +76,7 @@ function CredentialsScreen({ navigation }) {
    const [arraySize2, setArraySize2] = React.useState(0);
    const [values, setValues] = React.useState([]);
    const [searchText, setSearchText] = React.useState("");
-
+   const [empty, setEmpty] = React.useState(true);
 
    searchFilterFunction = (text, arrayholder) => {
       setSearchText(text);
@@ -164,28 +164,49 @@ function CredentialsScreen({ navigation }) {
 
          }
       }
+      if(currArraySize2>0)
+         setEmpty(false)
+      else
+         setEmpty(true)
    }
 
    return (
-      <SafeAreaView style={styles.container}>
-         <SearchBar
-            lightTheme
-            round
-            onChangeText={text => searchFilterFunction(text, values)}
-            onClear={text => searchFilterFunction('', values)}
-            // autoCorrect={false}
-            value={searchText}
-            showLoading={false}
-            placeholder="Type Here..."
-         />
-         <FlatList
-            data={values}
-            renderItem={({ item }) => <Item objectt={item} />}
-            keyExtractor={item => item.id.toString()}
-            ItemSeparatorComponent={FlatListItemSeparator}
-
-         />
-      </SafeAreaView>
+      <View  style={styles.container}>
+      {
+         empty?
+         (
+            <View style={styles.welcomeContainer}> 
+             <Image
+            source={
+              __DEV__
+                ? require('../assets/images/cred.jpg')
+                : require('../assets/images/robot-prod.png')
+            }
+            style={styles.welcomeImage}/>
+          </View>
+         )
+         :
+         (
+            <SafeAreaView style={styles.container}>
+               <SearchBar
+                  lightTheme
+                  round
+                  onChangeText={text => searchFilterFunction(text, values)}
+                  onClear={text => searchFilterFunction('', values)}
+                  // autoCorrect={false}
+                  value={searchText}
+                  showLoading={false}
+                  placeholder="Type Here..." />
+               <FlatList
+                  data={values}
+                  renderItem={({ item }) => <Item objectt={item} />}
+                  keyExtractor={item => item.id.toString()}
+                  ItemSeparatorComponent={FlatListItemSeparator}/>
+            </SafeAreaView>
+         )
+      }
+      </View>
+      
    );
 }
 
@@ -197,6 +218,7 @@ function ConnectionsScreen() {
    const [connectionName, setConnectionName] = React.useState("");
    const [arraySize, setArraySize] = React.useState(0);
    const [DATA, setData] = React.useState([]);
+   const [empty, setEmpty] = React.useState(true);
    var index = 0;
 
 
@@ -240,17 +262,40 @@ function ConnectionsScreen() {
          }
       }
       // //console.log(DATA);
+      if(currArraySize>0)
+         setEmpty(false)
+      else
+         setEmpty(true)
    }
 
    return (
-      <SafeAreaView style={styles.container}>
-         <FlatList
-            data={DATA}
-            renderItem={({ item }) => <Item title={item.title} url={item.image} />}
-            keyExtractor={item => item.id.toString()}
-            ItemSeparatorComponent={FlatListItemSeparator}
-         />
-      </SafeAreaView>
+      <View style={styles.container}>
+         {
+            empty?
+            (
+               <View style={styles.welcomeContainer}> 
+                  <Image
+                  source={
+                  __DEV__
+                     ? require('../assets/images/conn.jpg')
+                     : require('../assets/images/robot-prod.png')
+               }
+               style={styles.welcomeImage}/>
+               </View>
+            )
+            :
+            (
+               <SafeAreaView style={styles.container}>
+                  <FlatList
+                     data={DATA}
+                     renderItem={({ item }) => <Item title={item.title} url={item.image} />}
+                     keyExtractor={item => item.id.toString()}
+                     ItemSeparatorComponent={FlatListItemSeparator}
+                  />
+               </SafeAreaView>
+            )
+         }
+      </View>
    );
 }
 
@@ -335,6 +380,18 @@ const styles = StyleSheet.create({
    contentContainer: {
       paddingTop: 15,
    },
+   welcomeContainer: {
+      alignItems: 'center',
+      marginTop: 10,
+      marginBottom: 20,
+    },
+    welcomeImage: {
+      width: 150,
+      height: 180,
+      resizeMode: 'contain',
+      marginTop: 100,
+      marginLeft: -10,
+    },
    optionIconContainer: {
       marginRight: 12,
    },
