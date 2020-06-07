@@ -1,7 +1,13 @@
 import * as React from 'react';
 import {Platform, StyleSheet, Text, TouchableOpacity, View, Button, FlatList, SafeAreaView,Image } from 'react-native';
 import * as WebBrowser from 'expo-web-browser';
-import { Card } from 'react-native-elements';
+import { Card, SearchBar } from 'react-native-elements';
+import useAsyncEffect from 'use-async-effect';
+import useForceUpdate from 'use-force-update';
+import { WALLET_ID } from '../constants'
+
+console.disableYellowBox = true;
+
   
 var connectionDataArray=[];
 let details2=[];
@@ -9,9 +15,12 @@ let details = [];
 let detailsOfVer =[];
 let detailsOfVer2 =[];
 
+
 export default function HomeScreen({ route, navigation }) {
 
-  var walletID = "C4GTBBcbBMDGunfKF7ySUCH8fHibB4VLZ";
+  // var walletID = "CrtAMYWLD5ZdkowDdHreNz9goN3kLDsUC";
+  var walletID = WALLET_ID;
+
   const [credentials, setCredentials] = React.useState([]);
   const [Verifications, setVerification] = React.useState([]);
   const [offeredCredentials,setOfferedCredentials] = React.useState([]);

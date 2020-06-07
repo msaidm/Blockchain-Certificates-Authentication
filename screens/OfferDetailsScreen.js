@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, Text, View, Button,Image } from 'react-native';
 import { Card } from 'react-native-elements';
+import { WALLET_ID } from '../constants'
 
 
 export default function OfferDetailsScreen({ route, navigation }) {
@@ -8,7 +9,7 @@ export default function OfferDetailsScreen({ route, navigation }) {
   const { img } = route.params;
   const { credentialId } = route.params;
   //console.log(Item.credentialId);
-  var walletID = "C4GTBBcbBMDGunfKF7ySUCH8fHibB4VLZ";
+  var walletID = WALLET_ID;
 
 
   async function sendAcceptOfferNotification() {

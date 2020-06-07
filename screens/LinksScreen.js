@@ -10,6 +10,9 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import Constants from 'expo-constants';
 import * as Font from 'expo-font';
 import arrow from '../assets/images/simple-down-arrow.png';
+import { SearchBar } from 'react-native-elements';
+import { WALLET_ID } from '../constants'
+
 
 
 function useInterval(callback, delay) {
@@ -31,7 +34,6 @@ function useInterval(callback, delay) {
       }
    }, [delay]);
 }
-
 
 const Tab = createMaterialTopTabNavigator();
 const waitFor = 5000;
@@ -66,13 +68,34 @@ var currArraySize2 = 0;
 var connectionsData = [];
 
 function CredentialsScreen({ navigation }) {
-   var walletID = "C4GTBBcbBMDGunfKF7ySUCH8fHibB4VLZ";
+   var walletID = WALLET_ID;
 
    //var connectionID = "d418f248-33a4-428c-aff1-1eeb00079e52";
 
    const [credentials, setCredentials] = React.useState([]);
    const [arraySize2, setArraySize2] = React.useState(0);
    const [values, setValues] = React.useState([]);
+   const [searchText, setSearchText] = React.useState("");
+   const [empty, setEmpty] = React.useState(true);
+
+   searchFilterFunction = (text, arrayholder) => {
+      setSearchText(text);
+      console.log("arrayholder: ", arrayholder)
+      const newData = arrayholder.filter(function (item) {
+         //applying filter for the inserted text in search bar
+         const itemData = item.type ? item.type.toUpperCase() : ''.toUpperCase();
+         console.log("itemData: ", itemData)
+
+         const textData = text.toUpperCase();
+         console.log("textData: ", textData)
+
+         return itemData.indexOf(textData) > -1;
+      });
+
+      console.log("newData: ", newData)
+
+      setValues(newData);
+   };
 
 
    function Item({ objectt }) {
@@ -134,36 +157,68 @@ function CredentialsScreen({ navigation }) {
             //to add a credential and if condition
             const obj = { id: credentials[index].credentialId, sname: data.Name, sgpa: data.GPA, syear: data.Year, type: data.Type, connID: credentials[index].connectionId }
             setValues(add(values, credentials[index].credentialId, obj));
-            // console.log(connectionsData)
+            // console.log("values:", values)
          }
 
          else {
 
          }
       }
+      if(currArraySize2>0)
+         setEmpty(false)
+      else
+         setEmpty(true)
    }
 
    return (
-      <SafeAreaView style={styles.container}>
-         <FlatList
-            data={values}
-            renderItem={({ item }) => <Item objectt={item} />}
-            keyExtractor={item => item.id.toString()}
-            ItemSeparatorComponent={FlatListItemSeparator}
-
-         />
-      </SafeAreaView>
+      <View  style={styles.container}>
+      {
+         empty?
+         (
+            <View style={styles.welcomeContainer}> 
+             <Image
+            source={
+              __DEV__
+                ? require('../assets/images/cred.jpg')
+                : require('../assets/images/robot-prod.png')
+            }
+            style={styles.welcomeImage}/>
+          </View>
+         )
+         :
+         (
+            <SafeAreaView style={styles.container}>
+               <SearchBar
+                  lightTheme
+                  round
+                  onChangeText={text => searchFilterFunction(text, values)}
+                  onClear={text => searchFilterFunction('', values)}
+                  // autoCorrect={false}
+                  value={searchText}
+                  showLoading={false}
+                  placeholder="Type Here..." />
+               <FlatList
+                  data={values}
+                  renderItem={({ item }) => <Item objectt={item} />}
+                  keyExtractor={item => item.id.toString()}
+                  ItemSeparatorComponent={FlatListItemSeparator}/>
+            </SafeAreaView>
+         )
+      }
+      </View>
+      
    );
 }
 
 function ConnectionsScreen() {
 
-   var walletID = "C4GTBBcbBMDGunfKF7ySUCH8fHibB4VLZ";
+   var walletID = WALLET_ID;
 
    const [wallets, setWallets] = React.useState([]);
    const [connectionName, setConnectionName] = React.useState("");
    const [arraySize, setArraySize] = React.useState(0);
    const [DATA, setData] = React.useState([]);
+   const [empty, setEmpty] = React.useState(true);
    var index = 0;
 
 
@@ -207,17 +262,40 @@ function ConnectionsScreen() {
          }
       }
       // //console.log(DATA);
+      if(currArraySize>0)
+         setEmpty(false)
+      else
+         setEmpty(true)
    }
 
    return (
-      <SafeAreaView style={styles.container}>
-         <FlatList
-            data={DATA}
-            renderItem={({ item }) => <Item title={item.title} url={item.image} />}
-            keyExtractor={item => item.id.toString()}
-            ItemSeparatorComponent={FlatListItemSeparator}
-         />
-      </SafeAreaView>
+      <View style={styles.container}>
+         {
+            empty?
+            (
+               <View style={styles.welcomeContainer}> 
+                  <Image
+                  source={
+                  __DEV__
+                     ? require('../assets/images/conn.jpg')
+                     : require('../assets/images/robot-prod.png')
+               }
+               style={styles.welcomeImage}/>
+               </View>
+            )
+            :
+            (
+               <SafeAreaView style={styles.container}>
+                  <FlatList
+                     data={DATA}
+                     renderItem={({ item }) => <Item title={item.title} url={item.image} />}
+                     keyExtractor={item => item.id.toString()}
+                     ItemSeparatorComponent={FlatListItemSeparator}
+                  />
+               </SafeAreaView>
+            )
+         }
+      </View>
    );
 }
 
@@ -297,11 +375,23 @@ const styles = StyleSheet.create({
    // },
    container: {
       flex: 1,
-      marginTop: Constants.statusBarHeight,
+      // marginTop: Constants.statusBarHeight,
    },
    contentContainer: {
       paddingTop: 15,
    },
+   welcomeContainer: {
+      alignItems: 'center',
+      marginTop: 10,
+      marginBottom: 20,
+    },
+    welcomeImage: {
+      width: 150,
+      height: 180,
+      resizeMode: 'contain',
+      marginTop: 100,
+      marginLeft: -10,
+    },
    optionIconContainer: {
       marginRight: 12,
    },
