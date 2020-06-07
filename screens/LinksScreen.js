@@ -66,7 +66,7 @@ var currArraySize2 = 0;
 var connectionsData = [];
 
 function CredentialsScreen({ navigation }) {
-   var walletID = "CrtAMYWLD5ZdkowDdHreNz9goN3kLDsUC";
+   var walletID = "C4GTBBcbBMDGunfKF7ySUCH8fHibB4VLZ";
 
    //var connectionID = "d418f248-33a4-428c-aff1-1eeb00079e52";
 
@@ -158,7 +158,7 @@ function CredentialsScreen({ navigation }) {
 
 function ConnectionsScreen() {
 
-   var walletID = "CrtAMYWLD5ZdkowDdHreNz9goN3kLDsUC";
+   var walletID = "C4GTBBcbBMDGunfKF7ySUCH8fHibB4VLZ";
 
    const [wallets, setWallets] = React.useState([]);
    const [connectionName, setConnectionName] = React.useState("");

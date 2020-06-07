@@ -8,11 +8,11 @@ export default function OfferDetailsScreen({ route, navigation }) {
   const { img } = route.params;
   const { credentialId } = route.params;
   //console.log(Item.credentialId);
-  var walletID = "CrtAMYWLD5ZdkowDdHreNz9goN3kLDsUC";
+  var walletID = "C4GTBBcbBMDGunfKF7ySUCH8fHibB4VLZ";
 
 
   async function sendAcceptOfferNotification() {
-    const res = await fetch('http://7e5c97fa.ngrok.io/webhook', {
+    const res = await fetch('http://e1475bee.ngrok.io/webhook', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
