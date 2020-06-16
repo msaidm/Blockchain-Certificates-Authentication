@@ -16,11 +16,7 @@ import OfferDetailsScreen from './screens/OfferDetailsScreen';
 import RegisterScreen from './screens/RegisterScreen';
 // import VerRequestDetails from './screens/VerRequestDetails';
 
-
-
 const Stack = createStackNavigator();
-
-
 
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
@@ -29,9 +25,7 @@ export default function App(props) {
   const containerRef = React.useRef();
   const { getInitialState } = useLinking(containerRef);
 
-
   //AsyncStorage.removeItem('userinfo')
-
 
   AsyncStorage.getItem('userinfo').then((data) => {
     let walletcreated = JSON.parse(data);
