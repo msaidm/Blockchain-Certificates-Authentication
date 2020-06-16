@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, Text, View, Button,Image } from 'react-native';
+import { StyleSheet, AsyncStorage,Text, View, Button,Image } from 'react-native';
 import { Card } from 'react-native-elements';
 import { WALLET_ID } from '../constants'
 
@@ -8,12 +8,28 @@ export default function OfferDetailsScreen({ route, navigation }) {
   const { name } = route.params;
   const { img } = route.params;
   const { credentialId } = route.params;
+
+  const [walletID,setWalletID] = React.useState();
+
+  async function getWalletID()
+  {
+    await AsyncStorage.getItem('userinfo').then((data) => {
+      let dataInfo = JSON.parse(data);
+      //console.log(dataInfo)
+      if (dataInfo) {
+        setWalletID( dataInfo.walletId );
+      }
+    })
+  }
+  getWalletID()
+  console.log(walletID+"In offer details Screen")
+  
   //console.log(Item.credentialId);
-  var walletID = WALLET_ID;
+ // var walletID = WALLET_ID;
 
 
   async function sendAcceptOfferNotification() {
-    const res = await fetch('http://e1475bee.ngrok.io/webhook', {
+    const res = await fetch('http://a485e7383246.ngrok.io/webhook', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
