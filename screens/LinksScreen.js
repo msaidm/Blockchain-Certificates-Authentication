@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Header, Component } from 'react';
-import { StyleSheet, Text, View, FlatList, SafeAreaView, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet,AsyncStorage, Text, View, FlatList, SafeAreaView, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as WebBrowser from 'expo-web-browser';
 import { RectButton, ScrollView } from 'react-native-gesture-handler';
@@ -12,7 +12,6 @@ import * as Font from 'expo-font';
 import arrow from '../assets/images/simple-down-arrow.png';
 import { SearchBar } from 'react-native-elements';
 import { WALLET_ID } from '../constants'
-
 
 
 function useInterval(callback, delay) {
@@ -68,7 +67,7 @@ var currArraySize2 = 0;
 var connectionsData = [];
 
 function CredentialsScreen({ navigation }) {
-   var walletID = WALLET_ID;
+   //var walletID = WALLET_ID;
 
    //var connectionID = "d418f248-33a4-428c-aff1-1eeb00079e52";
 
@@ -77,7 +76,21 @@ function CredentialsScreen({ navigation }) {
    const [values, setValues] = React.useState([]);
    const [searchText, setSearchText] = React.useState("");
    const [empty, setEmpty] = React.useState(true);
+   const [walletID,setWalletID] = React.useState();
 
+   async function getWalletID()
+   {
+     await AsyncStorage.getItem('userinfo').then((data) => {
+       let dataInfo = JSON.parse(data);
+       //console.log(dataInfo)
+       if (dataInfo) {
+         setWalletID( dataInfo.walletId );
+       }
+     })
+   }
+   getWalletID()
+   console.log(walletID+"In Credentials Screen")
+   
    searchFilterFunction = (text, arrayholder) => {
       setSearchText(text);
       console.log("arrayholder: ", arrayholder)
@@ -212,7 +225,7 @@ function CredentialsScreen({ navigation }) {
 
 function ConnectionsScreen() {
 
-   var walletID = WALLET_ID;
+   //var walletID = WALLET_ID;
 
    const [wallets, setWallets] = React.useState([]);
    const [connectionName, setConnectionName] = React.useState("");
@@ -220,7 +233,21 @@ function ConnectionsScreen() {
    const [DATA, setData] = React.useState([]);
    const [empty, setEmpty] = React.useState(true);
    var index = 0;
+   const [walletID,setWalletID] = React.useState();
 
+   async function getWalletID()
+   {
+     await AsyncStorage.getItem('userinfo').then((data) => {
+       let dataInfo = JSON.parse(data);
+       //console.log(dataInfo)
+       if (dataInfo) {
+         setWalletID( dataInfo.walletId );
+       }
+     })
+   }
+   getWalletID()
+   console.log(walletID+"In Connections Screen")
+   
 
    function Item({ title, url }) {
       return (

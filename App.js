@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
-
-import { Platform, StatusBar, StyleSheet, View } from 'react-native';
+import React, { useState, useEffect } from "react"; 
+import { Platform, StatusBar, StyleSheet, View, AsyncStorage } from 'react-native';
 import { SplashScreen } from 'expo';
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
@@ -14,41 +13,29 @@ import LinksScreen from "./screens/LinksScreen";
 import DetailsScreen from "./screens/DetailsScreen";
 import HomeScreen from './screens/HomeScreen';
 import OfferDetailsScreen from './screens/OfferDetailsScreen';
+import RegisterScreen from './screens/RegisterScreen';
 // import VerRequestDetails from './screens/VerRequestDetails';
 
-
-
 const Stack = createStackNavigator();
-var walletIsCreated=false;
-var userName;
 
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
   const [initialNavigationState, setInitialNavigationState] = React.useState();
+  const [INITIAL_ROUTE_NAME, setInitialRouteName]=React.useState();
   const containerRef = React.useRef();
   const { getInitialState } = useLinking(containerRef);
 
-  
-   function createWallet()
-   {
-    
-    fetch('https://api.streetcred.id/custodian/v1/api/wallets', {
-      method: 'POST',
-      headers: {
-        Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
-        XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-          "ownerName": "testMohammed"
-      }),
-    });
-    walletIsCreated=true;
+  //AsyncStorage.removeItem('userinfo')
 
-   };  
-
-   
+  AsyncStorage.getItem('userinfo').then((data) => {
+    let walletcreated = JSON.parse(data);
+    // console.log(walletcreated)
+    if (walletcreated) {
+      setInitialRouteName('Root')
+    }
+    else
+      setInitialRouteName('Register')
+  })
     
 
   //  if(!walletIsCreated)
@@ -113,7 +100,8 @@ export default function App(props) {
       <View style={styles.container}>
         {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
         <NavigationContainer ref={containerRef} initialState={initialNavigationState}>
-          <Stack.Navigator>
+          <Stack.Navigator initialRouteName={INITIAL_ROUTE_NAME}>
+            <Stack.Screen name="Register" component={RegisterScreen}/>
             <Stack.Screen name="Root" component={BottomTabNavigator} />
             <Stack.Screen name="QRScanner" component={QRScanner} />
             <Stack.Screen name="Links" component={LinksScreen}/>

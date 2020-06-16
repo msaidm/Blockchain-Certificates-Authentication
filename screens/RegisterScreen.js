@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import { View, AsyncStorage, StyleSheet, ScrollView } from 'react-native';
 import { Input, Button, Icon } from 'react-native-elements';
-import { createBottomTabNavigator } from 'react-navigation';
-
-
+import { StackActions } from '@react-navigation/native';
 
 class RegisterTab extends Component {
     constructor(props) {
@@ -14,18 +12,54 @@ class RegisterTab extends Component {
             firstname: '',
             lastname: '',
             email: '',
-            remember: false,
+            walletID:'',
+            created: false,
+            
         }
     }
+    
 
+    async createWallet(username)
+    {
+      var res = await fetch('https://api.streetcred.id/custodian/v1/api/wallets', {
+       method: 'POST',
+       headers: {
+         Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
+         XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
+         Accept: 'application/json',
+         'Content-Type': 'application/json',
+       },
+       body: JSON.stringify({
+           "ownerName": username
+       }),
+     })
+     .then((res)=> res.json())
+       .then((res)=>{
+        //    console.log(JSON.stringify(res))
+        //    console.log(res.walletId)
+        this.setState({walletID:res.walletId});
+        })
+        .catch((error) => {
+            console.error(error);
+          })
 
-    handleRegister() {
-        console.log(JSON.stringify(this.state));
-        // if (this.state.remember)
-            AsyncStorage.setItem('userinfo', JSON.stringify({ username: this.state.username, password: this.state.password }))
-                .catch((error) => console.log('Could not save user info', error));
+    }
+    
+    async handleRegister() {
+        var walletId = await this.createWallet(this.state.username);
+        //console.log(this.state.walletID)
+        AsyncStorage.setItem('userinfo', JSON.stringify({ username: this.state.username, password: this.state.password,created:true,walletId:this.state.walletID }))
+            .catch((error) => console.log('Could not save user info', error));
+
+        this.props.navigation.dispatch(
+                StackActions.replace('Root', {
+                 
+                })
+              );       
+        //    this.props.navigation.navigate('Root')
     }
 
+    
     render() {
         return (
             <ScrollView>
@@ -47,7 +81,7 @@ class RegisterTab extends Component {
                     <Input
                         placeholder=" First Name"
                         leftIcon={{ type: 'font-awesome', name: 'user-o' }}
-                        onChangeText={(lastname) => this.setState({ firstname })}
+                        onChangeText={(firstname) => this.setState({ firstname })}
                         value={this.state.firstname}
                         containerStyle={styles.formInput}
                     />
@@ -65,12 +99,6 @@ class RegisterTab extends Component {
                         value={this.state.email}
                         containerStyle={styles.formInput}
                     />
-                    {/* <CheckBox title="Remember Me"
-                        center
-                        checked={this.state.remember}
-                        onPress={() => this.setState({ remember: !this.state.remember })}
-                        containerStyle={styles.formCheckbox}
-                    /> */}
                     <View style={styles.formButton}>
                         <Button
                             onPress={() => this.handleRegister()}
@@ -121,16 +149,5 @@ const styles = StyleSheet.create({
     }
 });
 
-const Login = createBottomTabNavigator({
-    Login: LoginTab,
-    Register: RegisterTab
-}, {
-    tabBarOptions: {
-        activeBackgroundColor: '#9575CD',
-        inactiveBackgroundColor: '#D1C4E9',
-        activeTintColor: '#ffffff',
-        inactiveTintColor: 'gray'
-    }
-});
 
-export default Login;
+ export default RegisterTab;

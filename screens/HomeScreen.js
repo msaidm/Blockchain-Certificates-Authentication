@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Platform, StyleSheet, Text, TouchableOpacity, View, Button, FlatList, SafeAreaView,Image } from 'react-native';
+import {Platform, AsyncStorage, StyleSheet, Text, TouchableOpacity, View, Button, FlatList, SafeAreaView,Image } from 'react-native';
 import * as WebBrowser from 'expo-web-browser';
 import { Card, SearchBar } from 'react-native-elements';
 import useAsyncEffect from 'use-async-effect';
@@ -8,7 +8,6 @@ import { WALLET_ID } from '../constants'
 
 console.disableYellowBox = true;
 
-  
 var connectionDataArray=[];
 let details2=[];
 let details = [];
@@ -18,8 +17,9 @@ let detailsOfVer2 =[];
 
 export default function HomeScreen({ route, navigation }) {
 
-  // var walletID = "CrtAMYWLD5ZdkowDdHreNz9goN3kLDsUC";
-  var walletID = WALLET_ID;
+
+
+  //var walletID = WALLET_ID;
 
   const [credentials, setCredentials] = React.useState([]);
   const [Verifications, setVerification] = React.useState([]);
@@ -34,55 +34,70 @@ export default function HomeScreen({ route, navigation }) {
   const [count, setCount] = React.useState(false);
   const [offeredCredentialsArraySize,setOfferedCredentialsArraySize] = React.useState(0);
   const [RequestedVerificationsArraySize, setRequestedVerificationsArraySize] = React.useState(0);
- 
- useInterval(() => {
-  try {
-    const fetchAllCredentials = async() => {
-      const data= await fetchCredentials();
-      setCredentials(data);
-      const dataVer= await fetchVerifications();
+  const [walletID,setWalletID] = React.useState();
 
-      setVerification(dataVer);
-      setArraySizeVer(dataVer.length);
 
-      setArraySize2(data.length);
-      details=await fetchOfferedCredentials(data);
-      detailsOfVer= await fetchRequestedVerifications(dataVer);
-
-       setConnectionDetailsArray(details);
-       setVerificationDetailsArray(detailsOfVer);
-       setConnectionDetailsArraySize(Object.keys(details).length);
-       setVerificationDetailsArraySize(Object.keys(detailsOfVer).length);
-     } 
-   fetchAllCredentials();
-   fillConnectionDataArray();
-   removeIssuedCredential();
-   removeRequestedVerification();
-    
-  } catch (error) {
-    
+  async function getWalletID()
+  {
+    await AsyncStorage.getItem('userinfo').then((data) => {
+      let dataInfo = JSON.parse(data);
+      // console.log(dataInfo)
+      if (dataInfo) {
+        setWalletID( dataInfo.walletId );
+      }
+    })
   }
-  
-}, 8000);
+  getWalletID()
+  console.log(walletID + "in home")
 
- function useInterval(callback, delay) {
-  const savedCallback = React.useRef();
-  React.useEffect(() => {
-    savedCallback.current = callback;
-    const isFocused = navigation.isFocused();  
-  },[callback]);
+  useInterval(() => {
+    try {
+      const fetchAllCredentials = async() => {
+        const data= await fetchCredentials();
+        setCredentials(data);
+        const dataVer= await fetchVerifications();
 
-  React.useEffect(() => {
-    function tick() {
-      savedCallback.current();
+        setVerification(dataVer);
+        setArraySizeVer(dataVer.length);
+
+        setArraySize2(data.length);
+        details=await fetchOfferedCredentials(data);
+        detailsOfVer= await fetchRequestedVerifications(dataVer);
+
+        setConnectionDetailsArray(details);
+        setVerificationDetailsArray(detailsOfVer);
+        setConnectionDetailsArraySize(Object.keys(details).length);
+        setVerificationDetailsArraySize(Object.keys(detailsOfVer).length);
+      } 
+    fetchAllCredentials();
+    fillConnectionDataArray();
+    removeIssuedCredential();
+    removeRequestedVerification();
+      
+    } catch (error) {
+      
     }
-    if (delay !== null) {
-      let id = setInterval(tick, delay);
-      return () => clearInterval(id);
-    }
-  }, [delay]);
+    
+  }, 8000);
 
-}
+  function useInterval(callback, delay) {
+    const savedCallback = React.useRef();
+    React.useEffect(() => {
+      savedCallback.current = callback;
+      const isFocused = navigation.isFocused();  
+    },[callback]);
+
+    React.useEffect(() => {
+      function tick() {
+        savedCallback.current();
+      }
+      if (delay !== null) {
+        let id = setInterval(tick, delay);
+        return () => clearInterval(id);
+      }
+    }, [delay]);
+
+  }
  
   function ItemC({ title, url,credentialId }) { //for credential items
     //console.log("render");
@@ -155,7 +170,7 @@ export default function HomeScreen({ route, navigation }) {
      },
   });
   var cred = await res.json();
- return cred;   
+  return cred;   
 }
 
   async function fetchOfferedCredentials(data)
@@ -186,6 +201,7 @@ export default function HomeScreen({ route, navigation }) {
 
   function fillConnectionDataArray()
   {
+   // console.log("gowa el fill ")
     try {
         if(VerificationDetailsArraySize>0)
         {
@@ -196,25 +212,30 @@ export default function HomeScreen({ route, navigation }) {
               connectionDataArray=addConnectionDetails(connectionDataArray,objj.id,objj); 
             }
           }
+        }
+      }
+          console.log("size Det"+connectionDetailsArraySize)
           if(connectionDetailsArraySize>0)
           {
+            console.log("ana gowa ")
             for (let index = 0; index < offeredCredentials.length; index++) {
               for (let index2 = 0; index2 < connectionDetailsArray.length; index2++) {
                 if( connectionDetailsArray[index2].connectionId === offeredCredentials[index].connectionId){
                   const obj = { id: connectionDetailsArray[index2].connectionId,credentialId:offeredCredentials[index].credentialId, title: connectionDetailsArray[index2].name, image: connectionDetailsArray[index2].imageUrl, type:'Credential' };  
                   connectionDataArray=addConnectionDetails(connectionDataArray,obj.id,obj); 
+                  console.log(connectionDataArray);
                 }
               }
             }
           }
-        }
+        
+      
         console.log(connectionDataArray);
-      }
-      }
-    catch (error) {
-        console.log(error)
-    }   
-  }
+        }catch (error) {
+          console.log(error)
+      }   
+      
+    }
     
   async function fetchVerifications() {
     const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/verifications', {

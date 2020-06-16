@@ -4,6 +4,7 @@ import { StyleSheet, Text, View, FlatList, SafeAreaView, Image } from 'react-nat
 import { Card } from 'react-native-elements';
 import { RectButton, ScrollView } from 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
+
 export default function DetailsScreen({ route, navigation }) {
   const { Item } = route.params;
   const { image } = route.params

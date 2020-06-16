@@ -13,8 +13,24 @@ export default function QRScanner({ navigation }) {
   const [wallets, setWallets] = useState({});
   const [connections, setConnections] = useState({});
   var splitted;
-  var userName = 'lastWallet'; // This will be changed will sign up page is ready 
-  var userWalletID;
+  // var userName = 'Home'; // This will be changed will sign up page is ready 
+  // var userWalletID;
+  const [walletID,setWalletID] = React.useState();
+
+
+  async function getWalletID()
+  {
+    await AsyncStorage.getItem('userinfo').then((data) => {
+      let dataInfo = JSON.parse(data);
+      // console.log(dataInfo)
+      if (dataInfo) {
+        setWalletID( dataInfo.walletId );
+      }
+    })
+  }
+  getWalletID()
+  console.log(walletID + "in QR Scanner")
+
 
   useEffect(() => {
     (async () => {
@@ -39,7 +55,7 @@ export default function QRScanner({ navigation }) {
 
   }
 
-  async function acceptInvitation(walletID, Invitation) {
+  async function acceptInvitation(Invitation) {
     let data = new FormData();
     data.append("invitation", Invitation);
     var fetchURLForAcceptInvitaion = 'https://api.streetcred.id/custodian/v1/api/' + walletID + '/connections/invitation';
@@ -57,7 +73,7 @@ export default function QRScanner({ navigation }) {
     console.log(res.json.toString)
   }
   async function sendAcceptConnectionNotification() {
-    const res = await fetch('http://e1475bee.ngrok.io/webhook', {
+    const res = await fetch('http://a485e7383246.ngrok.io/webhook', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -107,8 +123,8 @@ export default function QRScanner({ navigation }) {
         {
           text: 'YES', onPress: () => {
             //saveUserId('Alert','Yes') 
-            getWalletId();
-            acceptInvitation(userWalletID, invitationFromURL);
+            //getWalletId();
+            acceptInvitation(invitationFromURL);
             // console.log(connections);
             sendAcceptConnectionNotification();
             navigation.navigate("Root");
