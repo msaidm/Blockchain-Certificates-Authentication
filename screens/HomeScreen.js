@@ -18,6 +18,7 @@ export default function HomeScreen({ route, navigation }) {
   const [requestedVerifications,setrequestedVerifications] = React.useState([]);
   const [VerificationDetailsArray,setVerificationDetailsArray]= React.useState([]);
   const [VerificationDetailsArraySize, setVerificationDetailsArraySize] = React.useState(0);
+  const [AttributeReq , SetAttributeReq]= React.useState([]);
   const [arraySize2, setArraySize2] = React.useState(0); 
   const [arraySizeVer, setArraySizeVer] = React.useState(0); 
   const [connectionDetailsArray, setConnectionDetailsArray] = React.useState([]); 
@@ -101,12 +102,13 @@ export default function HomeScreen({ route, navigation }) {
     );
   }
 
-  function ItemV({ title, url,verificationId,}) { //for verification items
+  function ItemV({ title, url,verificationId,AttReq}) { //for verification items
     //console.log("render");    
     return (
        <TouchableOpacity
           onPress={() => navigation.navigate('VerificationRequestDetails',
           {
+             item:AttReq,
              img : url , 
              name : title,
              verificationId:verificationId
@@ -183,7 +185,7 @@ export default function HomeScreen({ route, navigation }) {
           for (let index = 0; index < requestedVerifications.length; index++) {
             for (let index2 = 0; index2 < VerificationDetailsArray.length; index2++) {
               if( VerificationDetailsArray[index2].connectionId === requestedVerifications[index].connectionId){
-              const objj = { id: VerificationDetailsArray[index2].connectionId,verificationId:requestedVerifications[index].verificationId, title: VerificationDetailsArray[index2].name, image: VerificationDetailsArray[index2].imageUrl , type:'Verification' }; 
+              const objj = { id: VerificationDetailsArray[index2].connectionId,verificationId:requestedVerifications[index].verificationId, title: VerificationDetailsArray[index2].name, image: VerificationDetailsArray[index2].imageUrl , type:'Verification' , VerAttributes:VerificationDetailsArray.attributes }; 
               connectionDataArray=addConnectionDetails(connectionDataArray,objj.id,objj); 
             }
           }
@@ -229,7 +231,7 @@ export default function HomeScreen({ route, navigation }) {
         {
           setrequestedVerifications(addConnectionDetails(requestedVerifications,dataVer[index].verificationId ,dataVer[index]));
           let tempVerConnectionID= dataVer[index].connectionId;
-          const res = await fetch('https://api.streetcred.id/custodian/v1/api/'+walletID+'/connections/'+tempVerConnectionID, {
+          const res = await fetch('https://api.streetcred.dataVerdataVerdataVerdataVerdataVerdataVerdataVerdataVerdataVerdataVerdataVerdataVerdataVerdataVerdataVer/custodian/v1/api/'+walletID+'/connections/'+tempVerConnectionID, {
             method: 'GET',
             headers: {
               Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
@@ -310,7 +312,8 @@ export default function HomeScreen({ route, navigation }) {
                 }
                 else if(item.type =="Verification")
                   {
-                    return <ItemV  title={item.title} url={item.image} verificationId={item.verificationId} />;
+                    SetAttributeReq(item.VerAttributes);
+                    return <ItemV  title={item.title} url={item.image} verificationId={item.verificationId}  AttReq={AttributeReq} />;
                 }
               }
               
