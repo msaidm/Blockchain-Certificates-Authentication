@@ -131,6 +131,7 @@ export default function HomeScreen({ route, navigation }) {
        <TouchableOpacity
           onPress={() => navigation.navigate('VerificationRequestDetails',
           {
+             item:AttReq,
              img : url , 
              name : title,
              verificationId:verificationId
@@ -208,7 +209,7 @@ export default function HomeScreen({ route, navigation }) {
           for (let index = 0; index < requestedVerifications.length; index++) {
             for (let index2 = 0; index2 < VerificationDetailsArray.length; index2++) {
               if( VerificationDetailsArray[index2].connectionId === requestedVerifications[index].connectionId){
-              const objj = { id: VerificationDetailsArray[index2].connectionId,verificationId:requestedVerifications[index].verificationId, title: VerificationDetailsArray[index2].name, image: VerificationDetailsArray[index2].imageUrl , type:'Verification' }; 
+              const objj = { id: VerificationDetailsArray[index2].connectionId,verificationId:requestedVerifications[index].verificationId, title: VerificationDetailsArray[index2].name, image: VerificationDetailsArray[index2].imageUrl , type:'Verification' ,VerAttributes:VerificationDetailsArray.attributes}; 
               connectionDataArray=addConnectionDetails(connectionDataArray,objj.id,objj); 
             }
           }
@@ -340,7 +341,8 @@ export default function HomeScreen({ route, navigation }) {
                 }
                 else if(item.type =="Verification")
                   {
-                    return <ItemV  title={item.title} url={item.image} verificationId={item.verificationId} />;
+                    SetAttributeReq(item.VerAttributes);
+                    return <ItemV  title={item.title} url={item.image} verificationId={item.verificationId} AttReq={AttributeReq}/>;
                 }
               }
               
