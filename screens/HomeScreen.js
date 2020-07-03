@@ -35,6 +35,7 @@ export default function HomeScreen({ route, navigation }) {
   const [offeredCredentialsArraySize,setOfferedCredentialsArraySize] = React.useState(0);
   const [RequestedVerificationsArraySize, setRequestedVerificationsArraySize] = React.useState(0);
   const [walletID,setWalletID] = React.useState();
+  const [AttributeReq,SetAttributeReq]=React.useState([]);
 
 
   async function getWalletID()
@@ -125,7 +126,7 @@ export default function HomeScreen({ route, navigation }) {
     );
   }
 
-  function ItemV({ title, url,verificationId,}) { //for verification items
+  function ItemV({ title, url,verificationId,AttReq}) { //for verification items
     //console.log("render");    
     return (
        <TouchableOpacity
