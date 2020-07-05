@@ -67,7 +67,7 @@ var currArraySize2 = 0;
 var connectionsData = [];
 
 function CredentialsScreen({ navigation }) {
-   //var walletID = WALLET_ID;
+   var walletID = "C4GTBBcbBMDGunfKF7ySUCH8fHibB4VLZ";
 
    //var connectionID = "d418f248-33a4-428c-aff1-1eeb00079e52";
 
@@ -76,9 +76,9 @@ function CredentialsScreen({ navigation }) {
    const [values, setValues] = React.useState([]);
    const [searchText, setSearchText] = React.useState("");
    const [empty, setEmpty] = React.useState(true);
-   const [walletID,setWalletID] = React.useState();
+//   const [walletID,setWalletID] = React.useState();
 
-   async function getWalletID()
+/*   async function getWalletID()
    {
      await AsyncStorage.getItem('userinfo').then((data) => {
        let dataInfo = JSON.parse(data);
@@ -89,7 +89,7 @@ function CredentialsScreen({ navigation }) {
      })
    }
    getWalletID()
-   console.log(walletID+"In Credentials Screen")
+   console.log(walletID+"In Credentials Screen")*/
    
    searchFilterFunction = (text, arrayholder) => {
       setSearchText(text);
@@ -225,7 +225,7 @@ function CredentialsScreen({ navigation }) {
 
 function ConnectionsScreen() {
 
-   //var walletID = WALLET_ID;
+   var walletID = "C4GTBBcbBMDGunfKF7ySUCH8fHibB4VLZ";
 
    const [wallets, setWallets] = React.useState([]);
    const [connectionName, setConnectionName] = React.useState("");
@@ -233,9 +233,9 @@ function ConnectionsScreen() {
    const [DATA, setData] = React.useState([]);
    const [empty, setEmpty] = React.useState(true);
    var index = 0;
-   const [walletID,setWalletID] = React.useState();
+//   const [walletID,setWalletID] = React.useState();
 
-   async function getWalletID()
+/*   async function getWalletID()
    {
      await AsyncStorage.getItem('userinfo').then((data) => {
        let dataInfo = JSON.parse(data);
@@ -246,7 +246,7 @@ function ConnectionsScreen() {
      })
    }
    getWalletID()
-   console.log(walletID+"In Connections Screen")
+   console.log(walletID+"In Connections Screen")*/
    
 
    function Item({ title, url }) {

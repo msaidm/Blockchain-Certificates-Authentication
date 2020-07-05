@@ -8,10 +8,11 @@ export default function OfferDetailsScreen({ route, navigation }) {
   const { name } = route.params;
   const { img } = route.params;
   const { credentialId } = route.params;
+  var walletID = "C4GTBBcbBMDGunfKF7ySUCH8fHibB4VLZ";
 
-  const [walletID,setWalletID] = React.useState();
+//  const [walletID,setWalletID] = React.useState();
 
-  async function getWalletID()
+/*  async function getWalletID()
   {
     await AsyncStorage.getItem('userinfo').then((data) => {
       let dataInfo = JSON.parse(data);
@@ -24,8 +25,8 @@ export default function OfferDetailsScreen({ route, navigation }) {
   getWalletID()
   console.log(walletID+"In offer details Screen")
   
-  //console.log(Item.credentialId);
- // var walletID = WALLET_ID;
+  //console.log(Item.credentialId);*/
+ 
 
 
   async function sendAcceptOfferNotification() {

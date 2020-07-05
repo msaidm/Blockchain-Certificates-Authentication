@@ -19,7 +19,7 @@ export default function HomeScreen({ route, navigation }) {
 
 
 
-  //var walletID = WALLET_ID;
+  var walletID = "C4GTBBcbBMDGunfKF7ySUCH8fHibB4VLZ";
 
   const [credentials, setCredentials] = React.useState([]);
   const [Verifications, setVerification] = React.useState([]);
@@ -34,11 +34,12 @@ export default function HomeScreen({ route, navigation }) {
   const [count, setCount] = React.useState(false);
   const [offeredCredentialsArraySize,setOfferedCredentialsArraySize] = React.useState(0);
   const [RequestedVerificationsArraySize, setRequestedVerificationsArraySize] = React.useState(0);
-  const [walletID,setWalletID] = React.useState();
+  const [dataVer,SetdataVer]=React.useState([]);
+  //const [walletID,setWalletID] = React.useState();
   const [AttributeReq,SetAttributeReq]=React.useState([]);
 
 
-  async function getWalletID()
+ /* async function getWalletID()
   {
     await AsyncStorage.getItem('userinfo').then((data) => {
       let dataInfo = JSON.parse(data);
@@ -49,18 +50,17 @@ export default function HomeScreen({ route, navigation }) {
     })
   }
   getWalletID()
-  console.log(walletID + "in home")
+  console.log(walletID + "in home")*/
 
   useInterval(() => {
     try {
       const fetchAllCredentials = async() => {
         const data= await fetchCredentials();
         setCredentials(data);
-        const dataVer= await fetchVerifications();
+        SetdataVer(await fetchVerifications());
 
         setVerification(dataVer);
         setArraySizeVer(dataVer.length);
-
         setArraySize2(data.length);
         details=await fetchOfferedCredentials(data);
         detailsOfVer= await fetchRequestedVerifications(dataVer);
@@ -72,6 +72,7 @@ export default function HomeScreen({ route, navigation }) {
       } 
     fetchAllCredentials();
     fillConnectionDataArray();
+    //fillAttReqArray();
     removeIssuedCredential();
     removeRequestedVerification();
       
@@ -79,8 +80,8 @@ export default function HomeScreen({ route, navigation }) {
       
     }
     
-  }, 8000);
-
+  }, 30000);
+  
   function useInterval(callback, delay) {
     const savedCallback = React.useRef();
     React.useEffect(() => {
@@ -101,7 +102,7 @@ export default function HomeScreen({ route, navigation }) {
   }
  
   function ItemC({ title, url,credentialId }) { //for credential items
-    //console.log("render");
+ 
     return (
        <TouchableOpacity
           onPress={() => navigation.navigate('OfferDetails',
@@ -120,22 +121,22 @@ export default function HomeScreen({ route, navigation }) {
           <Image source={{ uri: url }} style={styles.image} />
             <Text style={styles.title}>{title}</Text> 
          </View>   
-         <Text style={styles.paragraph}>You have a new credential offer</Text>  
+         <Text style={styles.paragraph}>    You have a new credential offer</Text>  
         </Card>
        </TouchableOpacity>
     );
   }
 
   function ItemV({ title, url,verificationId,AttReq}) { //for verification items
-    //console.log("render");    
+       
     return (
        <TouchableOpacity
           onPress={() => navigation.navigate('VerificationRequestDetails',
           {
-             item:AttReq,
-             img : url , 
-             name : title,
-             verificationId:verificationId
+             Item:AttReq,
+             Img : url , 
+             Name : title,
+             VerificationId:verificationId
           ,})}
           style={[
              styles.item,
@@ -216,27 +217,49 @@ export default function HomeScreen({ route, navigation }) {
           }
         }
       }
-          console.log("size Det"+connectionDetailsArraySize)
+         // console.log("size Det"+connectionDetailsArraySize)
           if(connectionDetailsArraySize>0)
           {
-            console.log("ana gowa ")
+         //   console.log("ana gowa ")
             for (let index = 0; index < offeredCredentials.length; index++) {
               for (let index2 = 0; index2 < connectionDetailsArray.length; index2++) {
                 if( connectionDetailsArray[index2].connectionId === offeredCredentials[index].connectionId){
                   const obj = { id: connectionDetailsArray[index2].connectionId,credentialId:offeredCredentials[index].credentialId, title: connectionDetailsArray[index2].name, image: connectionDetailsArray[index2].imageUrl, type:'Credential' };  
                   connectionDataArray=addConnectionDetails(connectionDataArray,obj.id,obj); 
-                  console.log(connectionDataArray);
+                  //console.log("DY EL CONNECTION DATA ARRAY MN GOWA");
+                  //console.log(connectionDataArray);
                 }
               }
             }
           }
         
-      
-        console.log(connectionDataArray);
+        //console.log("DY EL CONNECTION DATA ARRAY MN BARRA");
+        //console.log(connectionDataArray);
         }catch (error) {
           console.log(error)
       }   
       
+    }
+
+    function fillAttReqArray()
+    {
+      console.log("I enter the fill function");
+      for(let attIndex=0;attIndex<dataVer.length;attIndex++)
+      {
+        console.log("I am in the loop");
+        //if(dataVer[attIndex].state=='Requested')
+        //{
+        const firstvariable = "policyName";
+        const secondvariable = ",";
+        var att1= JSON.stringify(dataVer[attIndex]).match(new RegExp(firstvariable + "(.*)" + secondvariable));
+          //alert(att1[1]);
+        console.log(att1);
+        //} 
+      //  {
+      //    var att1=
+      //  }
+        
+      }
     }
     
   async function fetchVerifications() {
@@ -342,8 +365,9 @@ export default function HomeScreen({ route, navigation }) {
                 }
                 else if(item.type =="Verification")
                   {
-                    SetAttributeReq(item.VerAttributes);
-                    return <ItemV  title={item.title} url={item.image} verificationId={item.verificationId} AttReq={AttributeReq}/>;
+                    //SetAttributeReq(item.VerAttributes);
+                    const atts={ att1: "Name",att2:"Year",att3:"GPA"};
+                    return <ItemV  title={item.title} url={item.image} verificationId={item.verificationId} AttReq={atts}/>;
                 }
               }
               

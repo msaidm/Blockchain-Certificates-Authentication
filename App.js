@@ -27,15 +27,15 @@ export default function App(props) {
 
   //AsyncStorage.removeItem('userinfo')
 
-  AsyncStorage.getItem('userinfo').then((data) => {
-    let walletcreated = JSON.parse(data);
-    // console.log(walletcreated)
-    if (walletcreated) {
-      setInitialRouteName('Root')
-    }
-    else
-      setInitialRouteName('Register')
-  })
+//  AsyncStorage.getItem('userinfo').then((data) => {
+//    let walletcreated = JSON.parse(data);
+//    // console.log(walletcreated)
+//    if (walletcreated) {
+//      setInitialRouteName('Root')
+//    }
+//    else
+//      setInitialRouteName('Register')
+//  })
     
 
   //  if(!walletIsCreated)
@@ -100,7 +100,7 @@ export default function App(props) {
       <View style={styles.container}>
         {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
         <NavigationContainer ref={containerRef} initialState={initialNavigationState}>
-          <Stack.Navigator initialRouteName={INITIAL_ROUTE_NAME}>
+          <Stack.Navigator initialRouteName={"Root"}>
             <Stack.Screen name="Register" component={RegisterScreen}/>
             <Stack.Screen name="Root" component={BottomTabNavigator} />
             <Stack.Screen name="QRScanner" component={QRScanner} />
