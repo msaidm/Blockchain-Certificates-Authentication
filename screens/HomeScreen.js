@@ -72,6 +72,7 @@ export default function HomeScreen({ route, navigation }) {
       } 
     fetchAllCredentials();
     fillConnectionDataArray();
+    console.log(dataVer);
     //fillAttReqArray();
     removeIssuedCredential();
     removeRequestedVerification();
