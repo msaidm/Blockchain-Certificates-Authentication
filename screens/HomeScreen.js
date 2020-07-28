@@ -18,12 +18,8 @@ export default function HomeScreen({ route, navigation }) {
   {
     await AsyncStorage.getItem('userinfo').then((data) => {
       let dataInfo = JSON.parse(data);
-      // console.log(dataInfo)
       if (dataInfo) {
-        
         setWalletID( dataInfo.walletId );
-        //console.log("wallet ID"+walletID)
-
       }
     })
   }
@@ -31,7 +27,7 @@ export default function HomeScreen({ route, navigation }) {
 
   React.useEffect(() => {
     
-    const socket = socketIOClient('http://192.168.1.122:5002/');// Change This to your IP Address
+    const socket = socketIOClient('http://192.168.1.4:5002/');// Change This to your IP Address
     console.log(socket.connected)
     
     getWalletID() 
@@ -44,7 +40,7 @@ export default function HomeScreen({ route, navigation }) {
       {
         setConnectionDataArray(data);
         console.log("changing")
-        if(connectionDataArray.length>0)
+        if(data.length>0)
         setCount(true)
         else
         setCount(false) 
@@ -111,53 +107,6 @@ export default function HomeScreen({ route, navigation }) {
        </TouchableOpacity>
     );
   }
-
-  
-  // function removeIssuedCredential(){
-  //   var temArray=[]; 
-  //   setOfferedCredentials(temArray);
-  //   for (let index = 0; index < arraySize2; index++) 
-  //   {
-  //     if(credentials[index].state=="Issued")
-  //       {
-  //         for (let index2 = 0; index2 < connectionDataArray.length; index2++) {
-  //             if(connectionDataArray[index2].credentialId == credentials[index].credentialId)
-  //             {
-  //               connectionDataArray.splice(index2,1)
-  //               setOfferedCredentialsArraySize(offeredCredentials.length);
-  //             }
-  //         }    
-  //       }
-  //   }
-  //   if(connectionDataArray.length>0){
-  //     setCount(true)
-  //   }
-  //   else
-  //     setCount(false)  
-  // }
-
-  // function removeRequestedVerification(){
-  //   var tempArray=[]; 
-  //   setrequestedVerifications(tempArray);
-  //   for (let index = 0; index < arraySizeVer; index++) 
-  //   {
-  //     if(credentials[index].state=="Accepted")
-  //       {
-  //         for (let index3 = 0; index3 < connectionDataArray.length; index3++) {
-  //             if(connectionDataArray[index3].verificationId == Verifications[index].verificationId)
-  //             {
-  //               connectionDataArray.splice(index2,1)
-  //               setrequestedVerifications(requestedVerifications.length);
-  //             }
-  //         }    
-  //       }
-  //   }
-  //   if(connectionDataArray.length>0){
-  //     setCount(true)
-  //   }
-  //   else
-  //     setCount(false)  
-  //   }
 
 
   return (

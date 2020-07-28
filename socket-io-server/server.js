@@ -93,6 +93,19 @@ function addConnectionDetails(arr, myID, object) {
               }  
          }
         }
+
+    for (let index = 0; index < ver.length; index++) 
+    {
+      if(credentials[index].state=="Accepted")
+        {
+          for (let index3 = 0; index3 < connectionDataArray.length; index3++) {
+              if(connectionDataArray[index3].verificationId == ver[index].verificationId)
+              {
+                connectionDataArray.splice(index2,1)
+              }
+          }    
+        }
+    }
       }
 
  const fetchCredentials= async socket => {  
@@ -155,11 +168,12 @@ function addConnectionDetails(arr, myID, object) {
               if(connectionDataArray[index2].credentialId == cred[index].credentialId)
               {
                 connectionDataArray.splice(index2,1)
-                //setOfferedCredentialsArraySize(offeredCredentials.length);
               }
           }    
         }
     }
+
+    
 
 
 

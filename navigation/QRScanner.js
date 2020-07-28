@@ -73,7 +73,7 @@ export default function QRScanner({ navigation }) {
     console.log(res.json.toString)
   }
   async function sendAcceptConnectionNotification() {
-    const res = await fetch('http://a485e7383246.ngrok.io/webhook', {
+    const res = await fetch('http://8d6d8dcec062.ngrok.io/webhook', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
