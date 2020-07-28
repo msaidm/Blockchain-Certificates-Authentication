@@ -29,7 +29,7 @@ export default function OfferDetailsScreen({ route, navigation }) {
 
 
   async function sendAcceptOfferNotification() {
-    const res = await fetch('http://a485e7383246.ngrok.io/webhook', {
+    const res = await fetch('http://8d6d8dcec062.ngrok.io/webhook', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
