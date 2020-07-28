@@ -6,17 +6,56 @@ import { RectButton, ScrollView } from 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 export default function VerReqDetailsScreen({ route, navigation }) {
   var walletID = "C4GTBBcbBMDGunfKF7ySUCH8fHibB4VLZ";
+  const [arraySize2, setArraySize2] = React.useState(0);
+  const [credentials, setCredentials] = React.useState([]);
+  var currArraySize2 = 0;
+  const [values, setValues] = React.useState([]);
   const { Item } = route.params;
-  const { image } = route.params
-  const { name } = route.params
-  const { VerificationId }=route.params
+  const { image } = route.params;
+  const { name } = route.params;
+  const { VerificationId }=route.params;
   value1="pending";
   value2="pending";
   value3="pending";
+  fetchCredentials();
+  
   // const { itemGPA } = route.params;
   // const {itemYear}= route.params;
   //console.log("PRINTING CONTENT OG ITEM SENT TO DETAILS OF VER");
   //console.log(Item);
+ 
+
+
+async function fetchCredentials() {
+  const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/credentials', {
+     method: 'GET',
+     headers: {
+        Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
+        XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
+        Accept: 'application/json',
+     },
+  });
+  res.json().then(res => setCredentials(res)).then(setArraySize2(credentials.length))
+  // console.log(arraySize2);
+
+ // console.log("size: " + arraySize2)
+  currArraySize2 = arraySize2;
+  for (let index = 0; index < arraySize2; index++) {
+     const state = credentials[index].state
+     if (state == "Issued") {
+       console.log("I entered the if of issued");
+        const data = credentials[index].values
+        //to add a credential and if condition
+        const obj = { id: credentials[index].credentialId, sname: data.Name, sgpa: data.GPA, syear: data.Year, type: data.Type, connID: credentials[index].connectionId , SchemaID: credentials[index].schemaId }
+        setValues(add(values, credentials[index].credentialId, obj));
+        console.log("values:", values)
+     }
+  }
+ // if(currArraySize2>0)
+ //    setEmpty(false)
+ // else
+ //    setEmpty(true)
+}
   
   return (
     <View>
@@ -52,35 +91,7 @@ export default function VerReqDetailsScreen({ route, navigation }) {
 
 }
 
-async function fetchCredentials() {
-  const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/credentials', {
-     method: 'GET',
-     headers: {
-        Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
-        XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
-        Accept: 'application/json',
-     },
-  });
-  res.json().then(res => setCredentials(res)).then(setArraySize2(credentials.length))
-  // //console.log(arraySize2);
 
-  console.log("size: " + arraySize2)
-  currArraySize2 = arraySize2;
-  for (let index = 0; index < arraySize2; index++) {
-     const state = credentials[index].state
-     if (state == "Issued") {
-        const data = credentials[index].values
-        //to add a credential and if condition
-        const obj = { id: credentials[index].credentialId, sname: data.Name, sgpa: data.GPA, syear: data.Year, type: data.Type, connID: credentials[index].connectionId }
-        //setValues(add(values, credentials[index].credentialId, obj));
-        // console.log("values:", values)
-     }
-  }
- // if(currArraySize2>0)
- //    setEmpty(false)
- // else
- //    setEmpty(true)
-}
 
 const styles = StyleSheet.create({
   container: {
