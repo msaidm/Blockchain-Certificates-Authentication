@@ -13,7 +13,7 @@ export default function QRScanner({ navigation }) {
   const [wallets, setWallets] = useState({});
   const [connections, setConnections] = useState({});
   var splitted;
-  var userName = 'lastWallet'; // This will be changed will sign up page is ready 
+  var userName = 'WalletNew'; // This will be changed will sign up page is ready 
   var userWalletID;
 
   useEffect(() => {

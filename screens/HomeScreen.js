@@ -4,7 +4,9 @@ import * as WebBrowser from 'expo-web-browser';
 import { Card, SearchBar } from 'react-native-elements';
 import useAsyncEffect from 'use-async-effect';
 import useForceUpdate from 'use-force-update';
-import { WALLET_ID } from '../constants'
+import socketIOClient from "socket.io-client";
+import { WALLET_ID } from '../constants';
+import axios from 'axios';
 
 console.disableYellowBox = true;
 
@@ -14,12 +16,24 @@ let details2=[];
 let details = [];
 let detailsOfVer =[];
 let detailsOfVer2 =[];
-
+//axios.defaults.baseURL = 'http://localhost:5002/';
+const ENDPOINT = "http://127.0.0.1:5002";
 
 export default function HomeScreen({ route, navigation }) {
 
   // var walletID = "CrtAMYWLD5ZdkowDdHreNz9goN3kLDsUC";
   var walletID = WALLET_ID;
+
+  const connectionConfig = {
+    jsonp: false,
+    reconnection: true,
+    reconnectionDelay: 100,
+    reconnectionAttempts: 100000,
+    transports: ['websocket'], // you need to explicitly tell it to use websockets
+   };
+
+  const [response, setResponse] = React.useState("");
+  const [connectionDataArray, setConnectionDataArray] = React.useState([]);
 
   const [credentials, setCredentials] = React.useState([]);
   const [Verifications, setVerification] = React.useState([]);
@@ -31,58 +45,66 @@ export default function HomeScreen({ route, navigation }) {
   const [arraySizeVer, setArraySizeVer] = React.useState(0); 
   const [connectionDetailsArray, setConnectionDetailsArray] = React.useState([]); 
   const [connectionDetailsArraySize, setConnectionDetailsArraySize] = React.useState(0);
-  const [count, setCount] = React.useState(false);
+  const [count, setCount] = React.useState(true);
   const [offeredCredentialsArraySize,setOfferedCredentialsArraySize] = React.useState(0);
   const [RequestedVerificationsArraySize, setRequestedVerificationsArraySize] = React.useState(0);
  
- useInterval(() => {
-  try {
-    const fetchAllCredentials = async() => {
-      const data= await fetchCredentials();
-      setCredentials(data);
-      const dataVer= await fetchVerifications();
+//  useInterval(() => {
+//   try {
+//     const fetchAllCredentials = async() => {
+//       const data= await fetchCredentials();
+//       setCredentials(data);
+//       const dataVer= await fetchVerifications();
 
-      setVerification(dataVer);
-      setArraySizeVer(dataVer.length);
+//       setVerification(dataVer);
+//       setArraySizeVer(dataVer.length);
 
-      setArraySize2(data.length);
-      details=await fetchOfferedCredentials(data);
-      detailsOfVer= await fetchRequestedVerifications(dataVer);
+//       setArraySize2(data.length);
+//       details=await fetchOfferedCredentials(data);
+//       detailsOfVer= await fetchRequestedVerifications(dataVer);
 
-       setConnectionDetailsArray(details);
-       setVerificationDetailsArray(detailsOfVer);
-       setConnectionDetailsArraySize(Object.keys(details).length);
-       setVerificationDetailsArraySize(Object.keys(detailsOfVer).length);
-     } 
-   fetchAllCredentials();
-   fillConnectionDataArray();
-   removeIssuedCredential();
-   removeRequestedVerification();
+//        setConnectionDetailsArray(details);
+//        setVerificationDetailsArray(detailsOfVer);
+//        setConnectionDetailsArraySize(Object.keys(details).length);
+//        setVerificationDetailsArraySize(Object.keys(detailsOfVer).length);
+//      } 
+//    fetchAllCredentials();
+//    fillConnectionDataArray();
+//    removeIssuedCredential();
+//    removeRequestedVerification();
     
-  } catch (error) {
+//   } catch (error) {
     
-  }
+//   }
   
-}, 8000);
+// }, 8000);
 
- function useInterval(callback, delay) {
-  const savedCallback = React.useRef();
+//  function useInterval(callback, delay) {
+//   const savedCallback = React.useRef();
+//   React.useEffect(() => {
+//     savedCallback.current = callback;
+//     const isFocused = navigation.isFocused();  
+//   },[callback]);
+
   React.useEffect(() => {
-    savedCallback.current = callback;
-    const isFocused = navigation.isFocused();  
-  },[callback]);
+    
+    const socket = socketIOClient('http://192.168.1.122:5002/');
+    socket.on("FromAPI", data => {
+      setConnectionDataArray(data);
+      setCount(true);
+      console.log(data);
+      console.log('Feh data ?')
+    });
+    socket.on("webhook", data => {
+      setConnectionDataArray(data);
+      setCount(true);
+      console.log(data);
+      console.log('webhook geh ?')
+    });
+    return () => socket.disconnect();
+  }, []);
 
-  React.useEffect(() => {
-    function tick() {
-      savedCallback.current();
-    }
-    if (delay !== null) {
-      let id = setInterval(tick, delay);
-      return () => clearInterval(id);
-    }
-  }, [delay]);
 
-}
  
   function ItemC({ title, url,credentialId }) { //for credential items
     //console.log("render");
@@ -136,14 +158,19 @@ export default function HomeScreen({ route, navigation }) {
     );
   }
 
-  
-  function addConnectionDetails(arr, myID, object) {
-    const found = arr.some(el => el.id == myID);
-    if (!found) {
-       arr.push(object);
-    }
-    return arr;
- }
+  // axios.get('/webhook').then((response) => {
+  //   console.log(response);
+  //   const data=  fetchCredentials();
+  //    setCredentials(data);
+  //    console.log(credentials)
+  // });
+//   function addConnectionDetails(arr, myID, object) {
+//     const found = arr.some(el => el.id == myID);
+//     if (!found) {
+//        arr.push(object);
+//     }
+//     return arr;
+//  }
 
  async function fetchCredentials() {  
   const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/credentials', {
@@ -158,149 +185,149 @@ export default function HomeScreen({ route, navigation }) {
  return cred;   
 }
 
-  async function fetchOfferedCredentials(data)
-  { 
-      currArraySize2 = arraySize2 ;
-      for (let index = 0; index < data.length ; index++) 
-      {
-        if(data[index].state=="Offered")
-        {          
-          setOfferedCredentials(addConnectionDetails(offeredCredentials,data[index].credentialId ,data[index]));
-          let tempConnectionID= data[index].connectionId;
-          const res = await fetch('https://api.streetcred.id/custodian/v1/api/'+walletID+'/connections/'+tempConnectionID, {
-            method: 'GET',
-            headers: {
-              Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
-              XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
-                Accept: 'application/json',
-            },
-          });
-          var connection = await res.json();
-          details2 = addConnectionDetails(details,connection.connectionId,connection)
-          setOfferedCredentialsArraySize(offeredCredentials.length);
-        }
-      }
-      return details2
+  // async function fetchOfferedCredentials(data)
+  // { 
+  //     currArraySize2 = arraySize2 ;
+  //     for (let index = 0; index < data.length ; index++) 
+  //     {
+  //       if(data[index].state=="Offered")
+  //       {          
+  //         setOfferedCredentials(addConnectionDetails(offeredCredentials,data[index].credentialId ,data[index]));
+  //         let tempConnectionID= data[index].connectionId;
+  //         const res = await fetch('https://api.streetcred.id/custodian/v1/api/'+walletID+'/connections/'+tempConnectionID, {
+  //           method: 'GET',
+  //           headers: {
+  //             Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
+  //             XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
+  //               Accept: 'application/json',
+  //           },
+  //         });
+  //         var connection = await res.json();
+  //         details2 = addConnectionDetails(details,connection.connectionId,connection)
+  //         setOfferedCredentialsArraySize(offeredCredentials.length);
+  //       }
+  //     }
+  //     return details2
     
-  }
+  // }
 
-  function fillConnectionDataArray()
-  {
-    try {
-        if(VerificationDetailsArraySize>0)
-        {
-          for (let index = 0; index < requestedVerifications.length; index++) {
-            for (let index2 = 0; index2 < VerificationDetailsArray.length; index2++) {
-              if( VerificationDetailsArray[index2].connectionId === requestedVerifications[index].connectionId){
-              const objj = { id: VerificationDetailsArray[index2].connectionId,verificationId:requestedVerifications[index].verificationId, title: VerificationDetailsArray[index2].name, image: VerificationDetailsArray[index2].imageUrl , type:'Verification' }; 
-              connectionDataArray=addConnectionDetails(connectionDataArray,objj.id,objj); 
-            }
-          }
-          if(connectionDetailsArraySize>0)
-          {
-            for (let index = 0; index < offeredCredentials.length; index++) {
-              for (let index2 = 0; index2 < connectionDetailsArray.length; index2++) {
-                if( connectionDetailsArray[index2].connectionId === offeredCredentials[index].connectionId){
-                  const obj = { id: connectionDetailsArray[index2].connectionId,credentialId:offeredCredentials[index].credentialId, title: connectionDetailsArray[index2].name, image: connectionDetailsArray[index2].imageUrl, type:'Credential' };  
-                  connectionDataArray=addConnectionDetails(connectionDataArray,obj.id,obj); 
-                }
-              }
-            }
-          }
-        }
-        console.log(connectionDataArray);
-      }
-      }
-    catch (error) {
-        console.log(error)
-    }   
-  }
+  // function fillConnectionDataArray()
+  // {
+  //   try {
+  //       if(VerificationDetailsArraySize>0)
+  //       {
+  //         for (let index = 0; index < requestedVerifications.length; index++) {
+  //           for (let index2 = 0; index2 < VerificationDetailsArray.length; index2++) {
+  //             if( VerificationDetailsArray[index2].connectionId === requestedVerifications[index].connectionId){
+  //             const objj = { id: VerificationDetailsArray[index2].connectionId,verificationId:requestedVerifications[index].verificationId, title: VerificationDetailsArray[index2].name, image: VerificationDetailsArray[index2].imageUrl , type:'Verification' }; 
+  //             connectionDataArray=addConnectionDetails(connectionDataArray,objj.id,objj); 
+  //           }
+  //         }
+        //   if(connectionDetailsArraySize>0)
+        //   {
+        //     for (let index = 0; index < offeredCredentials.length; index++) {
+        //       for (let index2 = 0; index2 < connectionDetailsArray.length; index2++) {
+        //         if( connectionDetailsArray[index2].connectionId === offeredCredentials[index].connectionId){
+        //           const obj = { id: connectionDetailsArray[index2].connectionId,credentialId:offeredCredentials[index].credentialId, title: connectionDetailsArray[index2].name, image: connectionDetailsArray[index2].imageUrl, type:'Credential' };  
+        //           connectionDataArray=addConnectionDetails(connectionDataArray,obj.id,obj); 
+        //         }
+        //       }
+        //     }
+        //   }
+        // }
+  //       console.log(connectionDataArray);
+  //     }
+  //     }
+  //   catch (error) {
+  //       console.log(error)
+  //   }   
+  // }
     
-  async function fetchVerifications() {
-    const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/verifications', {
-       method: 'GET',
-       headers: {
-        Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
-        XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
-          Accept: 'application/json',
-       },
-    });
-    var ver = await res.json();
-   return ver;   
-  }
+  // async function fetchVerifications() {
+  //   const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/verifications', {
+  //      method: 'GET',
+  //      headers: {
+  //       Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
+  //       XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
+  //         Accept: 'application/json',
+  //      },
+  //   });
+  //   var ver = await res.json();
+  //  return ver;   
+  // }
 
-  async function fetchRequestedVerifications(dataVer)
-  { 
-      currArraySizeVer= arraySizeVer ;
-      for (let index = 0; index < dataVer.length ; index++) 
-      {
-        if(dataVer[index].state=="Requested")
-        {
-          setrequestedVerifications(addConnectionDetails(requestedVerifications,dataVer[index].verificationId ,dataVer[index]));
-          let tempVerConnectionID= dataVer[index].connectionId;
-          const res = await fetch('https://api.streetcred.id/custodian/v1/api/'+walletID+'/connections/'+tempVerConnectionID, {
-            method: 'GET',
-            headers: {
-              Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
-              XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
-                Accept: 'application/json',
-            },
-          });
+  // async function fetchRequestedVerifications(dataVer)
+  // { 
+  //     currArraySizeVer= arraySizeVer ;
+  //     for (let index = 0; index < dataVer.length ; index++) 
+  //     {
+  //       if(dataVer[index].state=="Requested")
+  //       {
+  //         setrequestedVerifications(addConnectionDetails(requestedVerifications,dataVer[index].verificationId ,dataVer[index]));
+  //         let tempVerConnectionID= dataVer[index].connectionId;
+  //         const res = await fetch('https://api.streetcred.id/custodian/v1/api/'+walletID+'/connections/'+tempVerConnectionID, {
+  //           method: 'GET',
+  //           headers: {
+  //             Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
+  //             XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
+  //               Accept: 'application/json',
+  //           },
+  //         });
           
-          var ver = await res.json();
-          detailsOfVer2 = addConnectionDetails(detailsOfVer,ver.connectionId,ver)
-          setOfferedCredentialsArraySize(offeredCredentials.length);
-          setRequestedVerificationsArraySize(requestedVerifications.length);
-        }
-      }
-      return detailsOfVer2;
-  }
+  //         var ver = await res.json();
+  //         detailsOfVer2 = addConnectionDetails(detailsOfVer,ver.connectionId,ver)
+  //         setOfferedCredentialsArraySize(offeredCredentials.length);
+  //         setRequestedVerificationsArraySize(requestedVerifications.length);
+  //       }
+  //     }
+  //     return detailsOfVer2;
+  // }
   
-  function removeIssuedCredential(){
-    var temArray=[]; 
-    setOfferedCredentials(temArray);
-    for (let index = 0; index < arraySize2; index++) 
-    {
-      if(credentials[index].state=="Issued")
-        {
-          for (let index2 = 0; index2 < connectionDataArray.length; index2++) {
-              if(connectionDataArray[index2].credentialId == credentials[index].credentialId)
-              {
-                connectionDataArray.splice(index2,1)
-                setOfferedCredentialsArraySize(offeredCredentials.length);
-              }
-          }    
-        }
-    }
-    if(connectionDataArray.length>0){
-      setCount(true)
-    }
-    else
-      setCount(false)  
-  }
+  // function removeIssuedCredential(){
+  //   var temArray=[]; 
+  //   setOfferedCredentials(temArray);
+  //   for (let index = 0; index < arraySize2; index++) 
+  //   {
+  //     if(credentials[index].state=="Issued")
+  //       {
+  //         for (let index2 = 0; index2 < connectionDataArray.length; index2++) {
+  //             if(connectionDataArray[index2].credentialId == credentials[index].credentialId)
+  //             {
+  //               connectionDataArray.splice(index2,1)
+  //               setOfferedCredentialsArraySize(offeredCredentials.length);
+  //             }
+  //         }    
+  //       }
+  //   }
+  //   if(connectionDataArray.length>0){
+  //     setCount(true)
+  //   }
+  //   else
+  //     setCount(false)  
+  // }
 
-  function removeRequestedVerification(){
-    var tempArray=[]; 
-    setrequestedVerifications(tempArray);
-    for (let index = 0; index < arraySizeVer; index++) 
-    {
-      if(credentials[index].state=="Accepted")
-        {
-          for (let index3 = 0; index3 < connectionDataArray.length; index3++) {
-              if(connectionDataArray[index3].verificationId == Verifications[index].verificationId)
-              {
-                connectionDataArray.splice(index2,1)
-                setrequestedVerifications(requestedVerifications.length);
-              }
-          }    
-        }
-    }
-    if(connectionDataArray.length>0){
-      setCount(true)
-    }
-    else
-      setCount(false)  
-    }
+  // function removeRequestedVerification(){
+  //   var tempArray=[]; 
+  //   setrequestedVerifications(tempArray);
+  //   for (let index = 0; index < arraySizeVer; index++) 
+  //   {
+  //     if(credentials[index].state=="Accepted")
+  //       {
+  //         for (let index3 = 0; index3 < connectionDataArray.length; index3++) {
+  //             if(connectionDataArray[index3].verificationId == Verifications[index].verificationId)
+  //             {
+  //               connectionDataArray.splice(index2,1)
+  //               setrequestedVerifications(requestedVerifications.length);
+  //             }
+  //         }    
+  //       }
+  //   }
+  //   if(connectionDataArray.length>0){
+  //     setCount(true)
+  //   }
+  //   else
+  //     setCount(false)  
+  //   }
 
 
   return (
@@ -335,6 +362,9 @@ export default function HomeScreen({ route, navigation }) {
             }
             style={styles.welcomeImage}
           />
+          <Text>
+            It's {response}
+          </Text>
           </View>)
     }
      <View  style={styles.tabBarInfoContainer}> 
