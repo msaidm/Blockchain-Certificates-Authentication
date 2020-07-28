@@ -2,112 +2,37 @@ import * as React from 'react';
 import {Platform, StyleSheet, Text, TouchableOpacity, View, Button, FlatList, SafeAreaView,Image } from 'react-native';
 import * as WebBrowser from 'expo-web-browser';
 import { Card, SearchBar } from 'react-native-elements';
-import useAsyncEffect from 'use-async-effect';
-import useForceUpdate from 'use-force-update';
 import socketIOClient from "socket.io-client";
-import { WALLET_ID } from '../constants';
-import axios from 'axios';
 
 console.disableYellowBox = true;
 
-  
-var connectionDataArray=[];
-let details2=[];
-let details = [];
-let detailsOfVer =[];
-let detailsOfVer2 =[];
-//axios.defaults.baseURL = 'http://localhost:5002/';
-const ENDPOINT = "http://127.0.0.1:5002";
-
 export default function HomeScreen({ route, navigation }) {
 
-  // var walletID = "CrtAMYWLD5ZdkowDdHreNz9goN3kLDsUC";
-  var walletID = WALLET_ID;
-
-  const connectionConfig = {
-    jsonp: false,
-    reconnection: true,
-    reconnectionDelay: 100,
-    reconnectionAttempts: 100000,
-    transports: ['websocket'], // you need to explicitly tell it to use websockets
-   };
-
-  const [response, setResponse] = React.useState("");
   const [connectionDataArray, setConnectionDataArray] = React.useState([]);
-
-  const [credentials, setCredentials] = React.useState([]);
-  const [Verifications, setVerification] = React.useState([]);
-  const [offeredCredentials,setOfferedCredentials] = React.useState([]);
-  const [requestedVerifications,setrequestedVerifications] = React.useState([]);
-  const [VerificationDetailsArray,setVerificationDetailsArray]= React.useState([]);
-  const [VerificationDetailsArraySize, setVerificationDetailsArraySize] = React.useState(0);
-  const [arraySize2, setArraySize2] = React.useState(0); 
-  const [arraySizeVer, setArraySizeVer] = React.useState(0); 
-  const [connectionDetailsArray, setConnectionDetailsArray] = React.useState([]); 
-  const [connectionDetailsArraySize, setConnectionDetailsArraySize] = React.useState(0);
   const [count, setCount] = React.useState(true);
-  const [offeredCredentialsArraySize,setOfferedCredentialsArraySize] = React.useState(0);
-  const [RequestedVerificationsArraySize, setRequestedVerificationsArraySize] = React.useState(0);
- 
-//  useInterval(() => {
-//   try {
-//     const fetchAllCredentials = async() => {
-//       const data= await fetchCredentials();
-//       setCredentials(data);
-//       const dataVer= await fetchVerifications();
-
-//       setVerification(dataVer);
-//       setArraySizeVer(dataVer.length);
-
-//       setArraySize2(data.length);
-//       details=await fetchOfferedCredentials(data);
-//       detailsOfVer= await fetchRequestedVerifications(dataVer);
-
-//        setConnectionDetailsArray(details);
-//        setVerificationDetailsArray(detailsOfVer);
-//        setConnectionDetailsArraySize(Object.keys(details).length);
-//        setVerificationDetailsArraySize(Object.keys(detailsOfVer).length);
-//      } 
-//    fetchAllCredentials();
-//    fillConnectionDataArray();
-//    removeIssuedCredential();
-//    removeRequestedVerification();
-    
-//   } catch (error) {
-    
-//   }
-  
-// }, 8000);
-
-//  function useInterval(callback, delay) {
-//   const savedCallback = React.useRef();
-//   React.useEffect(() => {
-//     savedCallback.current = callback;
-//     const isFocused = navigation.isFocused();  
-//   },[callback]);
+  let dataSize = 0;
 
   React.useEffect(() => {
     
-    const socket = socketIOClient('http://192.168.1.122:5002/');
+    const socket = socketIOClient('http://192.168.1.4:5002/');
     socket.on("FromAPI", data => {
-      setConnectionDataArray(data);
-      setCount(true);
-      console.log(data);
-      console.log('Feh data ?')
+      
+      if(dataSize!=data.length)
+      {
+        setConnectionDataArray(data);
+        console.log("changing")
+      }  
+      setCount(true)
+      dataSize = data.length;
     });
-    socket.on("webhook", data => {
-      setConnectionDataArray(data);
-      setCount(true);
-      console.log(data);
-      console.log('webhook geh ?')
-    });
+    if(connectionDataArray.length>0)
+        setCount(true)
+      else
+        setCount(false)  
     return () => socket.disconnect();
   }, []);
 
-
- 
   function ItemC({ title, url,credentialId }) { //for credential items
-    //console.log("render");
     return (
        <TouchableOpacity
           onPress={() => navigation.navigate('OfferDetails',
@@ -133,7 +58,6 @@ export default function HomeScreen({ route, navigation }) {
   }
 
   function ItemV({ title, url,verificationId,}) { //for verification items
-    //console.log("render");    
     return (
        <TouchableOpacity
           onPress={() => navigation.navigate('VerificationRequestDetails',
@@ -158,58 +82,8 @@ export default function HomeScreen({ route, navigation }) {
     );
   }
 
-  // axios.get('/webhook').then((response) => {
-  //   console.log(response);
-  //   const data=  fetchCredentials();
-  //    setCredentials(data);
-  //    console.log(credentials)
-  // });
-//   function addConnectionDetails(arr, myID, object) {
-//     const found = arr.some(el => el.id == myID);
-//     if (!found) {
-//        arr.push(object);
-//     }
-//     return arr;
-//  }
 
- async function fetchCredentials() {  
-  const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/credentials', {
-     method: 'GET',
-     headers: {
-      Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
-      XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
-        Accept: 'application/json',
-     },
-  });
-  var cred = await res.json();
- return cred;   
-}
 
-  // async function fetchOfferedCredentials(data)
-  // { 
-  //     currArraySize2 = arraySize2 ;
-  //     for (let index = 0; index < data.length ; index++) 
-  //     {
-  //       if(data[index].state=="Offered")
-  //       {          
-  //         setOfferedCredentials(addConnectionDetails(offeredCredentials,data[index].credentialId ,data[index]));
-  //         let tempConnectionID= data[index].connectionId;
-  //         const res = await fetch('https://api.streetcred.id/custodian/v1/api/'+walletID+'/connections/'+tempConnectionID, {
-  //           method: 'GET',
-  //           headers: {
-  //             Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
-  //             XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
-  //               Accept: 'application/json',
-  //           },
-  //         });
-  //         var connection = await res.json();
-  //         details2 = addConnectionDetails(details,connection.connectionId,connection)
-  //         setOfferedCredentialsArraySize(offeredCredentials.length);
-  //       }
-  //     }
-  //     return details2
-    
-  // }
 
   // function fillConnectionDataArray()
   // {
@@ -223,20 +97,6 @@ export default function HomeScreen({ route, navigation }) {
   //             connectionDataArray=addConnectionDetails(connectionDataArray,objj.id,objj); 
   //           }
   //         }
-        //   if(connectionDetailsArraySize>0)
-        //   {
-        //     for (let index = 0; index < offeredCredentials.length; index++) {
-        //       for (let index2 = 0; index2 < connectionDetailsArray.length; index2++) {
-        //         if( connectionDetailsArray[index2].connectionId === offeredCredentials[index].connectionId){
-        //           const obj = { id: connectionDetailsArray[index2].connectionId,credentialId:offeredCredentials[index].credentialId, title: connectionDetailsArray[index2].name, image: connectionDetailsArray[index2].imageUrl, type:'Credential' };  
-        //           connectionDataArray=addConnectionDetails(connectionDataArray,obj.id,obj); 
-        //         }
-        //       }
-        //     }
-        //   }
-        // }
-  //       console.log(connectionDataArray);
-  //     }
   //     }
   //   catch (error) {
   //       console.log(error)
@@ -362,9 +222,6 @@ export default function HomeScreen({ route, navigation }) {
             }
             style={styles.welcomeImage}
           />
-          <Text>
-            It's {response}
-          </Text>
           </View>)
     }
      <View  style={styles.tabBarInfoContainer}> 
