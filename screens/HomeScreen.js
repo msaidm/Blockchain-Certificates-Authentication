@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Platform, StyleSheet, Text, TouchableOpacity, View, Button, FlatList, SafeAreaView,Image } from 'react-native';
 import * as WebBrowser from 'expo-web-browser';
-import { Card, SearchBar } from 'react-native-elements';
+import { Card } from 'react-native-elements';
 import socketIOClient from "socket.io-client";
 
 console.disableYellowBox = true;
@@ -12,8 +12,7 @@ export default function HomeScreen({ route, navigation }) {
   const [count, setCount] = React.useState(true);
   let dataSize = 0;
 
-  React.useEffect(() => {
-    
+  React.useEffect(() => { 
     const socket = socketIOClient('http://192.168.1.4:5002/');
     socket.on("FromAPI", data => {
       
@@ -21,8 +20,9 @@ export default function HomeScreen({ route, navigation }) {
       {
         setConnectionDataArray(data);
         console.log("changing")
+        setCount(true)
       }  
-      setCount(true)
+      
       dataSize = data.length;
     });
     if(connectionDataArray.length>0)
@@ -82,66 +82,6 @@ export default function HomeScreen({ route, navigation }) {
     );
   }
 
-
-
-
-  // function fillConnectionDataArray()
-  // {
-  //   try {
-  //       if(VerificationDetailsArraySize>0)
-  //       {
-  //         for (let index = 0; index < requestedVerifications.length; index++) {
-  //           for (let index2 = 0; index2 < VerificationDetailsArray.length; index2++) {
-  //             if( VerificationDetailsArray[index2].connectionId === requestedVerifications[index].connectionId){
-  //             const objj = { id: VerificationDetailsArray[index2].connectionId,verificationId:requestedVerifications[index].verificationId, title: VerificationDetailsArray[index2].name, image: VerificationDetailsArray[index2].imageUrl , type:'Verification' }; 
-  //             connectionDataArray=addConnectionDetails(connectionDataArray,objj.id,objj); 
-  //           }
-  //         }
-  //     }
-  //   catch (error) {
-  //       console.log(error)
-  //   }   
-  // }
-    
-  // async function fetchVerifications() {
-  //   const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/verifications', {
-  //      method: 'GET',
-  //      headers: {
-  //       Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
-  //       XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
-  //         Accept: 'application/json',
-  //      },
-  //   });
-  //   var ver = await res.json();
-  //  return ver;   
-  // }
-
-  // async function fetchRequestedVerifications(dataVer)
-  // { 
-  //     currArraySizeVer= arraySizeVer ;
-  //     for (let index = 0; index < dataVer.length ; index++) 
-  //     {
-  //       if(dataVer[index].state=="Requested")
-  //       {
-  //         setrequestedVerifications(addConnectionDetails(requestedVerifications,dataVer[index].verificationId ,dataVer[index]));
-  //         let tempVerConnectionID= dataVer[index].connectionId;
-  //         const res = await fetch('https://api.streetcred.id/custodian/v1/api/'+walletID+'/connections/'+tempVerConnectionID, {
-  //           method: 'GET',
-  //           headers: {
-  //             Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
-  //             XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
-  //               Accept: 'application/json',
-  //           },
-  //         });
-          
-  //         var ver = await res.json();
-  //         detailsOfVer2 = addConnectionDetails(detailsOfVer,ver.connectionId,ver)
-  //         setOfferedCredentialsArraySize(offeredCredentials.length);
-  //         setRequestedVerificationsArraySize(requestedVerifications.length);
-  //       }
-  //     }
-  //     return detailsOfVer2;
-  // }
   
   // function removeIssuedCredential(){
   //   var temArray=[]; 

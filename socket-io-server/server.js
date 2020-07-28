@@ -14,6 +14,8 @@ const server = http.createServer(app);
 const io = socketIo(server); 
 
 let interval; 
+var connectionDataArray =[]
+
 
 io.on("connection", (socket) => {
     fetchCredentials(socket);
@@ -34,12 +36,59 @@ function addConnectionDetails(arr, myID, object) {
         return arr;
      }
 
+ async function fetchVerifications() {
+  var requestedVerifications=[]
+  var verificationDetails=[]
+    const res = await fetch('https://api.streetcred.id/custodian/v1/api/C4fbogi2d5UdjwvJZNk4F2ZmneuVzCZdl/verifications', {
+       method: 'GET',
+       headers: {
+        Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
+        XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
+          Accept: 'application/json',
+       },
+    });
+    var ver = await res.json();
+    for (let index = 0; index < ver.length ; index++) 
+        {
+          if(ver[index].state=="Requested")
+          {
+            requestedVerifications.push(ver[index])
+            let tempVerConnectionID= ver[index].connectionId;
+            const res = await fetch('https://api.streetcred.id/custodian/v1/api/C4fbogi2d5UdjwvJZNk4F2ZmneuVzCZdl/connections/'+tempVerConnectionID, {
+              method: 'GET',
+              headers: {
+                Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
+                XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
+                  Accept: 'application/json',
+              },
+            });
+            
+            var details = await res.json();
+            verificationDetails.push(details);
+
+            if(verificationDetails.length>0)
+              {
+                for (let index = 0; index < requestedVerifications.length; index++) 
+                {
+                    for (let index2 = 0; index2 < verificationDetails.length; index2++) 
+                    {
+                      if( verificationDetails[index2].connectionId === requestedVerifications[index].connectionId)
+                      {
+                        const objj = { id: verificationDetails[index2].connectionId,verificationId:requestedVerifications[index].verificationId, title: verificationDetails[index2].name, image: verificationDetails[index2].imageUrl , type:'Verification' }; 
+                        connectionDataArray=addConnectionDetails(connectionDataArray,objj.id,objj); 
+                      }
+                    }
+                }
+              }  
+         }
+        }
+      }
 
  const fetchCredentials= async socket => {  
+    fetchVerifications();
     var offeredCredentials=[]
     var connectionDetails=[]
-    var connectionDataArray=[]
-    const res = await fetch('https://api.streetcred.id/custodian/v1/api/CrtAMYWLD5ZdkowDdHreNz9goN3kLDsUC/credentials', {
+    const res = await fetch('https://api.streetcred.id/custodian/v1/api/C4fbogi2d5UdjwvJZNk4F2ZmneuVzCZdl/credentials', {
        method: 'GET',
        headers: {
         Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
@@ -55,7 +104,7 @@ function addConnectionDetails(arr, myID, object) {
         {  
           offeredCredentials.push(cred[index])
           let tempConnectionID= cred[index].connectionId;
-          const res = await fetch('https://api.streetcred.id/custodian/v1/api/CrtAMYWLD5ZdkowDdHreNz9goN3kLDsUC/connections/'+tempConnectionID, {
+          const res = await fetch('https://api.streetcred.id/custodian/v1/api/C4fbogi2d5UdjwvJZNk4F2ZmneuVzCZdl/connections/'+tempConnectionID, {
             method: 'GET',
             headers: {
               Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
@@ -70,8 +119,10 @@ function addConnectionDetails(arr, myID, object) {
 
       }
      
-      console.log(offeredCredentials.length)
-      console.log(connectionDetails.length)
+      //  console.log(offeredCredentials.length)
+      //  console.log(connectionDetails.length)
+      //  console.log(connectionDataArray.length)
+
       if(connectionDetails.length>0)
           {
             for (let index = 0; index < offeredCredentials.length; index++) {
@@ -83,6 +134,25 @@ function addConnectionDetails(arr, myID, object) {
               }
             }
           }
+
+    for (let index = 0; index < cred.length; index++) 
+    {
+      if(cred[index].state=="Issued")
+        {
+          console.log("hena")
+          for (let index2 = 0; index2 < connectionDataArray.length; index2++) {
+              if(connectionDataArray[index2].credentialId == cred[index].credentialId)
+              {
+                connectionDataArray.splice(index2,1)
+                //setOfferedCredentialsArraySize(offeredCredentials.length);
+              }
+          }    
+        }
+    }
+
+
+
+          console.log(connectionDataArray.length)
       socket.emit("FromAPI", connectionDataArray);
 
     

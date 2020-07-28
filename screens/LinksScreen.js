@@ -207,7 +207,7 @@ function CredentialsScreen({ navigation }) {
       }
       </View>
       
-   );
+   )
 }
 
 function ConnectionsScreen() {
