@@ -89,23 +89,23 @@ function CredentialsScreen({ navigation }) {
      })
    }
    getWalletID()
-   console.log(walletID+"In Credentials Screen")
+   // console.log(walletID+"In Credentials Screen")
    
    searchFilterFunction = (text, arrayholder) => {
       setSearchText(text);
-      console.log("arrayholder: ", arrayholder)
+      // console.log("arrayholder: ", arrayholder)
       const newData = arrayholder.filter(function (item) {
          //applying filter for the inserted text in search bar
          const itemData = item.type ? item.type.toUpperCase() : ''.toUpperCase();
-         console.log("itemData: ", itemData)
+         // console.log("itemData: ", itemData)
 
          const textData = text.toUpperCase();
-         console.log("textData: ", textData)
+         // console.log("textData: ", textData)
 
          return itemData.indexOf(textData) > -1;
       });
 
-      console.log("newData: ", newData)
+      // console.log("newData: ", newData)
 
       setValues(newData);
    };
@@ -161,7 +161,7 @@ function CredentialsScreen({ navigation }) {
       res.json().then(res => setCredentials(res)).then(setArraySize2(credentials.length))
       // //console.log(arraySize2);
 
-      console.log("size: " + arraySize2)
+      // console.log("size: " + arraySize2)
       currArraySize2 = arraySize2;
       for (let index = 0; index < arraySize2; index++) {
          const state = credentials[index].state
@@ -246,7 +246,7 @@ function ConnectionsScreen() {
      })
    }
    getWalletID()
-   console.log(walletID+"In Connections Screen")
+   // console.log(walletID+"In Connections Screen")
    
 
    function Item({ title, url }) {

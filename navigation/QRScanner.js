@@ -2,6 +2,7 @@ import React, { useState, useEffect, Component } from 'react';
 import { Text, View, StyleSheet, Button, Alert, AsyncStorage } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { ForceTouchGestureHandler } from 'react-native-gesture-handler';
+import { ngrok } from '../constants'
 
 var invitationFromURL = ' ';
 
@@ -73,7 +74,7 @@ export default function QRScanner({ navigation }) {
     console.log(res.json.toString)
   }
   async function sendAcceptConnectionNotification() {
-    const res = await fetch('http://8d6d8dcec062.ngrok.io/webhook', {
+    const res = await fetch(ngrok + '/webhook', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
