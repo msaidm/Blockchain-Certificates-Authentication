@@ -11,26 +11,27 @@ export default function CredsForVers({ route, navigation }) {
 
     const bachelorSchemaId= "WqHxTAtrKbPsEqkhHDEJK:2:Computer Bachelor Degree 3:1.1";
     const BachelorType= "Bachelor Degree";
-    var possibleCreds=[];
+    var possibleCreds=chooseTheRightCred();
 
     function chooseTheRightCred()
     {
-        for(i=0;i<Values.length;i++)
+      var Creds=[];
+        for(var i=0;i<Values.length;i++)
         {
          if(Values[i].type == BachelorType && Values[i].schemaId==bachelorSchemaId)
          {
-            possibleCreds.push(Values[i])
+            Creds.push(Values[i])
          }
         }
-        return possibleCreds;
+        return Creds;
     }
     function Item({ name, year,gpa }) {
       return (
          <View style={styles.item}>
-             <Text style={styles.paragraph}>Credential</Text>
-            <Text style={styles.NormalText}>{name}</Text>
-            <Text style={styles.NormalText}>{year}</Text>
-            <Text style={styles.NormalText}>{gpa}</Text>
+            <Text style={styles.paragraph1}>Credential</Text>
+            <Text style={styles.paragraph}>Name: {name}</Text>
+            <Text style={styles.paragraph}>Graduation Year: {year}</Text>
+            <Text style={styles.paragraph}>GPA: {gpa}</Text>
          </View>
       );
    }
@@ -39,7 +40,7 @@ return (
     {
      <SafeAreaView style={styles.container}>
         <FlatList
-            data={Values}
+            data={possibleCreds}
             renderItem={({ item }) => <Item name={item.sname} year={item.syear} gpa={item.sgpa}/>}
             keyExtractor={item => item.id.toString()}
             ItemSeparatorComponent={FlatListItemSeparator}
@@ -47,10 +48,11 @@ return (
            <View style={styles.alternativeLayoutButtonContainer}>
             <Button
                 title="done"
-       // onPress={() => navigation.navigate('CredsForVers',
+                onPress={() => navigation.navigate('VerificationRequestDetails')
        // {
        //   Values: credentialDataArray,
-       // })}
+       //})
+      }
     />
     
       </View>
@@ -61,6 +63,7 @@ return (
     </View>
      
 );
+}
 FlatListItemSeparator = () => {
     return (
        <View
@@ -80,6 +83,12 @@ const styles = StyleSheet.create({
     container: {
        flex: 1,
        // marginTop: Constants.statusBarHeight,
+    },
+    paragraph1:{
+      margin: 24,
+      fontSize: 25,
+      marginTop:5,
+      marginBottom:5,
     },
     contentContainer: {
        paddingTop: 15,
@@ -126,12 +135,16 @@ const styles = StyleSheet.create({
     title: {
        fontSize: 30,
        padding: 5,
-       fontFamily: "Josefin",
+       //fontFamily: "Josefin",
     },
-    NormalText:{
-      fontSize: 20,
-      padding: 5,
-      fontFamily: "Josefin",
+    paragraph:{
+      margin: 24,
+      fontSize: 15,
+      marginTop: 5,
+      marginBottom:5,
+      padding: 10,
+      color:0x555,
+      //fontFamily: "Josefin",
     },
     image: {
        width: 50,
@@ -143,4 +156,3 @@ const styles = StyleSheet.create({
     },
  });
 
-}
