@@ -12,7 +12,9 @@ import * as Font from 'expo-font';
 import arrow from '../assets/images/simple-down-arrow.png';
 import { SearchBar } from 'react-native-elements';
 import { WALLET_ID } from '../constants'
+import socketIOClient from "socket.io-client";
 
+var dataSize=0;
 
 function useInterval(callback, delay) {
    const savedCallback = React.useRef();
@@ -89,7 +91,7 @@ function CredentialsScreen({ navigation }) {
      })
    }
    getWalletID()
-   // console.log(walletID+"In Credentials Screen")
+   console.log(walletID+"In Credentials Screen")
    
    searchFilterFunction = (text, arrayholder) => {
       setSearchText(text);
@@ -225,29 +227,37 @@ function CredentialsScreen({ navigation }) {
 
 function ConnectionsScreen() {
 
-   //var walletID = WALLET_ID;
-
-   const [wallets, setWallets] = React.useState([]);
-   const [connectionName, setConnectionName] = React.useState("");
-   const [arraySize, setArraySize] = React.useState(0);
-   const [DATA, setData] = React.useState([]);
+   const [connectionsDataArray, setConnectionsDataArray] = React.useState([]);
    const [empty, setEmpty] = React.useState(true);
-   var index = 0;
-   const [walletID,setWalletID] = React.useState();
-
-   async function getWalletID()
-   {
-     await AsyncStorage.getItem('userinfo').then((data) => {
-       let dataInfo = JSON.parse(data);
-       //console.log(dataInfo)
-       if (dataInfo) {
-         setWalletID( dataInfo.walletId );
-       }
-     })
-   }
-   getWalletID()
-   // console.log(walletID+"In Connections Screen")
    
+  React.useEffect(() => {
+
+   const socket = socketIOClient('http://192.168.1.4:5002/');// Change This to your IP Address
+   console.log(socket.connected)
+   socket.on("ConnectionsData", async data => {
+
+     if (dataSize != data.length) {
+      setConnectionsDataArray(data);
+      console.log("changing3")
+      
+      if(data.length>0)
+         setEmpty(false)
+      else
+         setEmpty(true)
+   
+     }
+     console.log(connectionsDataArray.length)
+     dataSize = data.length;
+   });
+   if(connectionsDataArray.length>0)
+      setEmpty(false)
+   else
+      setEmpty(true)
+
+   return () => socket.disconnect();
+ }, [connectionsDataArray]);
+
+
 
    function Item({ title, url }) {
       return (
@@ -256,43 +266,6 @@ function ConnectionsScreen() {
             <Text style={styles.title}>{title}</Text>
          </View>
       );
-   }
-
-   useInterval(() => {
-      // Your custom logic here
-      fetchConnections();
-   }, waitFor);
-
-   async function fetchConnections() {
-
-      await Font.loadAsync({
-         Josefin: require('../assets/fonts/JosefinSans-SemiBold.ttf'),
-      });
-
-      const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/connections', {
-         method: 'GET',
-         headers: {
-            Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
-            XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
-            Accept: 'application/json',
-         },
-      });
-      res.json().then(res => setWallets(res)).then(setConnectionName(wallets[0].name)).then(setArraySize(wallets.length))
-      if (arraySize > currArraySize) {
-         currArraySize = arraySize;
-         for (let index = 0; index < arraySize; index++) {
-            const credentialsData = wallets[index]
-            const obj = { id: credentialsData.connectionId, title: credentialsData.name, image: credentialsData.imageUrl };
-            setData(add(DATA, obj.id, obj))
-            connectionsData = add(connectionsData, obj.id, obj)
-            ///to make the index with the connectionID
-         }
-      }
-      // //console.log(DATA);
-      if(currArraySize>0)
-         setEmpty(false)
-      else
-         setEmpty(true)
    }
 
    return (
@@ -314,7 +287,7 @@ function ConnectionsScreen() {
             (
                <SafeAreaView style={styles.container}>
                   <FlatList
-                     data={DATA}
+                     data={connectionsDataArray}
                      renderItem={({ item }) => <Item title={item.title} url={item.image} />}
                      keyExtractor={item => item.id.toString()}
                      ItemSeparatorComponent={FlatListItemSeparator}
@@ -449,7 +422,6 @@ const styles = StyleSheet.create({
    title: {
       fontSize: 20,
       padding: 5,
-      fontFamily: "Josefin",
    },
    image: {
       width: 50,

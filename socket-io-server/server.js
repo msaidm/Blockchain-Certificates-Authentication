@@ -17,16 +17,15 @@ const io = socketIo(server);
 let interval;
 var connectionDataArray = []
 var issuedCredentials = [];
-
-//let walletID;
-const walletID= 'CeQq0v5QY9g3c8yqzoTQKQVyc5hbzcnH8';
+var connectionDetailsArray =[]
+let walletID;
 
 
 io.on("connection", (socket) => {
   console.log("Client connected");
   socket.on('connection', data => {
-    console.log('hey', data);
-    //walletID = data;
+   // console.log('hey', data);
+    walletID = data;
   });
   fetchCredentials(socket);
   if (interval) {
@@ -98,8 +97,34 @@ async function fetchVerifications() {
   }
 }
 
+async function fetchConnections(walletID) {
+
+
+  const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/connections', {
+     method: 'GET',
+     headers: {
+        Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
+        XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
+        Accept: 'application/json',
+     },
+  });
+  var connections=await res.json()
+  console.log(connections.length)
+
+  if (connections.length>0) {
+     for (let index = 0; index < connections.length; index++) {
+        const obj = { id: connections[index].connectionId, title: connections[index].name, image: connections[index].imageUrl };
+        // setData(add(DATA, obj.id, obj))
+        connectionDetailsArray = addConnectionDetails(connectionDetailsArray, obj.id, obj)
+        //console.log(connectionDetailsArray)
+        ///to make the index with the connectionID
+     }
+  }
+}
 const fetchCredentials = async socket => {
   fetchVerifications();
+  fetchConnections(walletID);
+
   var offeredCredentials = []
   var connectionDetails = []
   const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/credentials', {
@@ -130,21 +155,19 @@ const fetchCredentials = async socket => {
     }
     else if (cred[index].state == "Issued") {
       const data = cred[index].values
-      //to add a credential and if condition
       const obj = { id: cred[index].credentialId, sname: data.Name, sgpa: data.GPA, syear: data.Year, type: data.Type, connID: cred[index].connectionId, schemaId: cred[index].schemaId }
-      // issuedCredentials.push(obj)
       issuedCredentials = addConnectionDetails(issuedCredentials, obj.id, obj);
-      //console.log(issuedCredentials)
-     // console.log("Iam printing cred array from server side");
-      //console.log(cred);
-      // setValues(addConnectionDetails(values, credentials[index].credentialId, obj));
-    }
+      for (let index2 = 0; index2 < connectionDataArray.length; index2++) {
+        if (connectionDataArray[index2].credentialId == cred[index].credentialId) {
+          connectionDataArray.splice(index2, 1)
+        }
 
+      }
+    }
   }
 
-  //  console.log(offeredCredentials.length)
-  //  console.log(connectionDetails.length)
-  //  console.log(connectionDataArray.length)
+    // console.log(offeredCredentials.length)
+    // console.log(connectionDetails.length)
 
   if (connectionDetails.length > 0) {
     for (let index = 0; index < offeredCredentials.length; index++) {
@@ -157,29 +180,28 @@ const fetchCredentials = async socket => {
     }
   }
 
-  for (let index = 0; index < cred.length; index++) {
-    if (cred[index].state == "Issued") {
-      // console.log("hena")
-      for (let index2 = 0; index2 < connectionDataArray.length; index2++) {
-        if (connectionDataArray[index2].credentialId == cred[index].credentialId) {
-          connectionDataArray.splice(index2, 1)
-        }
-      }
-    }
-  }
+  // for (let index = 0; index < cred.length; index++) {
+  //   if (cred[index].state == "Issued") {
+  //     // console.log("hena")
+  //     for (let index2 = 0; index2 < connectionDataArray.length; index2++) {
+  //       if (connectionDataArray[index2].credentialId == cred[index].credentialId) {
+  //         connectionDataArray.splice(index2, 1)
+  //       }
+  //     }
+  //   }
+  // }
 
 
 
 
 
-  // console.log(connectionDataArray.length)
+  //console.log(connectionDataArray.length)
   socket.emit("FromAPI", connectionDataArray);
   socket.emit("IssuedCred", issuedCredentials);
-
+  socket.emit("ConnectionsData", connectionDetailsArray);
   //console.log("My wallet"+walletID)
 
 
 }
 
 server.listen(port, () => console.log(`Listening on port ${port}`));
-
