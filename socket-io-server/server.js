@@ -18,20 +18,21 @@ let interval;
 var connectionDataArray = []
 var issuedCredentials = [];
 
-let walletID;
+//let walletID;
+const walletID= 'CeQq0v5QY9g3c8yqzoTQKQVyc5hbzcnH8';
 
 
 io.on("connection", (socket) => {
   console.log("Client connected");
   socket.on('connection', data => {
     console.log('hey', data);
-    walletID = data;
+    //walletID = data;
   });
   fetchCredentials(socket);
   if (interval) {
     clearInterval(interval);
   }
-  interval = setInterval(() => fetchCredentials(socket), 1000);
+  interval = setInterval(() => fetchCredentials(socket), 2000);
   socket.on("disconnect", () => {
     console.log("Client disconnected");
   });
@@ -134,6 +135,8 @@ const fetchCredentials = async socket => {
       // issuedCredentials.push(obj)
       issuedCredentials = addConnectionDetails(issuedCredentials, obj.id, obj);
       console.log(issuedCredentials)
+     // console.log("Iam printing cred array from server side");
+      //console.log(cred);
       // setValues(addConnectionDetails(values, credentials[index].credentialId, obj));
     }
 

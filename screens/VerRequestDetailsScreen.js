@@ -10,10 +10,11 @@ export default function VerReqDetailsScreen({ route, navigation }) {
     // var walletID = getWalletID();
     const [arraySize2, setArraySize2] = React.useState(0);
     const [credentials, setCredentials] = React.useState([]);
-    const [walletID, setWalletID] = React.useState();
+    //const [walletID, setWalletID] = React.useState();
     const [credentialDataArray, setCredentialDataArray] = React.useState([]);
     const [count, setCount] = React.useState(true);
     let dataSize = 0;
+    const walletID='CeQq0v5QY9g3c8yqzoTQKQVyc5hbzcnH8';
     var currArraySize2 = 0;
     const [values, setValues] = React.useState([]);
     const { Item } = route.params;
@@ -36,10 +37,10 @@ export default function VerReqDetailsScreen({ route, navigation }) {
 
     React.useEffect(() => {
 
-        const socket = socketIOClient('http://192.168.1.47:5002/');// Change This to your IP Address
+        const socket = socketIOClient('http://192.168.1.8:5002/');// Change This to your IP Address
         console.log(socket.connected)
 
-        getWalletID()
+    //    getWalletID()
         console.log(walletID + " in VerReqDetails")
         // socket.emit('connection', walletID)
         socket.on("IssuedCred", async data => {
@@ -73,7 +74,7 @@ export default function VerReqDetailsScreen({ route, navigation }) {
 
 
         return () => socket.disconnect();
-    }, [walletID]);
+    }, [credentialDataArray]);
 
     function add(arr, myID, object) {
         // const { length } = arr;
@@ -133,13 +134,13 @@ export default function VerReqDetailsScreen({ route, navigation }) {
                 </View>
                 <View style={styles.alternativeLayoutButtonContainer}>
                     <Button
-                        title="Present"
-                    //onPress={() => acceptButton(walletID, credentialId)}
+                        title="Find a Credential"
+                        onPress={() => navigation.navigate("CredsForVers",
+                        {
+                          Values: credentialDataArray
+                        })}
                     />
-                    <Button
-                        title="Decline"
-                    //onPress={() => declineButton()}
-                    />
+                    
                 </View>
             </Card>
         </View>

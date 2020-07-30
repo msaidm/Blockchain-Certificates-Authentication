@@ -11,7 +11,8 @@ export default function HomeScreen({ route, navigation }) {
   const [connectionDataArray, setConnectionDataArray] = React.useState([]);
   const [count, setCount] = React.useState(true);
   let dataSize = 0;
-  const [walletID, setWalletID] = React.useState();
+  //const [walletID, setWalletID] = React.useState();
+  const walletID='CeQq0v5QY9g3c8yqzoTQKQVyc5hbzcnH8';
 
 
   async function getWalletID() {
@@ -26,10 +27,10 @@ export default function HomeScreen({ route, navigation }) {
 
   React.useEffect(() => {
 
-    const socket = socketIOClient('http://192.168.1.47:5002/');// Change This to your IP Address
+    const socket = socketIOClient('http://192.168.1.8:5002/');// Change This to your IP Address
     console.log(socket.connected)
 
-    getWalletID()
+   // getWalletID()
     console.log(walletID + "in Home")
     socket.emit('connection', walletID)
     socket.on("FromAPI", async data => {

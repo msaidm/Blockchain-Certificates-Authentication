@@ -15,6 +15,7 @@ import HomeScreen from './screens/HomeScreen';
 import OfferDetailsScreen from './screens/OfferDetailsScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import VerRequestDetails from './screens/VerRequestDetailsScreen';
+import CredsForVers from './screens/CredsForVers';
 
 const Stack = createStackNavigator();
 
@@ -108,6 +109,7 @@ export default function App(props) {
             <Stack.Screen name="Details" component={DetailsScreen}/>
             <Stack.Screen name="OfferDetails" component={OfferDetailsScreen}/>
             <Stack.Screen name="VerificationRequestDetails" component={VerRequestDetails}/>
+            <Stack.Screen name="CredsForVers" component={CredsForVers}/>
             <Stack.Screen name="HomeScreen" 
             component={HomeScreen} 
             initialParams={{ text: 'Ya Rab' }}
