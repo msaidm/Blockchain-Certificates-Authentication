@@ -20,10 +20,41 @@ export default function VerReqDetailsScreen({ route, navigation }) {
     const { Item } = route.params;
     const { image } = route.params;
     const { name } = route.params;
-    const { VerificationId } = route.params;
+    const { verificationId } = route.params;
+   // console.log("Printing current Ver ID: "+ verificationId);
+    const{ ChosenCredID }=route.params;
+    //console.log("Printing Chosen Credential ID: " + ChosenCredID);
+    
     var value1 = "pending";
     var value2 = "pending";
     var value3 = "pending";
+    const Nameconst="Name";
+    const Yearconst="Year";
+    const GPAconst="GPA";
+    const verificationPolicyCredentialParametersArray=[];
+    var object1={policyName:{Nameconst} , credentialId:{ChosenCredID}}
+    var object2={policyName:{Yearconst} , credentialId:{ChosenCredID}}
+    var object3={policyName:{GPAconst} , credentialId:{ChosenCredID}}
+    verificationPolicyCredentialParametersArray.push(object1);
+    verificationPolicyCredentialParametersArray.push(object2);
+    verificationPolicyCredentialParametersArray.push(object3);
+    function updatingValuesPending(){
+        if(ChosenCredID != null && credentialDataArray !=null)
+        {
+            for(var i=0;i<credentialDataArray.length;i++)
+            {
+                if(credentialDataArray[i].id==ChosenCredID)
+                {
+                    value1=credentialDataArray[i].sname;
+                    value2=credentialDataArray[i].syear;
+                    value3=credentialDataArray[i].sgpa;
+                }
+                else
+                    console.log("Credential not present");
+            }
+        }
+    }
+    updatingValuesPending();
 
     async function getWalletID() {
         await AsyncStorage.getItem('userinfo').then((data) => {
@@ -41,18 +72,18 @@ export default function VerReqDetailsScreen({ route, navigation }) {
         console.log(socket.connected)
 
     //    getWalletID()
-        console.log(walletID + " in VerReqDetails")
+        //console.log(walletID + " in VerReqDetails")
         // socket.emit('connection', walletID)
         socket.on("IssuedCred", async data => {
-            console.log("GOWA EL ISSUEDDD")
-            console.log("before data " + data.length)
-            console.log("before original " + dataSize)
+            //console.log("GOWA EL ISSUEDDD")
+            //console.log("before data " + data.length)
+            //console.log("before original " + dataSize)
             // console.log(data)
 
             if (dataSize < data.length) {
                 setCredentialDataArray(data);
                 // console.log(data)
-                console.log("changing2")
+                //console.log("changing2")
                 // console.log(credentialDataArray)
                 if (data.length > 0)
                     setCount(true)
@@ -61,7 +92,7 @@ export default function VerReqDetailsScreen({ route, navigation }) {
             }
 
             dataSize = data.length;
-            console.log(credentialDataArray)
+            //console.log(credentialDataArray)
         });
 
         if (credentialDataArray.length > 0)
@@ -69,8 +100,8 @@ export default function VerReqDetailsScreen({ route, navigation }) {
         else
             setCount(false)
 
-        console.log("ana zehe2ttt")
-        console.log(credentialDataArray)
+        //console.log("ana zehe2ttt")
+        //console.log(credentialDataArray)
 
 
         return () => socket.disconnect();
@@ -85,6 +116,23 @@ export default function VerReqDetailsScreen({ route, navigation }) {
         }
         return arr;
     }
+
+    async function SubmitVerificationData() {
+        const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/verifications/'+ verificationId , {
+          method: 'PUT',
+          headers: {
+            Accept: 'application/json',
+            "Content-Type": 'application/json',
+          },
+          body: JSON.stringify({
+            "walletId": walletID,
+            "verificationId": verificationId ,
+            "verificationPolicyCredentialParametersArray":verificationPolicyCredentialParametersArray 
+          }),
+        });
+        res.json().then(console.log(JSON.stringify(res)))
+    
+      }
 
     async function fetchCredentials() {
         const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/credentials', {
@@ -103,12 +151,12 @@ export default function VerReqDetailsScreen({ route, navigation }) {
         for (let index = 0; index < arraySize2; index++) {
             const state = credentials[index].state
             if (state == "Issued") {
-                console.log("I entered the if of issued");
+                //console.log("I entered the if of issued");
                 const data = credentials[index].values
                 //to add a credential and if condition
                 const obj = { id: credentials[index].credentialId, sname: data.Name, sgpa: data.GPA, syear: data.Year, type: data.Type, connID: credentials[index].connectionId, SchemaID: credentials[index].schemaId }
                 setValues(add(values, credentials[index].credentialId, obj));
-                console.log("values:", values)
+                //console.log("values:", values)
             }
         }
         // if(currArraySize2>0)
@@ -140,6 +188,15 @@ export default function VerReqDetailsScreen({ route, navigation }) {
                           Values: credentialDataArray
                         })}
                     />
+                     <Button
+                        title="Present"
+                       // onPress={() => SubmitVerificationData()}
+                    />
+                    <Button
+                        title="Decline"
+                        onPress={() => navigation.navigate("HomeScreen")}
+                    />
+    
                     
                 </View>
             </Card>
@@ -165,9 +222,9 @@ const styles = StyleSheet.create({
     },
     paragraph: {
         margin: 24,
-        fontSize: 18,
+        fontSize: 15,
         fontWeight: 'bold',
-        textAlign: 'center',
+        textAlign: 'left',
         color: '#34495e',
     },
     title: {

@@ -28,7 +28,7 @@ export default function HomeScreen({ route, navigation }) {
   React.useEffect(() => {
 
     const socket = socketIOClient('http://192.168.1.8:5002/');// Change This to your IP Address
-    console.log(socket.connected)
+    //console.log(socket.connected)
 
    // getWalletID()
     console.log(walletID + "in Home")
@@ -38,7 +38,7 @@ export default function HomeScreen({ route, navigation }) {
 
       if (dataSize != data.length) {
         setConnectionDataArray(data);
-        console.log("changing")
+        //console.log("changing")
         if (data.length > 0)
           setCount(true)
         else
@@ -126,6 +126,8 @@ export default function HomeScreen({ route, navigation }) {
                 }
                 else if (item.type == "Verification") {
                   const atts = { att1: "Name", att2: "Year", att3: "GPA" };
+                  //console.log("Printing the whole Item From Home: ");
+                  //console.log(item);
                   return <ItemV title={item.title} url={item.image} verificationId={item.verificationId} AttReq={atts} />;
                 }
               }

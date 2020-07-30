@@ -11,6 +11,8 @@ export default function OfferDetailsScreen({ route, navigation }) {
   const { credentialId } = route.params;
 
   const [walletID, setWalletID] = React.useState();
+ 
+
 
   async function getWalletID() {
     await AsyncStorage.getItem('userinfo').then((data) => {
@@ -42,7 +44,7 @@ export default function OfferDetailsScreen({ route, navigation }) {
     res.json().then(console.log(JSON.stringify(res)))
 
   }
-
+  
   async function acceptButton(walletID, credentialID) {
     var fetchURLForAcceptInvitaion = 'https://api.streetcred.id/custodian/v1/api/' + walletID + '/credentials/' + credentialID;
     const res = await fetch(fetchURLForAcceptInvitaion, {

@@ -134,7 +134,7 @@ const fetchCredentials = async socket => {
       const obj = { id: cred[index].credentialId, sname: data.Name, sgpa: data.GPA, syear: data.Year, type: data.Type, connID: cred[index].connectionId, schemaId: cred[index].schemaId }
       // issuedCredentials.push(obj)
       issuedCredentials = addConnectionDetails(issuedCredentials, obj.id, obj);
-      console.log(issuedCredentials)
+      //console.log(issuedCredentials)
      // console.log("Iam printing cred array from server side");
       //console.log(cred);
       // setValues(addConnectionDetails(values, credentials[index].credentialId, obj));
