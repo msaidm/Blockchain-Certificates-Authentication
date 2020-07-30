@@ -28,16 +28,24 @@ export default function VerReqDetailsScreen({ route, navigation }) {
     var value1 = "pending";
     var value2 = "pending";
     var value3 = "pending";
-    const Nameconst="Name";
-    const Yearconst="Year";
-    const GPAconst="GPA";
-    const verificationPolicyCredentialParametersArray=[];
-    var object1={policyName:{Nameconst} , credentialId:{ChosenCredID}}
-    var object2={policyName:{Yearconst} , credentialId:{ChosenCredID}}
-    var object3={policyName:{GPAconst} , credentialId:{ChosenCredID}}
+    const PolicyName="Name";
+    var credentialId=ChosenCredID;
+    const Name_req="Name"
+    const Year_req="Year";
+    const GPA_req="GPA";
+    const True="true";
+    const False="false";
+    var verificationPolicyCredentialParametersArray=[];
+    var object1={credentialId:ChosenCredID , policyName:Name_req}
+    var object2={credentialId:ChosenCredID,policyName:Year_req}
+    var object3={credentialId:ChosenCredID, policyName:GPA_req}
     verificationPolicyCredentialParametersArray.push(object1);
     verificationPolicyCredentialParametersArray.push(object2);
     verificationPolicyCredentialParametersArray.push(object3);
+   // console.log("PRINTING THE SUBMIT ARRAY HEREEEEE");
+    //console.log(verificationPolicyCredentialParametersArray);
+
+
     function updatingValuesPending(){
         if(ChosenCredID != null && credentialDataArray !=null)
         {
@@ -118,6 +126,7 @@ export default function VerReqDetailsScreen({ route, navigation }) {
     }
 
     async function SubmitVerificationData() {
+        console.log("I ENTER THE SUBMIT FUNCTIONNNN");
         const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/verifications/'+ verificationId , {
           method: 'PUT',
           headers: {
@@ -127,7 +136,21 @@ export default function VerReqDetailsScreen({ route, navigation }) {
           body: JSON.stringify({
             "walletId": walletID,
             "verificationId": verificationId ,
-            "verificationPolicyCredentialParametersArray":verificationPolicyCredentialParametersArray 
+            "verificationPolicyCredentialParametersArray":[
+                {
+                  "policyName": "Name",
+                  "credentialId": ChosenCredID
+                  
+                },
+                    {
+                      "policyName": "Year",
+                      "credentialId": ChosenCredID
+                    },
+                    {
+                        "policyName": "GPA",
+                        "credentialId": ChosenCredID
+                      }  
+              ]
           }),
         });
         res.json().then(console.log(JSON.stringify(res)))
@@ -190,7 +213,7 @@ export default function VerReqDetailsScreen({ route, navigation }) {
                     />
                      <Button
                         title="Present"
-                       // onPress={() => SubmitVerificationData()}
+                       onPress={() => SubmitVerificationData()}
                     />
                     <Button
                         title="Decline"
