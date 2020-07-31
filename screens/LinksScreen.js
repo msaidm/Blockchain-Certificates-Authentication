@@ -11,7 +11,7 @@ import Constants from 'expo-constants';
 import * as Font from 'expo-font';
 import arrow from '../assets/images/simple-down-arrow.png';
 import { SearchBar } from 'react-native-elements';
-import { WALLET_ID } from '../constants'
+import { WALLET_ID, IP_address } from '../constants'
 import socketIOClient from "socket.io-client";
 
 var dataSize=0;
@@ -91,7 +91,7 @@ function CredentialsScreen({ navigation }) {
      })
    }
    getWalletID()
-   console.log(walletID+"In Credentials Screen")
+   // console.log(walletID+"In Credentials Screen")
    
    searchFilterFunction = (text, arrayholder) => {
       setSearchText(text);
@@ -232,7 +232,7 @@ function ConnectionsScreen() {
    
   React.useEffect(() => {
 
-   const socket = socketIOClient('http://192.168.1.4:5002/');// Change This to your IP Address
+   const socket = socketIOClient(IP_address);// Change This to your IP Address
    console.log(socket.connected)
    socket.on("ConnectionsData", async data => {
 

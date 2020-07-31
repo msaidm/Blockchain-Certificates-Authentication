@@ -17,14 +17,15 @@ const io = socketIo(server);
 let interval;
 var connectionDataArray = []
 var issuedCredentials = [];
-var connectionDetailsArray =[]
+var issuedBachelorCredentials = []
+var connectionDetailsArray = []
 let walletID;
 
 
 io.on("connection", (socket) => {
   console.log("Client connected");
   socket.on('connection', data => {
-   // console.log('hey', data);
+    // console.log('hey', data);
     walletID = data;
   });
   fetchCredentials(socket);
@@ -101,24 +102,24 @@ async function fetchConnections(walletID) {
 
 
   const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/connections', {
-     method: 'GET',
-     headers: {
-        Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
-        XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
-        Accept: 'application/json',
-     },
+    method: 'GET',
+    headers: {
+      Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
+      XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
+      Accept: 'application/json',
+    },
   });
-  var connections=await res.json()
+  var connections = await res.json()
   console.log(connections.length)
 
-  if (connections.length>0) {
-     for (let index = 0; index < connections.length; index++) {
-        const obj = { id: connections[index].connectionId, title: connections[index].name, image: connections[index].imageUrl };
-        // setData(add(DATA, obj.id, obj))
-        connectionDetailsArray = addConnectionDetails(connectionDetailsArray, obj.id, obj)
-        //console.log(connectionDetailsArray)
-        ///to make the index with the connectionID
-     }
+  if (connections.length > 0) {
+    for (let index = 0; index < connections.length; index++) {
+      const obj = { id: connections[index].connectionId, title: connections[index].name, image: connections[index].imageUrl };
+      // setData(add(DATA, obj.id, obj))
+      connectionDetailsArray = addConnectionDetails(connectionDetailsArray, obj.id, obj)
+      //console.log(connectionDetailsArray)
+      ///to make the index with the connectionID
+    }
   }
 }
 const fetchCredentials = async socket => {
@@ -154,6 +155,11 @@ const fetchCredentials = async socket => {
 
     }
     else if (cred[index].state == "Issued") {
+      if (cred[index].values.Type == "Bachelor Degree") {
+        const data = cred[index].values
+        const obj = { id: cred[index].credentialId, sname: data.Name, sgpa: data.GPA, syear: data.Year, type: data.Type, connID: cred[index].connectionId, schemaId: cred[index].schemaId }
+        issuedBachelorCredentials = addConnectionDetails(issuedBachelorCredentials, obj.id, obj);
+      }
       const data = cred[index].values
       const obj = { id: cred[index].credentialId, sname: data.Name, sgpa: data.GPA, syear: data.Year, type: data.Type, connID: cred[index].connectionId, schemaId: cred[index].schemaId }
       issuedCredentials = addConnectionDetails(issuedCredentials, obj.id, obj);
@@ -166,8 +172,8 @@ const fetchCredentials = async socket => {
     }
   }
 
-    // console.log(offeredCredentials.length)
-    // console.log(connectionDetails.length)
+  // console.log(offeredCredentials.length)
+  // console.log(connectionDetails.length)
 
   if (connectionDetails.length > 0) {
     for (let index = 0; index < offeredCredentials.length; index++) {
@@ -194,10 +200,11 @@ const fetchCredentials = async socket => {
 
 
 
-
+  console.log(issuedCredentials)
   //console.log(connectionDataArray.length)
   socket.emit("FromAPI", connectionDataArray);
   socket.emit("IssuedCred", issuedCredentials);
+  socket.emit("BachelorCreds", issuedBachelorCredentials)
   socket.emit("ConnectionsData", connectionDetailsArray);
   //console.log("My wallet"+walletID)
 

@@ -1,10 +1,10 @@
 {
   "devToolsPort": 19002,
-  "expoServerPort": null,
-  "packagerPort": null,
-  "packagerPid": null,
-  "expoServerNgrokUrl": null,
-  "packagerNgrokUrl": null,
-  "ngrokPid": null,
+  "expoServerPort": 19000,
+  "packagerPort": 19001,
+  "packagerPid": 15941,
+  "expoServerNgrokUrl": "https://bf-p7a.anonymous.blockchain-certificates-authentication.exp.direct",
+  "packagerNgrokUrl": "https://packager.bf-p7a.anonymous.blockchain-certificates-authentication.exp.direct",
+  "ngrokPid": 15974,
   "webpackServerPort": null
 }

@@ -3,6 +3,7 @@ import { Platform, StyleSheet, Text, TouchableOpacity, View, Button, FlatList, S
 import * as WebBrowser from 'expo-web-browser';
 import { Card } from 'react-native-elements';
 import socketIOClient from "socket.io-client";
+import { IP_address } from '../constants'
 
 console.disableYellowBox = true;
 
@@ -27,7 +28,7 @@ export default function HomeScreen({ route, navigation }) {
 
   React.useEffect(() => {
 
-    const socket = socketIOClient('http://192.168.1.8:5002/');// Change This to your IP Address
+    const socket = socketIOClient(IP_address);// Change This to your IP Address
     //console.log(socket.connected)
 
    // getWalletID()

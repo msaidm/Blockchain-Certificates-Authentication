@@ -5,6 +5,8 @@ import { Card } from 'react-native-elements';
 import { RectButton, ScrollView } from 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import socketIOClient from "socket.io-client";
+import { IP_address } from '../constants'
+import verArray from '../VerificationArray.json'
 
 export default function VerReqDetailsScreen({ route, navigation }) {
     // var walletID = getWalletID();
@@ -14,48 +16,48 @@ export default function VerReqDetailsScreen({ route, navigation }) {
     const [credentialDataArray, setCredentialDataArray] = React.useState([]);
     const [count, setCount] = React.useState(true);
     let dataSize = 0;
-    const walletID='CeQq0v5QY9g3c8yqzoTQKQVyc5hbzcnH8';
+    const walletID = 'CeQq0v5QY9g3c8yqzoTQKQVyc5hbzcnH8';
     var currArraySize2 = 0;
     const [values, setValues] = React.useState([]);
     const { Item } = route.params;
     const { image } = route.params;
     const { name } = route.params;
     const { verificationId } = route.params;
-   // console.log("Printing current Ver ID: "+ verificationId);
-    const{ ChosenCredID }=route.params;
+    console.log(verificationId)
+    // console.log("Printing current Ver ID: "+ verificationId);
+    const { ChosenCredID } = route.params;
     //console.log("Printing Chosen Credential ID: " + ChosenCredID);
-    
+
     var value1 = "pending";
     var value2 = "pending";
     var value3 = "pending";
-    const PolicyName="Name";
-    var credentialId=ChosenCredID;
-    const Name_req="Name"
-    const Year_req="Year";
-    const GPA_req="GPA";
-    const True="true";
-    const False="false";
-    var verificationPolicyCredentialParametersArray=[];
-    var object1={credentialId:ChosenCredID , policyName:Name_req}
-    var object2={credentialId:ChosenCredID,policyName:Year_req}
-    var object3={credentialId:ChosenCredID, policyName:GPA_req}
+    const PolicyName = "Name";
+    var credentialId = ChosenCredID;
+    const Name_req = "Name"
+    const Year_req = "Year";
+    const GPA_req = "GPA";
+    const True = "true";
+    const False = "false";
+    var verificationPolicyCredentialParametersArray = [];
+    var object1 = { credentialId: ChosenCredID, policyName: Name_req }
+    var object2 = { credentialId: ChosenCredID, policyName: Year_req }
+    var object3 = { credentialId: ChosenCredID, policyName: GPA_req }
     verificationPolicyCredentialParametersArray.push(object1);
     verificationPolicyCredentialParametersArray.push(object2);
     verificationPolicyCredentialParametersArray.push(object3);
-   // console.log("PRINTING THE SUBMIT ARRAY HEREEEEE");
+
+    // ==============================================================================
+    // console.log("PRINTING THE SUBMIT ARRAY HEREEEEE");
     //console.log(verificationPolicyCredentialParametersArray);
 
 
-    function updatingValuesPending(){
-        if(ChosenCredID != null && credentialDataArray !=null)
-        {
-            for(var i=0;i<credentialDataArray.length;i++)
-            {
-                if(credentialDataArray[i].id==ChosenCredID)
-                {
-                    value1=credentialDataArray[i].sname;
-                    value2=credentialDataArray[i].syear;
-                    value3=credentialDataArray[i].sgpa;
+    function updatingValuesPending() {
+        if (ChosenCredID != null && credentialDataArray != null) {
+            for (var i = 0; i < credentialDataArray.length; i++) {
+                if (credentialDataArray[i].id == ChosenCredID) {
+                    value1 = credentialDataArray[i].sname;
+                    value2 = credentialDataArray[i].syear;
+                    value3 = credentialDataArray[i].sgpa;
                 }
                 else
                     console.log("Credential not present");
@@ -76,23 +78,23 @@ export default function VerReqDetailsScreen({ route, navigation }) {
 
     React.useEffect(() => {
 
-        const socket = socketIOClient('http://192.168.1.8:5002/');// Change This to your IP Address
+        const socket = socketIOClient(IP_address);// Change This to your IP Address
         console.log(socket.connected)
 
-    //    getWalletID()
+        //    getWalletID()
         //console.log(walletID + " in VerReqDetails")
         // socket.emit('connection', walletID)
         socket.on("IssuedCred", async data => {
-            //console.log("GOWA EL ISSUEDDD")
-            //console.log("before data " + data.length)
-            //console.log("before original " + dataSize)
+            console.log("GOWA EL ISSUEDDD")
+            console.log("before data " + data.length)
+            console.log("before original " + dataSize)
             // console.log(data)
 
             if (dataSize < data.length) {
                 setCredentialDataArray(data);
                 // console.log(data)
                 //console.log("changing2")
-                // console.log(credentialDataArray)
+                console.log(credentialDataArray)
                 if (data.length > 0)
                     setCount(true)
                 else
@@ -125,37 +127,43 @@ export default function VerReqDetailsScreen({ route, navigation }) {
         return arr;
     }
 
+    console.log(verArray)
+
     async function SubmitVerificationData() {
         console.log("I ENTER THE SUBMIT FUNCTIONNNN");
-        const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/verifications/'+ verificationId , {
-          method: 'PUT',
-          headers: {
-            Accept: 'application/json',
-            "Content-Type": 'application/json',
-          },
-          body: JSON.stringify({
-            "walletId": walletID,
-            "verificationId": verificationId ,
-            "verificationPolicyCredentialParametersArray":[
-                {
-                  "policyName": "Name",
-                  "credentialId": ChosenCredID
-                  
-                },
-                    {
-                      "policyName": "Year",
-                      "credentialId": ChosenCredID
-                    },
-                    {
-                        "policyName": "GPA",
-                        "credentialId": ChosenCredID
-                      }  
-              ]
-          }),
+        console.log(verificationId)
+        const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/verifications/' + verificationId, {
+            method: 'PUT',
+            headers: {
+                Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
+                XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
+                Accept: 'application/json',
+                "Content-Type": 'application/json',
+            },
+            body: JSON.stringify({
+                "walletId": walletID,
+                "verificationId": verificationId,
+                verificationPolicyCredentialParametersArray : verArray
+                // [
+                //     {
+                //         "policyName": "Name",
+                //         "credentialId": ChosenCredID
+
+                //     },
+                //     {
+                //         "policyName": "Year",
+                //         "credentialId": ChosenCredID
+                //     },
+                //     {
+                //         "policyName": "GPA",
+                //         "credentialId": ChosenCredID
+                //     }
+                // ]                
+            }),
         });
         res.json().then(console.log(JSON.stringify(res)))
-    
-      }
+
+    }
 
     async function fetchCredentials() {
         const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/credentials', {
@@ -207,20 +215,20 @@ export default function VerReqDetailsScreen({ route, navigation }) {
                     <Button
                         title="Find a Credential"
                         onPress={() => navigation.navigate("CredsForVers",
-                        {
-                          Values: credentialDataArray
-                        })}
+                            {
+                                Values: credentialDataArray
+                            })}
                     />
-                     <Button
+                    <Button
                         title="Present"
-                       onPress={() => SubmitVerificationData()}
+                        onPress={() => SubmitVerificationData()}
                     />
                     <Button
                         title="Decline"
                         onPress={() => navigation.navigate("HomeScreen")}
                     />
-    
-                    
+
+
                 </View>
             </Card>
         </View>
