@@ -47,6 +47,22 @@ export default function VerReqDetailsScreen({ route, navigation }) {
     verificationPolicyCredentialParametersArray.push(object3);
 
     // ==============================================================================
+    var verificationArray = JSON.stringify([
+        {
+            "policyName": "Name",
+            "credentialId": ChosenCredID
+        },
+        {
+            "policyName": "GPA",
+            "credentialId": ChosenCredID
+        },
+        {
+            "policyName": "Year",
+            "credentialId": ChosenCredID
+        }
+    ])
+    // console.log(arr)
+
     // console.log("PRINTING THE SUBMIT ARRAY HEREEEEE");
     //console.log(verificationPolicyCredentialParametersArray);
 
@@ -85,16 +101,16 @@ export default function VerReqDetailsScreen({ route, navigation }) {
         //console.log(walletID + " in VerReqDetails")
         // socket.emit('connection', walletID)
         socket.on("IssuedCred", async data => {
-            console.log("GOWA EL ISSUEDDD")
-            console.log("before data " + data.length)
-            console.log("before original " + dataSize)
+            // console.log("GOWA EL ISSUEDDD")
+            // console.log("before data " + data.length)
+            // console.log("before original " + dataSize)
             // console.log(data)
 
             if (dataSize < data.length) {
                 setCredentialDataArray(data);
                 // console.log(data)
                 //console.log("changing2")
-                console.log(credentialDataArray)
+                // console.log(credentialDataArray)
                 if (data.length > 0)
                     setCount(true)
                 else
@@ -127,11 +143,11 @@ export default function VerReqDetailsScreen({ route, navigation }) {
         return arr;
     }
 
-    console.log(verArray)
+    // console.log(verArray)
 
     async function SubmitVerificationData() {
         console.log("I ENTER THE SUBMIT FUNCTIONNNN");
-        console.log(verificationId)
+        // console.log(verificationId)
         const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/verifications/' + verificationId, {
             method: 'PUT',
             headers: {
@@ -140,29 +156,17 @@ export default function VerReqDetailsScreen({ route, navigation }) {
                 Accept: 'application/json',
                 "Content-Type": 'application/json',
             },
-            body: JSON.stringify({
-                "walletId": walletID,
-                "verificationId": verificationId,
-                verificationPolicyCredentialParametersArray : verArray
-                // [
-                //     {
-                //         "policyName": "Name",
-                //         "credentialId": ChosenCredID
-
-                //     },
-                //     {
-                //         "policyName": "Year",
-                //         "credentialId": ChosenCredID
-                //     },
-                //     {
-                //         "policyName": "GPA",
-                //         "credentialId": ChosenCredID
-                //     }
-                // ]                
-            }),
+            body: verificationArray
+            ,
         });
+        if(!res.ok)
+        {
+            res.text().then(text => {throw Error(text)}).catch(err => {
+                console.log('caught it!',err);
+             })
+        }
         res.json().then(console.log(JSON.stringify(res)))
-
+        
     }
 
     async function fetchCredentials() {

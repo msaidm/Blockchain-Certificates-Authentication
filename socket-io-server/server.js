@@ -100,7 +100,6 @@ async function fetchVerifications() {
 
 async function fetchConnections(walletID) {
 
-
   const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/connections', {
     method: 'GET',
     headers: {
