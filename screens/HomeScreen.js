@@ -42,10 +42,10 @@ export default function HomeScreen({ route, navigation }) {
         
         console.log(connectionDataArray)
         console.log("changing")
-        // if (data.length > 0)
+         if (data.length > 0)
           setCount(true)
-        // else
-          // setCount(false)
+        else
+          setCount(false)
 
 
         dataSize = data.length;
@@ -54,10 +54,10 @@ export default function HomeScreen({ route, navigation }) {
 
     con
     });
-    // if (connectionDataArray.length > 0)
+     if (connectionDataArray.length > 0)
       setCount(true)
-    // else
-    //   setCount(false)
+    else
+      setCount(false)
 
 
 
