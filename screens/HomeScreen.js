@@ -6,14 +6,14 @@ import socketIOClient from "socket.io-client";
 import { IP_address } from '../constants'
 
 console.disableYellowBox = true;
-
+var dataSize =0;
 export default function HomeScreen({ route, navigation }) {
 
   const [connectionDataArray, setConnectionDataArray] = React.useState([]);
   const [count, setCount] = React.useState(true);
-  let dataSize = 0;
-  //const [walletID, setWalletID] = React.useState();
-  const walletID='CeQq0v5QY9g3c8yqzoTQKQVyc5hbzcnH8';
+  //let dataSize = 0;
+  const [walletID, setWalletID] = React.useState();
+  //const walletID='CeQq0v5QY9g3c8yqzoTQKQVyc5hbzcnH8';
 
 
   async function getWalletID() {
@@ -31,32 +31,38 @@ export default function HomeScreen({ route, navigation }) {
     const socket = socketIOClient(IP_address);// Change This to your IP Address
     //console.log(socket.connected)
 
-   // getWalletID()
+    getWalletID()
     console.log(walletID + "in Home")
     socket.emit('connection', walletID)
     socket.on("FromAPI", async data => {
 
-
       if (dataSize != data.length) {
         setConnectionDataArray(data);
-        //console.log("changing")
-        if (data.length > 0)
-          setCount(true)
-        else
-          setCount(false)
-      }
 
-      dataSize = data.length;
+        
+        console.log(connectionDataArray)
+        console.log("changing")
+        // if (data.length > 0)
+          setCount(true)
+        // else
+          // setCount(false)
+
+
+        dataSize = data.length;
+      }
+      
+
+    con
     });
-    if (connectionDataArray.length > 0)
+    // if (connectionDataArray.length > 0)
       setCount(true)
-    else
-      setCount(false)
+    // else
+    //   setCount(false)
 
 
 
     return () => socket.disconnect();
-  }, [walletID]);
+  }, [connectionDataArray.length,dataSize,walletID]);
 
   function ItemC({ title, url, credentialId }) { //for credential items
     return (

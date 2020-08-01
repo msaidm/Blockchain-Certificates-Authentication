@@ -17,6 +17,7 @@ export default function QRScanner({ navigation }) {
   // var userName = 'Home'; // This will be changed will sign up page is ready 
   // var userWalletID;
   const [walletID,setWalletID] = React.useState();
+  //const walletID='CeQq0v5QY9g3c8yqzoTQKQVyc5hbzcnH8';
 
 
   async function getWalletID()

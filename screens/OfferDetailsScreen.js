@@ -11,7 +11,7 @@ export default function OfferDetailsScreen({ route, navigation }) {
   const { credentialId } = route.params;
 
   const [walletID, setWalletID] = React.useState();
- 
+  //const walletID='CeQq0v5QY9g3c8yqzoTQKQVyc5hbzcnH8';
 
 
   async function getWalletID() {
@@ -24,7 +24,7 @@ export default function OfferDetailsScreen({ route, navigation }) {
     })
   }
   getWalletID()
-  console.log(walletID + "In offer details Screen")
+  //console.log(walletID + "In offer details Screen")
 
   //console.log(Item.credentialId);
   // var walletID = WALLET_ID;

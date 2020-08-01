@@ -91,7 +91,7 @@ async function fetchVerifications() {
     if (ver[index].state == "Accepted") {
       for (let index3 = 0; index3 < connectionDataArray.length; index3++) {
         if (connectionDataArray[index3].verificationId == ver[index].verificationId) {
-          connectionDataArray.splice(index2, 1)
+          connectionDataArray.splice(index3, 1)
         }
       }
     }
@@ -109,7 +109,7 @@ async function fetchConnections(walletID) {
     },
   });
   var connections = await res.json()
-  console.log(connections.length)
+  //console.log(connections.length)
 
   if (connections.length > 0) {
     for (let index = 0; index < connections.length; index++) {
@@ -158,16 +158,18 @@ const fetchCredentials = async socket => {
         const data = cred[index].values
         const obj = { id: cred[index].credentialId, sname: data.Name, sgpa: data.GPA, syear: data.Year, type: data.Type, connID: cred[index].connectionId, schemaId: cred[index].schemaId }
         issuedBachelorCredentials = addConnectionDetails(issuedBachelorCredentials, obj.id, obj);
+
       }
       const data = cred[index].values
       const obj = { id: cred[index].credentialId, sname: data.Name, sgpa: data.GPA, syear: data.Year, type: data.Type, connID: cred[index].connectionId, schemaId: cred[index].schemaId }
       issuedCredentials = addConnectionDetails(issuedCredentials, obj.id, obj);
-      for (let index2 = 0; index2 < connectionDataArray.length; index2++) {
-        if (connectionDataArray[index2].credentialId == cred[index].credentialId) {
-          connectionDataArray.splice(index2, 1)
-        }
+      console.log(issuedBachelorCredentials)
+      // for (let index2 = 0; index2 < connectionDataArray.length; index2++) {
+      //   if (connectionDataArray[index2].credentialId == cred[index].credentialId) {
+      //     connectionDataArray.splice(index2, 1)
+      //   }
 
-      }
+      // }
     }
   }
 
@@ -185,21 +187,21 @@ const fetchCredentials = async socket => {
     }
   }
 
-  // for (let index = 0; index < cred.length; index++) {
-  //   if (cred[index].state == "Issued") {
-  //     // console.log("hena")
-  //     for (let index2 = 0; index2 < connectionDataArray.length; index2++) {
-  //       if (connectionDataArray[index2].credentialId == cred[index].credentialId) {
-  //         connectionDataArray.splice(index2, 1)
-  //       }
-  //     }
-  //   }
-  // }
+  for (let index = 0; index < cred.length; index++) {
+    if (cred[index].state == "Issued") {
+      // console.log("hena")
+      for (let index2 = 0; index2 < connectionDataArray.length; index2++) {
+        if (connectionDataArray[index2].credentialId == cred[index].credentialId) {
+          connectionDataArray.splice(index2, 1)
+        }
+      }
+    }
+  }
 
 
 
 
-  console.log(issuedCredentials)
+  //  console.log(issuedCredentials)
   //console.log(connectionDataArray.length)
   socket.emit("FromAPI", connectionDataArray);
   socket.emit("IssuedCred", issuedCredentials);

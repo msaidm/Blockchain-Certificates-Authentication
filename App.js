@@ -26,7 +26,7 @@ export default function App(props) {
   const containerRef = React.useRef();
   const { getInitialState } = useLinking(containerRef);
 
-//  AsyncStorage.removeItem('userinfo')
+  //AsyncStorage.removeItem('userinfo')
 
   AsyncStorage.getItem('userinfo').then((data) => {
     let walletcreated = JSON.parse(data);

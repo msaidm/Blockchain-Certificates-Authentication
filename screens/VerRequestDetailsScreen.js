@@ -5,15 +5,15 @@ import { Card } from 'react-native-elements';
 import { RectButton, ScrollView } from 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import socketIOClient from "socket.io-client";
-import { IP_address } from '../constants'
+import { IP_address,ngrok2 } from '../constants'
 import verArray from '../VerificationArray.json'
 
 export default function VerReqDetailsScreen({ route, navigation }) {
-    //const [walletID, setWalletID] = React.useState();
+    const [walletID, setWalletID] = React.useState();
     const [credentialDataArray, setCredentialDataArray] = React.useState([]);
     const [count, setCount] = React.useState(true);
     let dataSize = 0;
-    const walletID = 'CeQq0v5QY9g3c8yqzoTQKQVyc5hbzcnH8';
+    //const walletID = 'CeQq0v5QY9g3c8yqzoTQKQVyc5hbzcnH8';
     const { Item } = route.params;
     const { image } = route.params;
     const { name } = route.params;
@@ -92,7 +92,7 @@ export default function VerReqDetailsScreen({ route, navigation }) {
         const socket = socketIOClient(IP_address);// Change This to your IP Address
         console.log(socket.connected)
 
-        //    getWalletID()
+            getWalletID()
         //console.log(walletID + " in VerReqDetails")
         // socket.emit('connection', walletID)
         socket.on("IssuedCred", async data => {
@@ -169,7 +169,7 @@ export default function VerReqDetailsScreen({ route, navigation }) {
     }
 
     async function sendAcceptVerificationNotification() {
-        const res = await fetch(ngrok + '/webhook', {
+        const res = await fetch(ngrok2 + '/webhook', {
           method: 'POST',
           headers: {
             Accept: 'application/json',

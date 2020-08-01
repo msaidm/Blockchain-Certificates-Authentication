@@ -1,16 +1,12 @@
 import * as React from 'react';
-import { Header, Component } from 'react';
-import { StyleSheet, Text, View, FlatList, SafeAreaView, Image } from 'react-native';
+import { StyleSheet, Text, View, Image } from 'react-native';
 import { Card } from 'react-native-elements';
-import { RectButton, ScrollView } from 'react-native-gesture-handler';
-import { NavigationContainer } from '@react-navigation/native';
 
 export default function DetailsScreen({ route, navigation }) {
   const { Item } = route.params;
   const { image } = route.params
   const { name } = route.params
-  // const { itemGPA } = route.params;
-  // const {itemYear}= route.params;
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{name}</Text>
@@ -22,10 +18,7 @@ export default function DetailsScreen({ route, navigation }) {
       </Card>
     </View>
 
-    //<View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-    //  <Text>Details: </Text>
-    //  <Text>Script Details: {JSON.stringify(Item)}</Text>
-    //    </View>
+
   );
 
 }

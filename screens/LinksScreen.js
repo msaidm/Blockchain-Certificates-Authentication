@@ -3,19 +3,16 @@ import { Header, Component } from 'react';
 import { StyleSheet, AsyncStorage, Text, View, FlatList, SafeAreaView, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { RectButton, ScrollView } from 'react-native-gesture-handler';
-import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import Constants from 'expo-constants';
-import * as Font from 'expo-font';
 import arrow from '../assets/images/simple-down-arrow.png';
 import { SearchBar } from 'react-native-elements';
-import { WALLET_ID, IP_address } from '../constants'
+import { IP_address } from '../constants'
 import socketIOClient from "socket.io-client";
 
 var dataSize = 0;
 var dataSize2 = 0
-
+var connectionsData = [];
 const Tab = createMaterialTopTabNavigator();
 
 FlatListItemSeparator = () => {
@@ -31,46 +28,22 @@ FlatListItemSeparator = () => {
 }
 
 
-function add(arr, myID, object) {
-   // const { length } = arr;
-   // const id = length + 1;
-   const found = arr.some(el => el.id == myID);
-   if (!found) {
-      arr.push(object);
-   }
-   return arr;
-}
-
-async function getWalletID() {
-   await AsyncStorage.getItem('userinfo').then((data) => {
-      let dataInfo = JSON.parse(data);
-      //console.log(dataInfo)
-      if (dataInfo) {
-         setWalletID(dataInfo.walletId);
-      }
-   })
-}
-
-var connectionsData = [];
-
 function CredentialsScreen({ navigation }) {
 
    const [credentials, setCredentials] = React.useState([]);
-   // const [arraySize2, setArraySize2] = React.useState(0);
-   // const [values, setValues] = React.useState([]);
    const [searchText, setSearchText] = React.useState("");
    const [empty, setEmpty] = React.useState(true);
 
    React.useEffect(() => {
 
-      // getWalletID()
-
       const socket = socketIOClient(IP_address);// Change This to your IP Address
       console.log(socket.connected)
+    
       socket.on("IssuedCred", async data => {
 
          if (dataSize2 != data.length) {
             setCredentials(data);
+            console.log(credentials)
             console.log("changing4")
 
             if (data.length > 0)
@@ -88,12 +61,12 @@ function CredentialsScreen({ navigation }) {
          setEmpty(true)
 
       return () => socket.disconnect();
-   }, [credentials]);
+   }, [credentials.length]);
 
 
    // console.log(walletID+"In Credentials Screen")
 
-   searchFilterFunction = (text, arrayholder) => {
+   const searchFilterFunction = (text, arrayholder) => {
       setSearchText(text);
       // console.log("arrayholder: ", arrayholder)
       const newData = arrayholder.filter(function (item) {
@@ -116,7 +89,7 @@ function CredentialsScreen({ navigation }) {
    function Item({ objectt }) {
       var img, title;
       var connId = objectt.connID;
-      for (i = 0; i < connectionsData.length; i++) {
+      for (let i = 0; i < connectionsData.length; i++) {
          if (connectionsData[i].id == connId) {
             img = connectionsData[i].image
             title = connectionsData[i].title
@@ -158,7 +131,7 @@ function CredentialsScreen({ navigation }) {
                :
                (
                   <SafeAreaView style={styles.container}>
-                     <SearchBar
+                     {/* <SearchBar
                         lightTheme
                         round
                         onChangeText={text => searchFilterFunction(text, credentials)}
@@ -166,7 +139,7 @@ function CredentialsScreen({ navigation }) {
                         // autoCorrect={false}
                         value={searchText}
                         showLoading={false}
-                        placeholder="Type Here..." />
+                        placeholder="Type Here..." /> */}
                      <FlatList
                         data={credentials}
                         renderItem={({ item }) => <Item objectt={item} />}
