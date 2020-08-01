@@ -42,7 +42,6 @@ export default function OfferDetailsScreen({ route, navigation }) {
       }),
     });
     res.json().then(console.log(JSON.stringify(res)))
-
   }
   
   async function acceptButton(walletID, credentialID) {

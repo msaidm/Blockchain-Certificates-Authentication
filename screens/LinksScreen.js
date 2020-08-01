@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Header, Component } from 'react';
 import { StyleSheet, AsyncStorage, Text, View, FlatList, SafeAreaView, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import * as WebBrowser from 'expo-web-browser';
 import { RectButton, ScrollView } from 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -17,28 +16,7 @@ import socketIOClient from "socket.io-client";
 var dataSize = 0;
 var dataSize2 = 0
 
-function useInterval(callback, delay) {
-   const savedCallback = React.useRef();
-
-   // Remember the latest function.
-   React.useEffect(() => {
-      savedCallback.current = callback;
-   }, [callback]);
-
-   // Set up the interval.
-   React.useEffect(() => {
-      function tick() {
-         savedCallback.current();
-      }
-      if (delay !== null) {
-         let id = setInterval(tick, delay);
-         return () => clearInterval(id);
-      }
-   }, [delay]);
-}
-
 const Tab = createMaterialTopTabNavigator();
-const waitFor = 5000;
 
 FlatListItemSeparator = () => {
    return (
@@ -73,24 +51,15 @@ async function getWalletID() {
    })
 }
 
-var connectionName;
-var connectionsArray = [""];
-var currArraySize = 0;
-var currArraySize2 = 0;
 var connectionsData = [];
-var credentialsData = [];
 
 function CredentialsScreen({ navigation }) {
-   //var walletID = WALLET_ID;
-
-   //var connectionID = "d418f248-33a4-428c-aff1-1eeb00079e52";
 
    const [credentials, setCredentials] = React.useState([]);
    // const [arraySize2, setArraySize2] = React.useState(0);
    // const [values, setValues] = React.useState([]);
    const [searchText, setSearchText] = React.useState("");
    const [empty, setEmpty] = React.useState(true);
-   const [walletID, setWalletID] = React.useState();
 
    React.useEffect(() => {
 
@@ -169,46 +138,6 @@ function CredentialsScreen({ navigation }) {
             <Image source={arrow} style={{ width: 20, height: 20, alignSelf: 'flex-end' }} />
          </TouchableOpacity>
       );
-   }
-
-
-   // useInterval(() => {
-   //    // Your custom logic here
-   //    fetchCredentials();
-   // }, waitFor);
-
-   async function fetchCredentials() {
-      const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/credentials', {
-         method: 'GET',
-         headers: {
-            Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
-            XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
-            Accept: 'application/json',
-         },
-      });
-      res.json().then(res => setCredentials(res)).then(setArraySize2(credentials.length))
-      // //console.log(arraySize2);
-
-      // console.log("size: " + arraySize2)
-      currArraySize2 = arraySize2;
-      for (let index = 0; index < arraySize2; index++) {
-         const state = credentials[index].state
-         if (state == "Issued") {
-            const data = credentials[index].values
-            //to add a credential and if condition
-            const obj = { id: credentials[index].credentialId, sname: data.Name, sgpa: data.GPA, syear: data.Year, type: data.Type, connID: credentials[index].connectionId }
-            setValues(add(values, credentials[index].credentialId, obj));
-            // console.log("values:", values)
-         }
-
-         else {
-
-         }
-      }
-      if (currArraySize2 > 0)
-         setEmpty(false)
-      else
-         setEmpty(true)
    }
 
    return (

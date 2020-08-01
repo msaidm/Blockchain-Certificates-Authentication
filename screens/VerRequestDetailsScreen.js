@@ -160,9 +160,27 @@ export default function VerReqDetailsScreen({ route, navigation }) {
                 console.log('caught it!',err);
              })
         }
+        else if(res.ok)
+        {
+            sendAcceptVerificationNotification()
+        }
         res.json().then(console.log(JSON.stringify(res)))
         
     }
+
+    async function sendAcceptVerificationNotification() {
+        const res = await fetch(ngrok + '/webhook', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            "Content-Type": 'application/json',
+          },
+          body: JSON.stringify({
+            "message_type": "verification_request"
+          }),
+        });
+        res.json().then(console.log(JSON.stringify(res)))
+      }
 
 
     return (
