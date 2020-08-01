@@ -9,16 +9,11 @@ import { IP_address } from '../constants'
 import verArray from '../VerificationArray.json'
 
 export default function VerReqDetailsScreen({ route, navigation }) {
-    // var walletID = getWalletID();
-    const [arraySize2, setArraySize2] = React.useState(0);
-    const [credentials, setCredentials] = React.useState([]);
     //const [walletID, setWalletID] = React.useState();
     const [credentialDataArray, setCredentialDataArray] = React.useState([]);
     const [count, setCount] = React.useState(true);
     let dataSize = 0;
     const walletID = 'CeQq0v5QY9g3c8yqzoTQKQVyc5hbzcnH8';
-    var currArraySize2 = 0;
-    const [values, setValues] = React.useState([]);
     const { Item } = route.params;
     const { image } = route.params;
     const { name } = route.params;
@@ -169,38 +164,6 @@ export default function VerReqDetailsScreen({ route, navigation }) {
         
     }
 
-    async function fetchCredentials() {
-        const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/credentials', {
-            method: 'GET',
-            headers: {
-                Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
-                XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
-                Accept: 'application/json',
-            },
-        });
-        res.json().then(res => setCredentials(res)).then(setArraySize2(credentials.length))
-        // console.log(arraySize2);
-
-        // console.log("size: " + arraySize2)
-        currArraySize2 = arraySize2;
-        for (let index = 0; index < arraySize2; index++) {
-            const state = credentials[index].state
-            if (state == "Issued") {
-                //console.log("I entered the if of issued");
-                const data = credentials[index].values
-                //to add a credential and if condition
-                const obj = { id: credentials[index].credentialId, sname: data.Name, sgpa: data.GPA, syear: data.Year, type: data.Type, connID: credentials[index].connectionId, SchemaID: credentials[index].schemaId }
-                setValues(add(values, credentials[index].credentialId, obj));
-                //console.log("values:", values)
-            }
-        }
-        // if(currArraySize2>0)
-        //    setEmpty(false)
-        // else
-        //    setEmpty(true)
-    }
-
-    // fetchCredentials()
 
     return (
         <View>

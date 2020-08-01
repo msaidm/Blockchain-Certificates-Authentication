@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Header, Component } from 'react';
-import { StyleSheet,AsyncStorage, Text, View, FlatList, SafeAreaView, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, AsyncStorage, Text, View, FlatList, SafeAreaView, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as WebBrowser from 'expo-web-browser';
 import { RectButton, ScrollView } from 'react-native-gesture-handler';
@@ -14,7 +14,8 @@ import { SearchBar } from 'react-native-elements';
 import { WALLET_ID, IP_address } from '../constants'
 import socketIOClient from "socket.io-client";
 
-var dataSize=0;
+var dataSize = 0;
+var dataSize2 = 0
 
 function useInterval(callback, delay) {
    const savedCallback = React.useRef();
@@ -62,11 +63,22 @@ function add(arr, myID, object) {
    return arr;
 }
 
+async function getWalletID() {
+   await AsyncStorage.getItem('userinfo').then((data) => {
+      let dataInfo = JSON.parse(data);
+      //console.log(dataInfo)
+      if (dataInfo) {
+         setWalletID(dataInfo.walletId);
+      }
+   })
+}
+
 var connectionName;
 var connectionsArray = [""];
 var currArraySize = 0;
 var currArraySize2 = 0;
 var connectionsData = [];
+var credentialsData = [];
 
 function CredentialsScreen({ navigation }) {
    //var walletID = WALLET_ID;
@@ -74,25 +86,44 @@ function CredentialsScreen({ navigation }) {
    //var connectionID = "d418f248-33a4-428c-aff1-1eeb00079e52";
 
    const [credentials, setCredentials] = React.useState([]);
-   const [arraySize2, setArraySize2] = React.useState(0);
-   const [values, setValues] = React.useState([]);
+   // const [arraySize2, setArraySize2] = React.useState(0);
+   // const [values, setValues] = React.useState([]);
    const [searchText, setSearchText] = React.useState("");
    const [empty, setEmpty] = React.useState(true);
-   const [walletID,setWalletID] = React.useState();
+   const [walletID, setWalletID] = React.useState();
 
-   async function getWalletID()
-   {
-     await AsyncStorage.getItem('userinfo').then((data) => {
-       let dataInfo = JSON.parse(data);
-       //console.log(dataInfo)
-       if (dataInfo) {
-         setWalletID( dataInfo.walletId );
-       }
-     })
-   }
-   getWalletID()
+   React.useEffect(() => {
+
+      // getWalletID()
+
+      const socket = socketIOClient(IP_address);// Change This to your IP Address
+      console.log(socket.connected)
+      socket.on("IssuedCred", async data => {
+
+         if (dataSize2 != data.length) {
+            setCredentials(data);
+            console.log("changing4")
+
+            if (data.length > 0)
+               setEmpty(false)
+            else
+               setEmpty(true)
+
+         }
+         console.log(credentials.length)
+         dataSize2 = data.length;
+      });
+      if (credentials.length > 0)
+         setEmpty(false)
+      else
+         setEmpty(true)
+
+      return () => socket.disconnect();
+   }, [credentials]);
+
+
    // console.log(walletID+"In Credentials Screen")
-   
+
    searchFilterFunction = (text, arrayholder) => {
       setSearchText(text);
       // console.log("arrayholder: ", arrayholder)
@@ -109,7 +140,7 @@ function CredentialsScreen({ navigation }) {
 
       // console.log("newData: ", newData)
 
-      setValues(newData);
+      setCredentials(newData);
    };
 
 
@@ -140,16 +171,11 @@ function CredentialsScreen({ navigation }) {
       );
    }
 
-   // React.useEffect(() => {
-   //    (async () => {
-   //       fetchCredentials();
-   //    })();
-   // }, [credentials]);
 
-   useInterval(() => {
-      // Your custom logic here
-      fetchCredentials();
-   }, waitFor);
+   // useInterval(() => {
+   //    // Your custom logic here
+   //    fetchCredentials();
+   // }, waitFor);
 
    async function fetchCredentials() {
       const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/credentials', {
@@ -179,49 +205,49 @@ function CredentialsScreen({ navigation }) {
 
          }
       }
-      if(currArraySize2>0)
+      if (currArraySize2 > 0)
          setEmpty(false)
       else
          setEmpty(true)
    }
 
    return (
-      <View  style={styles.container}>
-      {
-         empty?
-         (
-            <View style={styles.welcomeContainer}> 
-             <Image
-            source={
-              __DEV__
-                ? require('../assets/images/cred.jpg')
-                : require('../assets/images/robot-prod.png')
-            }
-            style={styles.welcomeImage}/>
-          </View>
-         )
-         :
-         (
-            <SafeAreaView style={styles.container}>
-               <SearchBar
-                  lightTheme
-                  round
-                  onChangeText={text => searchFilterFunction(text, values)}
-                  onClear={text => searchFilterFunction('', values)}
-                  // autoCorrect={false}
-                  value={searchText}
-                  showLoading={false}
-                  placeholder="Type Here..." />
-               <FlatList
-                  data={values}
-                  renderItem={({ item }) => <Item objectt={item} />}
-                  keyExtractor={item => item.id.toString()}
-                  ItemSeparatorComponent={FlatListItemSeparator}/>
-            </SafeAreaView>
-         )
-      }
+      <View style={styles.container}>
+         {
+            empty ?
+               (
+                  <View style={styles.welcomeContainer}>
+                     <Image
+                        source={
+                           __DEV__
+                              ? require('../assets/images/cred.jpg')
+                              : require('../assets/images/robot-prod.png')
+                        }
+                        style={styles.welcomeImage} />
+                  </View>
+               )
+               :
+               (
+                  <SafeAreaView style={styles.container}>
+                     <SearchBar
+                        lightTheme
+                        round
+                        onChangeText={text => searchFilterFunction(text, credentials)}
+                        onClear={text => searchFilterFunction('', credentials)}
+                        // autoCorrect={false}
+                        value={searchText}
+                        showLoading={false}
+                        placeholder="Type Here..." />
+                     <FlatList
+                        data={credentials}
+                        renderItem={({ item }) => <Item objectt={item} />}
+                        keyExtractor={item => item.id.toString()}
+                        ItemSeparatorComponent={FlatListItemSeparator} />
+                  </SafeAreaView>
+               )
+         }
       </View>
-      
+
    );
 }
 
@@ -229,33 +255,33 @@ function ConnectionsScreen() {
 
    const [connectionsDataArray, setConnectionsDataArray] = React.useState([]);
    const [empty, setEmpty] = React.useState(true);
-   
-  React.useEffect(() => {
 
-   const socket = socketIOClient(IP_address);// Change This to your IP Address
-   console.log(socket.connected)
-   socket.on("ConnectionsData", async data => {
+   React.useEffect(() => {
 
-     if (dataSize != data.length) {
-      setConnectionsDataArray(data);
-      console.log("changing3")
-      
-      if(data.length>0)
+      const socket = socketIOClient(IP_address);// Change This to your IP Address
+      console.log(socket.connected)
+      socket.on("ConnectionsData", async data => {
+
+         if (dataSize != data.length) {
+            setConnectionsDataArray(data);
+            console.log("changing3")
+
+            if (data.length > 0)
+               setEmpty(false)
+            else
+               setEmpty(true)
+
+         }
+         console.log(connectionsDataArray.length)
+         dataSize = data.length;
+      });
+      if (connectionsDataArray.length > 0)
          setEmpty(false)
       else
          setEmpty(true)
-   
-     }
-     console.log(connectionsDataArray.length)
-     dataSize = data.length;
-   });
-   if(connectionsDataArray.length>0)
-      setEmpty(false)
-   else
-      setEmpty(true)
 
-   return () => socket.disconnect();
- }, [connectionsDataArray]);
+      return () => socket.disconnect();
+   }, [connectionsDataArray]);
 
 
 
@@ -271,29 +297,29 @@ function ConnectionsScreen() {
    return (
       <View style={styles.container}>
          {
-            empty?
-            (
-               <View style={styles.welcomeContainer}> 
-                  <Image
-                  source={
-                  __DEV__
-                     ? require('../assets/images/conn.jpg')
-                     : require('../assets/images/robot-prod.png')
-               }
-               style={styles.welcomeImage}/>
-               </View>
-            )
-            :
-            (
-               <SafeAreaView style={styles.container}>
-                  <FlatList
-                     data={connectionsDataArray}
-                     renderItem={({ item }) => <Item title={item.title} url={item.image} />}
-                     keyExtractor={item => item.id.toString()}
-                     ItemSeparatorComponent={FlatListItemSeparator}
-                  />
-               </SafeAreaView>
-            )
+            empty ?
+               (
+                  <View style={styles.welcomeContainer}>
+                     <Image
+                        source={
+                           __DEV__
+                              ? require('../assets/images/conn.jpg')
+                              : require('../assets/images/robot-prod.png')
+                        }
+                        style={styles.welcomeImage} />
+                  </View>
+               )
+               :
+               (
+                  <SafeAreaView style={styles.container}>
+                     <FlatList
+                        data={connectionsDataArray}
+                        renderItem={({ item }) => <Item title={item.title} url={item.image} />}
+                        keyExtractor={item => item.id.toString()}
+                        ItemSeparatorComponent={FlatListItemSeparator}
+                     />
+                  </SafeAreaView>
+               )
          }
       </View>
    );
@@ -384,14 +410,14 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       marginTop: 10,
       marginBottom: 20,
-    },
-    welcomeImage: {
+   },
+   welcomeImage: {
       width: 150,
       height: 180,
       resizeMode: 'contain',
       marginTop: 100,
       marginLeft: -10,
-    },
+   },
    optionIconContainer: {
       marginRight: 12,
    },
