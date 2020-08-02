@@ -23,15 +23,16 @@ let walletID;
 
 
 io.on("connection", (socket) => {
+  
   console.log("Client connected");
-  socket.on('connection', data => {
-    // console.log('hey', data);
+  socket.on('sendWalletIDOnConnection', data => {
+    console.log('wallet Id from the client'+ data);
     walletID = data;
   });
   fetchCredentials(socket);
-  if (interval) {
-    clearInterval(interval);
-  }
+  // if (interval) {
+  //   clearInterval(interval);
+  // }
   interval = setInterval(() => fetchCredentials(socket), 2000);
   socket.on("disconnect", () => {
     console.log("Client disconnected");
@@ -163,7 +164,7 @@ const fetchCredentials = async socket => {
       const data = cred[index].values
       const obj = { id: cred[index].credentialId, sname: data.Name, sgpa: data.GPA, syear: data.Year, type: data.Type, connID: cred[index].connectionId, schemaId: cred[index].schemaId }
       issuedCredentials = addConnectionDetails(issuedCredentials, obj.id, obj);
-      console.log(issuedBachelorCredentials)
+      console.log(issuedBachelorCredentials.length + "dah lenghth el issued cred")
       // for (let index2 = 0; index2 < connectionDataArray.length; index2++) {
       //   if (connectionDataArray[index2].credentialId == cred[index].credentialId) {
       //     connectionDataArray.splice(index2, 1)

@@ -4,6 +4,7 @@ import * as WebBrowser from 'expo-web-browser';
 import { Card } from 'react-native-elements';
 import socketIOClient from "socket.io-client";
 import { IP_address } from '../constants'
+//import {socket} from "../service/socket";
 
 console.disableYellowBox = true;
 var dataSize =0;
@@ -26,14 +27,16 @@ export default function HomeScreen({ route, navigation }) {
   }
 
 
-  React.useEffect(() => {
+  React.useEffect(()  => {
 
-    const socket = socketIOClient(IP_address);// Change This to your IP Address
-    //console.log(socket.connected)
+   const socket = socketIOClient(IP_address);// Change This to your IP Address
 
     getWalletID()
     console.log(walletID + "in Home")
-    socket.emit('connection', walletID)
+    socket.emit('sendWalletIDOnConnection', walletID)
+    socket.on("disconnect", () => {
+      console.log("Home Client disconnected");
+    });
     socket.on("FromAPI", async data => {
 
       if (dataSize != data.length) {
@@ -49,10 +52,12 @@ export default function HomeScreen({ route, navigation }) {
 
 
         dataSize = data.length;
+        console.log(socket.connected)
+
       }
       
 
-    con
+    
     });
      if (connectionDataArray.length > 0)
       setCount(true)
@@ -62,7 +67,7 @@ export default function HomeScreen({ route, navigation }) {
 
 
     return () => socket.disconnect();
-  }, [connectionDataArray.length,dataSize,walletID]);
+  }, [walletID]);
 
   function ItemC({ title, url, credentialId }) { //for credential items
     return (

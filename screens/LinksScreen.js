@@ -9,6 +9,7 @@ import arrow from '../assets/images/simple-down-arrow.png';
 import { SearchBar } from 'react-native-elements';
 import { IP_address } from '../constants'
 import socketIOClient from "socket.io-client";
+//import {socket} from "../service/socket";
 
 var dataSize = 0;
 var dataSize2 = 0
@@ -37,7 +38,10 @@ function CredentialsScreen({ navigation }) {
    React.useEffect(() => {
 
       const socket = socketIOClient(IP_address);// Change This to your IP Address
-      console.log(socket.connected)
+      //console.log(socket.connected)
+      socket.on("disconnect", () => {
+         console.log("Cred Client disconnected");
+       });
     
       socket.on("IssuedCred", async data => {
 
@@ -160,9 +164,13 @@ function ConnectionsScreen() {
 
    React.useEffect(() => {
 
-      const socket = socketIOClient(IP_address);// Change This to your IP Address
-      console.log(socket.connected)
+     const socket = socketIOClient(IP_address);// Change This to your IP Address
+      //console.log(socket.connected)
+      socket.on("disconnect", () => {
+         console.log("Connection Client disconnected");
+       });
       socket.on("ConnectionsData", async data => {
+
 
          if (dataSize != data.length) {
             setConnectionsDataArray(data);
