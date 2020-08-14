@@ -34,6 +34,7 @@ function CredentialsScreen({ navigation }) {
    const [credentials, setCredentials] = React.useState([]);
    const [searchText, setSearchText] = React.useState("");
    const [empty, setEmpty] = React.useState(true);
+   const [masterDegree, setMasterDegree] = React.useState(true);
 
    React.useEffect(() => {
 
@@ -42,6 +43,10 @@ function CredentialsScreen({ navigation }) {
       socket.on("disconnect", () => {
          console.log("Cred Client disconnected");
        });
+       
+
+       
+
     
       socket.on("IssuedCred", async data => {
 
@@ -91,8 +96,9 @@ function CredentialsScreen({ navigation }) {
 
 
    function Item({ objectt }) {
-      var img, title;
+      var img, title,masterDegree;
       var connId = objectt.connID;
+      var masterDegreeAfterNotifi=masterDegree;
       for (let i = 0; i < connectionsData.length; i++) {
          if (connectionsData[i].id == connId) {
             img = connectionsData[i].image
@@ -106,6 +112,7 @@ function CredentialsScreen({ navigation }) {
                   Item: objectt,
                   image: img,
                   name: title,
+                  masterDe: masterDegreeAfterNotifi
                })}
             style={[
                styles.item,

@@ -22,6 +22,24 @@ var connectionDetailsArray = []
 let walletID;
 
 
+app.post('/webhook', async function (req, res) {
+  try {
+      //console.log("got webhook" + req + "   type: " + req.body.message_type);
+      //if (req.body.message_type === 'MasterDegree_offer') {
+            console.log("new Master Degree notif");
+            interval = setInterval(() => io.emit("masterDegreeNotif",true), 2000);
+
+            
+            console.log("ba3at master deg")
+            
+      //}
+  }
+  catch (e) {
+      console.log(e.message || e.toString());
+  }
+});
+
+
 io.on("connection", (socket) => {
   
   console.log("Client connected");
