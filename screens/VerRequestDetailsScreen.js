@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Header, Component } from 'react';
-import { StyleSheet, Text, View, FlatList, SafeAreaView, Image, Button, AsyncStorage } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View, FlatList, SafeAreaView, Image, Button, AsyncStorage } from 'react-native';
 import { Card } from 'react-native-elements';
 import { RectButton, ScrollView } from 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import socketIOClient from "socket.io-client";
-import { IP_address,ngrok2 } from '../constants'
+import { IP_address, ngrok2 } from '../constants'
 import verArray from '../VerificationArray.json'
 
 export default function VerReqDetailsScreen({ route, navigation }) {
@@ -92,7 +92,7 @@ export default function VerReqDetailsScreen({ route, navigation }) {
         const socket = socketIOClient(IP_address);// Change This to your IP Address
         console.log(socket.connected)
 
-            getWalletID()
+        getWalletID()
         //console.log(walletID + " in VerReqDetails")
         // socket.emit('connection', walletID)
         socket.on("IssuedCred", async data => {
@@ -154,33 +154,31 @@ export default function VerReqDetailsScreen({ route, navigation }) {
             body: verificationArray
             ,
         });
-        if(!res.ok)
-        {
-            res.text().then(text => {throw Error(text)}).catch(err => {
-                console.log('caught it!',err);
-             })
+        if (!res.ok) {
+            res.text().then(text => { throw Error(text) }).catch(err => {
+                console.log('caught it!', err);
+            })
         }
-        else if(res.ok)
-        {
+        else if (res.ok) {
             sendAcceptVerificationNotification()
         }
         res.json().then(console.log(JSON.stringify(res)))
-        
+
     }
 
     async function sendAcceptVerificationNotification() {
         const res = await fetch(ngrok2 + '/webhook', {
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            "Content-Type": 'application/json',
-          },
-          body: JSON.stringify({
-            "message_type": "verification_request"
-          }),
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                "Content-Type": 'application/json',
+            },
+            body: JSON.stringify({
+                "message_type": "verification_request"
+            }),
         });
         res.json().then(console.log(JSON.stringify(res)))
-      }
+    }
 
 
     return (

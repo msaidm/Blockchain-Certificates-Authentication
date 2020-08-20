@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, Text, View, Image,Button } from 'react-native';
+import { StyleSheet, Text, View, Image, Button } from 'react-native';
 import { Card } from 'react-native-elements';
 import { Router } from 'react-router-dom';
 import { IP_address } from '../constants'
@@ -16,81 +16,81 @@ export default function DetailsScreen({ route, navigation }) {
   const { Item } = route.params;
   const { image } = route.params
   const { name } = route.params
-  const { masterDe} = route.params
+  const { masterDe } = route.params
   const [masterDegree, setMasterDegree] = React.useState(false);
   const [mySrc, setMysrc] = React.useState();
 
 
-  React.useEffect(()  =>  {
+  React.useEffect(() => {
 
     const socket = socketIOClient(IP_address);// Change This to your IP Address
     //console.log(socket.connected)
-    
-     
 
-     socket.on("masterDegreeNotif", async data => {
-       console.log("msater de"+data)
+
+
+    socket.on("masterDegreeNotif", async data => {
+      console.log("msater de" + data)
       setMasterDegree(data);
       console.log(masterDegree)
-      });
-      // const asset = asuLogo;
-      // let src =  copyFromAssets(asset);
-      // if(Platform.OS === 'ios') {
-      //     src =  processLocalImageIOS(src);
-      //     console.log("src "+src[0])
-      // }
-      // setMysrc(src[0]);
+    });
+    // const asset = asuLogo;
+    // let src =  copyFromAssets(asset);
+    // if(Platform.OS === 'ios') {
+    //     src =  processLocalImageIOS(src);
+    //     console.log("src "+src[0])
+    // }
+    // setMysrc(src[0]);
 
-  
-    
+
+
 
     return () => socket.disconnect();
- }, [masterDegree]);
- 
-//  const htmlContent = async () => {
+  }, [masterDegree]);
 
-//   try {
+  //  const htmlContent = async () => {
 
-//     const myHtml=  `
-//     <!DOCTYPE html>
-//     <html lang="en">
-//     <head>
-//         <meta charset="UTF-8">
-//         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-//         <title>Pdf Content</title>
-//         <style>
-//             body {
-//                 font-size: 16px;
-//                 color: rgb(255, 196, 0);
-//             }
-//             h1 {
-//                 text-align: center;
-//             }
-//         </style>
-//     </head>
-//     <body>
-//         <h1>Hello, UppLabs!</h1>
-        
-//     </body>
-//     </html>
-// `;
+  //   try {
 
-//       const asset = asuLogo;
-//       let src = await copyFromAssets(asset);
-//       if(Platform.OS === 'ios') {
-//           src = await processLocalImageIOS(src);
-//          // console.log("src "+src)
-//       }
-//       return myHtml
-//   } catch (error) {
-//       console.log(error);
-//   }
-// }
+  //     const myHtml=  `
+  //     <!DOCTYPE html>
+  //     <html lang="en">
+  //     <head>
+  //         <meta charset="UTF-8">
+  //         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  //         <title>Pdf Content</title>
+  //         <style>
+  //             body {
+  //                 font-size: 16px;
+  //                 color: rgb(255, 196, 0);
+  //             }
+  //             h1 {
+  //                 text-align: center;
+  //             }
+  //         </style>
+  //     </head>
+  //     <body>
+  //         <h1>Hello, UppLabs!</h1>
 
- const htmlContent = 
- 
- 
- `
+  //     </body>
+  //     </html>
+  // `;
+
+  //       const asset = asuLogo;
+  //       let src = await copyFromAssets(asset);
+  //       if(Platform.OS === 'ios') {
+  //           src = await processLocalImageIOS(src);
+  //          // console.log("src "+src)
+  //       }
+  //       return myHtml
+  //   } catch (error) {
+  //       console.log(error);
+  //   }
+  // }
+
+  const htmlContent =
+
+
+    `
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -243,100 +243,100 @@ export default function DetailsScreen({ route, navigation }) {
     </html>
 `;
 
-const createAndSavePDF = async (html) => {
-  try {
-    console.log(html)
-    const { uri } = await Print.printToFileAsync({ html });
-    if (Platform.OS === "ios") {
-      await Sharing.shareAsync(uri);
-    } else {
-      const permission = await MediaLibrary.requestPermissionsAsync();
-      if (permission.granted) {
-        await MediaLibrary.createAssetAsync(uri);
+  const createAndSavePDF = async (html) => {
+    try {
+      console.log(html)
+      const { uri } = await Print.printToFileAsync({ html });
+      if (Platform.OS === "ios") {
+        await Sharing.shareAsync(uri);
+      } else {
+        const permission = await MediaLibrary.requestPermissionsAsync();
+        if (permission.granted) {
+          await MediaLibrary.createAssetAsync(uri);
+        }
       }
+    } catch (error) {
+      console.error(error);
     }
-  } catch (error) {
-    console.error(error);
-  }
-};
+  };
 
-const copyFromAssets = async (asset) => {
-  try {
-    await Asset.loadAsync(asset);
-    const { localUri } = Asset.fromModule(asset);
-    return localUri;
-  } catch (error) {
-    console.log(error);
-    throw err;
-  }
-};
-const processLocalImageIOS = async (imageUri) => {
-  try {
-    const uriParts = imageUri.split(".");
-    const formatPart = uriParts[uriParts.length - 1];
-    let format;
-    if (formatPart.includes("png")) {
-      format = "png";
-    } else if (formatPart.includes("jpg") || formatPart.includes("jpeg")) {
-      format = "jpeg";
+  const copyFromAssets = async (asset) => {
+    try {
+      await Asset.loadAsync(asset);
+      const { localUri } = Asset.fromModule(asset);
+      return localUri;
+    } catch (error) {
+      console.log(error);
+      throw err;
     }
-    const { base64 } = await ImageManipulator.manipulateAsync(
-      imageUri,
-      [],
-      { format: format || "png", base64: true }
-    );
-    return `data:image/${format};base64,${base64}`;
-  } catch (error) {
-    console.log(error);
-    throw error
-  }
-};
+  };
+  const processLocalImageIOS = async (imageUri) => {
+    try {
+      const uriParts = imageUri.split(".");
+      const formatPart = uriParts[uriParts.length - 1];
+      let format;
+      if (formatPart.includes("png")) {
+        format = "png";
+      } else if (formatPart.includes("jpg") || formatPart.includes("jpeg")) {
+        format = "jpeg";
+      }
+      const { base64 } = await ImageManipulator.manipulateAsync(
+        imageUri,
+        [],
+        { format: format || "png", base64: true }
+      );
+      return `data:image/${format};base64,${base64}`;
+    } catch (error) {
+      console.log(error);
+      throw error
+    }
+  };
 
-  console.log("ana fe det"+masterDegree )
+  console.log("ana fe det" + masterDegree)
 
   return (
-    
+
     <View style={styles.container}>
-      { masterDegree ?
-  
-      (
-        <View style={styles.container}>
-      <Text style={styles.title}>{name}</Text>
-      <Image source={{ uri: image }} style={styles.image} />
-      <Card title={JSON.stringify(Item.type)}>
-        <Text style={styles.paragraph}>Student name: {JSON.stringify(Item.sname)}</Text>
-        <Text style={styles.paragraph}>Cummilative GPA: {JSON.stringify(Item.sgpa)}</Text>
-        <Text style={styles.paragraph}>Graduation Year: {JSON.stringify(Item.syear)}</Text>
-        <Text style={styles.paragraph}>Master Degree GPA: 3.85</Text>
-        <Text style={styles.paragraph}>Master Degree Year: 2020</Text>
-      </Card> 
-      </View>
-      
-      )
-  
-      : 
+      {masterDegree ?
 
-      (
-        <View style={styles.container}>
-       
-      <Text style={styles.title}>{name}</Text>
-      <Image source={{ uri: image }} style={styles.image} />
-      <Card title={JSON.stringify(Item.type)}>
-        <Text style={styles.paragraph}>Student name: {JSON.stringify(Item.sname)}</Text>
-        <Text style={styles.paragraph}>Cummilative GPA: {JSON.stringify(Item.sgpa)}</Text>
-        <Text style={styles.paragraph}>Graduation Year: {JSON.stringify(Item.syear)}</Text>
-        <Button
-          title="Gernerate PDF" type="outline" onPress={() => createAndSavePDF(htmlContent)} />
-      </Card>
-      </View>
-      )
+        (
+          <View style={styles.container}>
+            <Text style={styles.title}>{name}</Text>
+            <Image source={{ uri: image }} style={styles.image} />
+            <Card title={JSON.stringify(Item.type)}>
+              <Text style={styles.paragraph}>Student name: {JSON.stringify(Item.sname)}</Text>
+              <Text style={styles.paragraph}>Cummilative GPA: {JSON.stringify(Item.sgpa)}</Text>
+              <Text style={styles.paragraph}>Graduation Year: {JSON.stringify(Item.syear)}</Text>
+              <Text style={styles.paragraph}>Master Degree GPA: 3.85</Text>
+              <Text style={styles.paragraph}>Master Degree Year: 2020</Text>
+            </Card>
+          </View>
 
-    }
-  
+        )
+
+        :
+
+        (
+          <View style={styles.container}>
+
+            <Text style={styles.title}>{name}</Text>
+            <Image source={{ uri: image }} style={styles.image} />
+            <Card title={JSON.stringify(Item.type)}>
+              <Text style={styles.paragraph}>Student name: {JSON.stringify(Item.sname)}</Text>
+              <Text style={styles.paragraph}>Cummilative GPA: {JSON.stringify(Item.sgpa)}</Text>
+              <Text style={styles.paragraph}>Graduation Year: {JSON.stringify(Item.syear)}</Text>
+              <Button
+                title="Gernerate PDF" type="outline" onPress={() => createAndSavePDF(htmlContent)} />
+            </Card>
+          </View>
+        )
+
+      }
+
     </View>
-    
-      
-    
+
+
+
   );
 
 }
