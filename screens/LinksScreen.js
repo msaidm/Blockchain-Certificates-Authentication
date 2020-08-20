@@ -44,7 +44,7 @@ function CredentialsScreen({ navigation }) {
          console.log("Cred Client disconnected");
        });
        
-
+       socket.emit('loadOldIssu', "walletID")
        
 
     
@@ -70,7 +70,7 @@ function CredentialsScreen({ navigation }) {
          setEmpty(true)
 
       return () => socket.disconnect();
-   }, [credentials.length]);
+   }, []);
 
 
    // console.log(walletID+"In Credentials Screen")
@@ -173,10 +173,15 @@ function ConnectionsScreen() {
 
      const socket = socketIOClient(IP_address);// Change This to your IP Address
       //console.log(socket.connected)
+
+      socket.emit('loadOldConn', "walletID")
+      console.log('ba3at eny a load')
       socket.on("disconnect", () => {
          console.log("Connection Client disconnected");
        });
-      socket.on("ConnectionsData", async data => {
+      socket.on("ConnectionData", async data => {
+         console.log("gali new connection")
+        //console.log(data)
 
 
          if (dataSize != data.length) {
@@ -197,8 +202,8 @@ function ConnectionsScreen() {
       else
          setEmpty(true)
 
-      return () => socket.disconnect();
-   }, [connectionsDataArray]);
+      //return () => socket.disconnect();
+   }, []);
 
 
 

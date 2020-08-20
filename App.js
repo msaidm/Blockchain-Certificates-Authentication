@@ -16,6 +16,8 @@ import OfferDetailsScreen from './screens/OfferDetailsScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import VerRequestDetails from './screens/VerRequestDetailsScreen';
 import CredsForVers from './screens/CredsForVers';
+import socketIOClient from "socket.io-client";
+
 
 
 const Stack = createStackNavigator();
@@ -27,7 +29,7 @@ export default function App(props) {
   const containerRef = React.useRef();
   const { getInitialState } = useLinking(containerRef);
 
-  //AsyncStorage.removeItem('userinfo')
+  AsyncStorage.removeItem('userinfo')
 
   AsyncStorage.getItem('userinfo').then((data) => {
     let walletcreated = JSON.parse(data);

@@ -32,18 +32,77 @@ export default function HomeScreen({ route, navigation }) {
    const socket = socketIOClient(IP_address);// Change This to your IP Address
 
     getWalletID()
+
     console.log(walletID + "in Home")
+    if(walletID != null)
     socket.emit('sendWalletIDOnConnection', walletID)
     socket.on("disconnect", () => {
       console.log("Home Client disconnected");
     });
-    socket.on("FromAPI", async data => {
+
+   // socket.emit('loadOldCred', "walletID")
+    socket.on("disconnect", () => {
+      console.log("Home Client disconnected");
+    });
+    socket.on("oldCredOffers", async data => { 
+      console.log("loading old cred")
+      //console.log(data)
 
       if (dataSize != data.length) {
         setConnectionDataArray(data);
 
         
         console.log(connectionDataArray)
+        console.log("changing")
+         if (data.length > 0)
+          setCount(true)
+        else
+          setCount(false)
+
+
+        dataSize = data.length;
+        console.log(socket.connected)
+
+      }
+      
+
+    
+    });
+
+    socket.on("CredOfferNotif", async data => { 
+      console.log("ana gali noftfi be cred offer fel home")
+      console.log(data)
+
+      if (dataSize != data.length) {
+        setConnectionDataArray(data);
+
+        
+        //console.log(connectionDataArray)
+        console.log("changing")
+         if (data.length > 0)
+          setCount(true)
+        else
+          setCount(false)
+
+
+        dataSize = data.length;
+        console.log(socket.connected)
+
+      }
+      
+
+    
+    }); 
+
+    socket.on("NewVerOffer", async data => { 
+      console.log("ana gali noftfi be ver offer fel home")
+      console.log(data)
+
+      if (dataSize != data.length) {
+        setConnectionDataArray(data);
+
+        
+        //console.log(connectionDataArray)
         console.log("changing")
          if (data.length > 0)
           setCount(true)
@@ -66,7 +125,7 @@ export default function HomeScreen({ route, navigation }) {
 
 
 
-    return () => socket.disconnect();
+    //return () => socket.disconnect();
   }, [walletID]);
 
   function ItemC({ title, url, credentialId }) { //for credential items
