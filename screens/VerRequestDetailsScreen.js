@@ -23,9 +23,9 @@ export default function VerReqDetailsScreen({ route, navigation }) {
     const { ChosenCredID } = route.params;
     //console.log("Printing Chosen Credential ID: " + ChosenCredID);
 
-    var value1 = "pending";
-    var value2 = "pending";
-    var value3 = "pending";
+    var value1 = "pending credential";
+    var value2 = "pending credential";
+    var value3 = "pending credential";
     const PolicyName = "Name";
     var credentialId = ChosenCredID;
     const Name_req = "Name"
@@ -75,6 +75,13 @@ export default function VerReqDetailsScreen({ route, navigation }) {
             }
         }
     }
+    function isSubmitDisabled(str) {
+        if (str == "pending credential")
+            return true;
+        else
+            return false;
+    }
+
     updatingValuesPending();
 
     async function getWalletID() {
@@ -183,18 +190,34 @@ export default function VerReqDetailsScreen({ route, navigation }) {
 
     return (
         <View>
-            <Card title="Verification request details">
+            <Card title="Verification Request Details">
                 <View style={styles.item}>
                     <Image source={{ uri: image }} style={styles.image} />
                     <Text style={styles.title}>{name}</Text>
-                    <Text style={styles.paragraph}>{JSON.stringify(Item.att1)}: {JSON.stringify(value1)}</Text>
+                    <Text style={styles.paragraph}>{name} is requesting the following attributes:</Text>
+                    <Text style={styles.paragraph}>{Item.att1}:</Text>
+                    {isSubmitDisabled(value1) ?
+                        (<ActivityIndicator />)
+                        :
+                        (<Text style={styles.text}> {JSON.stringify(value1)}</Text>)
+                    }
 
-                    <Text style={styles.paragraph}>{JSON.stringify(Item.att2)}: {JSON.stringify(value2)}</Text>
+                    <Text style={styles.paragraph}>{Item.att2}:</Text>
+                    {isSubmitDisabled(value1) ?
+                        (<ActivityIndicator />)
+                        :
+                        (<Text style={styles.text}> {JSON.stringify(value2)}</Text>)
+                    }
 
-                    <Text style={styles.paragraph}>{JSON.stringify(Item.att3)}: {JSON.stringify(value3)}</Text>
-
+                   <Text style={styles.paragraph}>{Item.att3}:</Text>
+                    {isSubmitDisabled(value1) ?
+                        (<ActivityIndicator />)
+                        :
+                        (<Text style={styles.text}> {JSON.stringify(value3)}</Text>)
+                    }
                 </View>
-                <View style={styles.alternativeLayoutButtonContainer}>
+                {/* <View style={styles.alternativeLayoutButtonContainer}> */}
+                <View style={styles.oneButton}>
                     <Button
                         title="Find a Credential"
                         onPress={() => navigation.navigate("CredsForVers",
@@ -202,7 +225,10 @@ export default function VerReqDetailsScreen({ route, navigation }) {
                                 Values: credentialDataArray
                             })}
                     />
+                </View>
+                <View style={styles.alternativeLayoutButtonContainer}>
                     <Button
+                        disabled={isSubmitDisabled(value1)}
                         title="Present"
                         onPress={() => SubmitVerificationData()}
                     />
@@ -210,11 +236,13 @@ export default function VerReqDetailsScreen({ route, navigation }) {
                         title="Decline"
                         onPress={() => navigation.navigate("HomeScreen")}
                     />
-
-
                 </View>
+
+
+
+                {/* </View> */}
             </Card>
-        </View>
+        </View >
 
         //<View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         //  <Text>Details: </Text>
@@ -242,6 +270,8 @@ const styles = StyleSheet.create({
         color: '#34495e',
     },
     title: {
+        color: '#0D47A1',
+        fontWeight: "bold",
         fontSize: 20,
         padding: 5,
 
@@ -263,8 +293,27 @@ const styles = StyleSheet.create({
         // borderColor: "black"
     },
     alternativeLayoutButtonContainer: {
-        margin: 20,
+        // margin: 20,
+        // paddingRight:20,
+        // paddingLeft:20,
+        // marginLeft:30,
+        // flexWrap: 'wrap',
         flexDirection: 'row',
         justifyContent: 'space-between'
+    },
+    oneButton: {
+        justifyContent: 'space-evenly',
+        alignItems: 'center',
+        flexDirection: 'column',
+        marginBottom: 20,
+    },
+    text: {
+        marginTop: 25,
+        fontSize: 15,
+        fontWeight: 'bold',
+        // textAlign: 'left',
+        color: '#0D47A1',
+        // flexDirection: 'row',
+        // flexWrap:'wrap'
     }
 });

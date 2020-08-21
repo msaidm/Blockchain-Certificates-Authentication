@@ -151,7 +151,7 @@ export default function HomeScreen({ route, navigation }) {
           <Image
             source={
               __DEV__
-                ? require('../assets/images/barcode.png')
+                ? require('../assets/images/qrcode.jpg')
                 : require('../assets/images/robot-prod.png')
             }
             style={styles.welcomeImage}
@@ -227,15 +227,19 @@ const styles = StyleSheet.create({
   },
   welcomeContainer: {
     alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20,
+    // marginTop: 10,
+    // marginBottom: 20,
   },
   welcomeImage: {
-    width: 150,
-    height: 180,
+    // width: 150,
+    // height: 180,
+    // resizeMode: 'contain',
+    // marginTop: 100,
+    // marginLeft: -10,
+    margin:0,
+    height:'100%',
+    // width:'100%',
     resizeMode: 'contain',
-    marginTop: 100,
-    marginLeft: -10,
   },
   linearGradient: {
 
