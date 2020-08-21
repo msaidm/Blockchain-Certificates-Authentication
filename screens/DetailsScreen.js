@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, Text, View, Image,Button } from 'react-native';
+import { StyleSheet, Text, View, Image, Button } from 'react-native';
 import { Card } from 'react-native-elements';
 import { IP_address } from '../constants'
 import socketIOClient from "socket.io-client";
@@ -20,15 +20,14 @@ export default function DetailsScreen({ route, navigation }) {
 
     const socket = socketIOClient(IP_address);// Change This to your IP Address
     //console.log(socket.connected)
-    
-     
 
-     socket.on("masterDegreeNotif", async data => {
-       console.log("msater de"+data)
+
+
+    socket.on("masterDegreeNotif", async data => {
+      console.log("msater de" + data)
       setMasterDegree(data);
       console.log(masterDegree)
       });
-
     
 
     return () => socket.disconnect();
@@ -168,6 +167,19 @@ const createAndSavePDF = async (html) => {
       if (permission.granted) {
         await MediaLibrary.createAssetAsync(uri);
       }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const copyFromAssets = async (asset) => {
+    try {
+      await Asset.loadAsync(asset);
+      const { localUri } = Asset.fromModule(asset);
+      return localUri;
+    } catch (error) {
+      console.log(error);
+      throw err;
     }
   } catch (error) {
     console.error(error);
@@ -177,7 +189,7 @@ const createAndSavePDF = async (html) => {
   console.log("ana fe det"+masterDegree )
 
   return (
-    
+
     <View style={styles.container}>
       { masterDegree ?
   
@@ -213,12 +225,10 @@ const createAndSavePDF = async (html) => {
       </View>
       )
 
-    }
-  
     </View>
-    
-      
-    
+
+
+
   );
 
 }

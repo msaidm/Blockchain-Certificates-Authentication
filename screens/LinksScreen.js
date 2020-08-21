@@ -43,8 +43,6 @@ function CredentialsScreen({ navigation }) {
        
        socket.emit('loadOldIssu', "walletID")
        
-
-    
       socket.on("IssuedCred", async data => {
 
          if (dataSize2 != data.length) {
@@ -93,9 +91,9 @@ function CredentialsScreen({ navigation }) {
 
 
    function Item({ objectt }) {
-      var img, title,masterDegree;
+      var img, title, masterDegree;
       var connId = objectt.connID;
-      var masterDegreeAfterNotifi=masterDegree;
+      var masterDegreeAfterNotifi = masterDegree;
       for (let i = 0; i < connectionsData.length; i++) {
          if (connectionsData[i].id == connId) {
             img = connectionsData[i].image
@@ -130,7 +128,7 @@ function CredentialsScreen({ navigation }) {
                      <Image
                         source={
                            __DEV__
-                              ? require('../assets/images/cred.jpg')
+                              ? require('../assets/images/credentials.jpg')
                               : require('../assets/images/robot-prod.png')
                         }
                         style={styles.welcomeImage} />
@@ -168,7 +166,7 @@ function ConnectionsScreen() {
 
    React.useEffect(() => {
 
-     const socket = socketIOClient(IP_address);// Change This to your IP Address
+      const socket = socketIOClient(IP_address);// Change This to your IP Address
       //console.log(socket.connected)
 
       socket.emit('loadOldConn', "walletID")
@@ -179,7 +177,6 @@ function ConnectionsScreen() {
       socket.on("ConnectionData", async data => {
          //console.log("gali new connection")
         //console.log(data)
-
 
          if (dataSize != data.length) {
             setConnectionsDataArray(data);
@@ -222,7 +219,7 @@ function ConnectionsScreen() {
                      <Image
                         source={
                            __DEV__
-                              ? require('../assets/images/conn.jpg')
+                              ? require('../assets/images/connections3.jpeg')
                               : require('../assets/images/robot-prod.png')
                         }
                         style={styles.welcomeImage} />
@@ -320,6 +317,7 @@ const styles = StyleSheet.create({
    // },
    container: {
       flex: 1,
+      // resizeMode: 'cover', // or 'stretch'
       // marginTop: Constants.statusBarHeight,
    },
    contentContainer: {
@@ -327,15 +325,22 @@ const styles = StyleSheet.create({
    },
    welcomeContainer: {
       alignItems: 'center',
-      marginTop: 10,
-      marginBottom: 20,
+      // marginTop: 10,
+      // // marginBottom: 20,
+      // flex: 1,
+      // resizeMode: 'stretch', // or 'stretch'
+      // width: null,
+      // height: null,
    },
    welcomeImage: {
-      width: 150,
-      height: 180,
-      resizeMode: 'contain',
-      marginTop: 100,
-      marginLeft: -10,
+      // width: 300,
+      // height: 550,
+      margin:0,
+      height:'100%',
+      width:'100%',
+      resizeMode: 'cover',
+      // marginTop: 100,
+      // marginLeft: -10,
    },
    optionIconContainer: {
       marginRight: 12,

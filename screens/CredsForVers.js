@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Header, Component } from 'react';
-import { StyleSheet, Text, View, FlatList, SafeAreaView, Image, Button, AsyncStorage, TouchableOpacity } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View, FlatList, SafeAreaView, Image, Button, AsyncStorage, TouchableOpacity } from 'react-native';
 import { Card } from 'react-native-elements';
+// import { Card } from 'react-bootstrap';
 import { RectButton, ScrollView } from 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import socketIOClient from "socket.io-client";
@@ -49,7 +50,7 @@ export default function CredsForVers({ route, navigation }) {
 
 
    }
-   function Item({ name, year, gpa, ID }) {
+   function Item({ name, year, gpa, ID, type }) {
       return (
          <TouchableOpacity
             onPress={() =>
@@ -60,11 +61,17 @@ export default function CredsForVers({ route, navigation }) {
                styles.itemPressed,
             ]}
          >
-
-            <Text style={styles.paragraph1}>Credential</Text>
+            <View style={styles.container}>
+               <Card title={type}>
+                  <Text style={styles.paragraph}>Name: {name}</Text>
+                  <Text style={styles.paragraph}>Graduation Year: {year}</Text>
+                  <Text style={styles.paragraph}>GPA: {gpa}</Text>
+               </Card>
+            </View>
+            {/* <Text style={styles.paragraph1}>{type}</Text>
             <Text style={styles.paragraph}>Name: {name}</Text>
             <Text style={styles.paragraph}>Graduation Year: {year}</Text>
-            <Text style={styles.paragraph}>GPA: {gpa}</Text>
+            <Text style={styles.paragraph}>GPA: {gpa}</Text> */}
 
          </TouchableOpacity>
       );
@@ -97,18 +104,20 @@ export default function CredsForVers({ route, navigation }) {
    }, waitFor);
 
    return (
-      <View style={styles.container}>
+      <View style={styles.horizontal}>
          {
             empty ?
                (
-                  <Text style={styles.paragraph1}>Loading Credentials</Text>
+                  <ActivityIndicator size="large" />
+                  // <Text style={styles.paragraph1}>Loading Credentials</Text>
                )
                :
                (
                   <SafeAreaView style={styles.container}>
+                     <Text style={styles.paragraph1}> Available Credentials</Text>
                      <FlatList
                         data={credentialDataArray}
-                        renderItem={({ item }) => <Item name={item.sname} year={item.syear} gpa={item.sgpa} ID={item.id} />}
+                        renderItem={({ item }) => <Item name={item.sname} year={item.syear} gpa={item.sgpa} ID={item.id} type={item.type} />}
                         keyExtractor={item => item.id.toString()}
                         ItemSeparatorComponent={FlatListItemSeparator}
                      />
@@ -141,9 +150,13 @@ const styles = StyleSheet.create({
    // },
    container: {
       flex: 1,
+      justifyContent: "center",
+      // alignItems: 'center',
       // marginTop: Constants.statusBarHeight,
    },
    paragraph1: {
+      // textAlign: 'left',
+      marginRight: 'auto',
       margin: 24,
       fontSize: 25,
       marginTop: 5,
@@ -220,6 +233,12 @@ const styles = StyleSheet.create({
       overflow: "hidden",
       // borderWidth: 3,
       // borderColor: "black"
+   },
+   horizontal: {
+      flexDirection: "row",
+      justifyContent: "space-around",
+      padding: 10,
+      // marginTop:240,
    },
 });
 
