@@ -1,7 +1,10 @@
 import * as React from 'react';
-import { StyleSheet, AsyncStorage,Text, View, Button,Image } from 'react-native';
+import { StyleSheet, AsyncStorage, Text, View, Button, Image } from 'react-native';
 import { Card } from 'react-native-elements';
 import { WALLET_ID } from '../constants'
+import { ngrok } from '../constants'
+import socketIOClient from "socket.io-client";
+import { IP_address } from '../constants'
 
 
 export default function OfferDetailsScreen({ route, navigation }) {
@@ -9,27 +12,29 @@ export default function OfferDetailsScreen({ route, navigation }) {
   const { img } = route.params;
   const { credentialId } = route.params;
 
-  const [walletID,setWalletID] = React.useState();
+  const [walletID, setWalletID] = React.useState();
+  //const walletID='CeQq0v5QY9g3c8yqzoTQKQVyc5hbzcnH8';
+  const socket = socketIOClient(IP_address);
 
-  async function getWalletID()
-  {
+  async function getWalletID() {
     await AsyncStorage.getItem('userinfo').then((data) => {
       let dataInfo = JSON.parse(data);
       //console.log(dataInfo)
       if (dataInfo) {
-        setWalletID( dataInfo.walletId );
+        setWalletID(dataInfo.walletId);
       }
     })
   }
+
   getWalletID()
-  console.log(walletID+"In offer details Screen")
-  
+  //console.log(walletID + "In offer details Screen")
+
   //console.log(Item.credentialId);
- // var walletID = WALLET_ID;
+  // var walletID = WALLET_ID;
 
 
   async function sendAcceptOfferNotification() {
-    const res = await fetch('http://8d6d8dcec062.ngrok.io/webhook', {
+    const res = await fetch(ngrok + '/webhook', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -40,9 +45,8 @@ export default function OfferDetailsScreen({ route, navigation }) {
       }),
     });
     res.json().then(console.log(JSON.stringify(res)))
-
   }
-
+  
   async function acceptButton(walletID, credentialID) {
     var fetchURLForAcceptInvitaion = 'https://api.streetcred.id/custodian/v1/api/' + walletID + '/credentials/' + credentialID;
     const res = await fetch(fetchURLForAcceptInvitaion, {
@@ -59,6 +63,7 @@ export default function OfferDetailsScreen({ route, navigation }) {
       }),
     })
     sendAcceptOfferNotification();
+    socket.emit('removeOffer', "accepted")
     navigation.navigate("Root");
   }
 
@@ -72,11 +77,11 @@ export default function OfferDetailsScreen({ route, navigation }) {
   return (
     <View>
       <Card title="Credential Offer Details">
-      <View style={styles.item}>
+        <View style={styles.item}>
           <Image source={{ uri: img }} style={styles.image} />
-            <Text style={styles.title}>{name}</Text> 
-         </View>   
-         <Text style={styles.paragraph}>You have a new credential offer</Text>  
+          <Text style={styles.title}>{name}</Text>
+        </View>
+        <Text style={styles.paragraph}>You have a new credential offer</Text>
         <View style={styles.alternativeLayoutButtonContainer}>
           <Button
             title="Accept"
@@ -111,24 +116,24 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     padding: 5,
-    
- },
- item: {
-  backgroundColor: '#ff00ff00',
-  padding: 5,
-  marginVertical: 8,
-  marginHorizontal: 16,
-  flexDirection: 'row',
-  flexWrap: 'wrap',
-},
- image: {
+
+  },
+  item: {
+    backgroundColor: '#ff00ff00',
+    padding: 5,
+    marginVertical: 8,
+    marginHorizontal: 16,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  image: {
     width: 50,
     height: 50,
     borderRadius: 50 / 2,
     overflow: "hidden",
     // borderWidth: 3,
     // borderColor: "black"
- },
+  },
   alternativeLayoutButtonContainer: {
     margin: 20,
     flexDirection: 'row',

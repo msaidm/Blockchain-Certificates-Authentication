@@ -1,41 +1,18 @@
 import * as React from 'react';
-import { Header, Component } from 'react';
-import { StyleSheet,AsyncStorage, Text, View, FlatList, SafeAreaView, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, Text, View, FlatList, SafeAreaView, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import * as WebBrowser from 'expo-web-browser';
-import { RectButton, ScrollView } from 'react-native-gesture-handler';
-import { NavigationContainer } from '@react-navigation/native';
+import { RectButton } from 'react-native-gesture-handler';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import Constants from 'expo-constants';
-import * as Font from 'expo-font';
 import arrow from '../assets/images/simple-down-arrow.png';
 import { SearchBar } from 'react-native-elements';
-import { WALLET_ID } from '../constants'
+import { IP_address } from '../constants'
+import socketIOClient from "socket.io-client";
 
-
-function useInterval(callback, delay) {
-   const savedCallback = React.useRef();
-
-   // Remember the latest function.
-   React.useEffect(() => {
-      savedCallback.current = callback;
-   }, [callback]);
-
-   // Set up the interval.
-   React.useEffect(() => {
-      function tick() {
-         savedCallback.current();
-      }
-      if (delay !== null) {
-         let id = setInterval(tick, delay);
-         return () => clearInterval(id);
-      }
-   }, [delay]);
-}
-
+var dataSize = 0;
+var dataSize2 = 0
+var connectionsData = [];
 const Tab = createMaterialTopTabNavigator();
-const waitFor = 5000;
 
 FlatListItemSeparator = () => {
    return (
@@ -50,71 +27,76 @@ FlatListItemSeparator = () => {
 }
 
 
-function add(arr, myID, object) {
-   // const { length } = arr;
-   // const id = length + 1;
-   const found = arr.some(el => el.id == myID);
-   if (!found) {
-      arr.push(object);
-   }
-   return arr;
-}
-
-var connectionName;
-var connectionsArray = [""];
-var currArraySize = 0;
-var currArraySize2 = 0;
-var connectionsData = [];
-
 function CredentialsScreen({ navigation }) {
-   //var walletID = WALLET_ID;
-
-   //var connectionID = "d418f248-33a4-428c-aff1-1eeb00079e52";
 
    const [credentials, setCredentials] = React.useState([]);
-   const [arraySize2, setArraySize2] = React.useState(0);
-   const [values, setValues] = React.useState([]);
    const [searchText, setSearchText] = React.useState("");
    const [empty, setEmpty] = React.useState(true);
-   const [walletID,setWalletID] = React.useState();
 
-   async function getWalletID()
-   {
-     await AsyncStorage.getItem('userinfo').then((data) => {
-       let dataInfo = JSON.parse(data);
-       //console.log(dataInfo)
-       if (dataInfo) {
-         setWalletID( dataInfo.walletId );
-       }
-     })
-   }
-   getWalletID()
-   console.log(walletID+"In Credentials Screen")
-   
-   searchFilterFunction = (text, arrayholder) => {
+   React.useEffect(() => {
+
+      const socket = socketIOClient(IP_address);// Change This to your IP Address
+      //console.log(socket.connected)
+      socket.on("disconnect", () => {
+         // console.log("Cred Client disconnected");
+       });
+       
+       socket.emit('loadOldIssu', "walletID")
+       
+
+    
+      socket.on("IssuedCred", async data => {
+
+         if (dataSize2 != data.length) {
+            setCredentials(data);
+            // console.log(credentials)
+            // console.log("changing4")
+
+            if (data.length > 0)
+               setEmpty(false)
+            else
+               setEmpty(true)
+
+         }
+         //console.log(credentials.length)
+         dataSize2 = data.length;
+      });
+      if (credentials.length > 0)
+         setEmpty(false)
+      else
+         setEmpty(true)
+
+      return () => socket.disconnect();
+   }, []);
+
+
+   // console.log(walletID+"In Credentials Screen")
+
+   const searchFilterFunction = (text, arrayholder) => {
       setSearchText(text);
-      console.log("arrayholder: ", arrayholder)
+      // console.log("arrayholder: ", arrayholder)
       const newData = arrayholder.filter(function (item) {
          //applying filter for the inserted text in search bar
          const itemData = item.type ? item.type.toUpperCase() : ''.toUpperCase();
-         console.log("itemData: ", itemData)
+         // console.log("itemData: ", itemData)
 
          const textData = text.toUpperCase();
-         console.log("textData: ", textData)
+         // console.log("textData: ", textData)
 
          return itemData.indexOf(textData) > -1;
       });
 
-      console.log("newData: ", newData)
+      // console.log("newData: ", newData)
 
-      setValues(newData);
+      setCredentials(newData);
    };
 
 
    function Item({ objectt }) {
-      var img, title;
+      var img, title,masterDegree;
       var connId = objectt.connID;
-      for (i = 0; i < connectionsData.length; i++) {
+      var masterDegreeAfterNotifi=masterDegree;
+      for (let i = 0; i < connectionsData.length; i++) {
          if (connectionsData[i].id == connId) {
             img = connectionsData[i].image
             title = connectionsData[i].title
@@ -127,6 +109,7 @@ function CredentialsScreen({ navigation }) {
                   Item: objectt,
                   image: img,
                   name: title,
+                  masterDe: masterDegreeAfterNotifi
                })}
             style={[
                styles.item,
@@ -138,116 +121,88 @@ function CredentialsScreen({ navigation }) {
       );
    }
 
-   // React.useEffect(() => {
-   //    (async () => {
-   //       fetchCredentials();
-   //    })();
-   // }, [credentials]);
-
-   useInterval(() => {
-      // Your custom logic here
-      fetchCredentials();
-   }, waitFor);
-
-   async function fetchCredentials() {
-      const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/credentials', {
-         method: 'GET',
-         headers: {
-            Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
-            XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
-            Accept: 'application/json',
-         },
-      });
-      res.json().then(res => setCredentials(res)).then(setArraySize2(credentials.length))
-      // //console.log(arraySize2);
-
-      console.log("size: " + arraySize2)
-      currArraySize2 = arraySize2;
-      for (let index = 0; index < arraySize2; index++) {
-         const state = credentials[index].state
-         if (state == "Issued") {
-            const data = credentials[index].values
-            //to add a credential and if condition
-            const obj = { id: credentials[index].credentialId, sname: data.Name, sgpa: data.GPA, syear: data.Year, type: data.Type, connID: credentials[index].connectionId }
-            setValues(add(values, credentials[index].credentialId, obj));
-            // console.log("values:", values)
-         }
-
-         else {
-
-         }
-      }
-      if(currArraySize2>0)
-         setEmpty(false)
-      else
-         setEmpty(true)
-   }
-
    return (
-      <View  style={styles.container}>
-      {
-         empty?
-         (
-            <View style={styles.welcomeContainer}> 
-             <Image
-            source={
-              __DEV__
-                ? require('../assets/images/cred.jpg')
-                : require('../assets/images/robot-prod.png')
-            }
-            style={styles.welcomeImage}/>
-          </View>
-         )
-         :
-         (
-            <SafeAreaView style={styles.container}>
-               <SearchBar
-                  lightTheme
-                  round
-                  onChangeText={text => searchFilterFunction(text, values)}
-                  onClear={text => searchFilterFunction('', values)}
-                  // autoCorrect={false}
-                  value={searchText}
-                  showLoading={false}
-                  placeholder="Type Here..." />
-               <FlatList
-                  data={values}
-                  renderItem={({ item }) => <Item objectt={item} />}
-                  keyExtractor={item => item.id.toString()}
-                  ItemSeparatorComponent={FlatListItemSeparator}/>
-            </SafeAreaView>
-         )
-      }
+      <View style={styles.container}>
+         {
+            empty ?
+               (
+                  <View style={styles.welcomeContainer}>
+                     <Image
+                        source={
+                           __DEV__
+                              ? require('../assets/images/cred.jpg')
+                              : require('../assets/images/robot-prod.png')
+                        }
+                        style={styles.welcomeImage} />
+                  </View>
+               )
+               :
+               (
+                  <SafeAreaView style={styles.container}>
+                     {/* <SearchBar
+                        lightTheme
+                        round
+                        onChangeText={text => searchFilterFunction(text, credentials)}
+                        onClear={text => searchFilterFunction('', credentials)}
+                        // autoCorrect={false}
+                        value={searchText}
+                        showLoading={false}
+                        placeholder="Type Here..." /> */}
+                     <FlatList
+                        data={credentials}
+                        renderItem={({ item }) => <Item objectt={item} />}
+                        keyExtractor={item => item.id.toString()}
+                        ItemSeparatorComponent={FlatListItemSeparator} />
+                  </SafeAreaView>
+               )
+         }
       </View>
-      
+
    );
 }
 
 function ConnectionsScreen() {
 
-   //var walletID = WALLET_ID;
-
-   const [wallets, setWallets] = React.useState([]);
-   const [connectionName, setConnectionName] = React.useState("");
-   const [arraySize, setArraySize] = React.useState(0);
-   const [DATA, setData] = React.useState([]);
+   const [connectionsDataArray, setConnectionsDataArray] = React.useState([]);
    const [empty, setEmpty] = React.useState(true);
-   var index = 0;
-   const [walletID,setWalletID] = React.useState();
 
-   async function getWalletID()
-   {
-     await AsyncStorage.getItem('userinfo').then((data) => {
-       let dataInfo = JSON.parse(data);
-       //console.log(dataInfo)
-       if (dataInfo) {
-         setWalletID( dataInfo.walletId );
-       }
-     })
-   }
-   getWalletID()
-   console.log(walletID+"In Connections Screen")
-   
+   React.useEffect(() => {
+
+     const socket = socketIOClient(IP_address);// Change This to your IP Address
+      //console.log(socket.connected)
+
+      socket.emit('loadOldConn', "walletID")
+      //console.log('ba3at eny a load')
+      socket.on("disconnect", () => {
+         //console.log("Connection Client disconnected");
+       });
+      socket.on("ConnectionData", async data => {
+         //console.log("gali new connection")
+        //console.log(data)
+
+
+         if (dataSize != data.length) {
+            setConnectionsDataArray(data);
+            //console.log("changing3")
+
+            if (data.length > 0)
+               setEmpty(false)
+            else
+               setEmpty(true)
+
+         }
+         //console.log(connectionsDataArray.length)
+         dataSize = data.length;
+      });
+      if (connectionsDataArray.length > 0)
+         setEmpty(false)
+      else
+         setEmpty(true)
+
+      //return () => socket.disconnect();
+   }, []);
+
+
 
    function Item({ title, url }) {
       return (
@@ -258,69 +213,32 @@ function ConnectionsScreen() {
       );
    }
 
-   useInterval(() => {
-      // Your custom logic here
-      fetchConnections();
-   }, waitFor);
-
-   async function fetchConnections() {
-
-      await Font.loadAsync({
-         Josefin: require('../assets/fonts/JosefinSans-SemiBold.ttf'),
-      });
-
-      const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/connections', {
-         method: 'GET',
-         headers: {
-            Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
-            XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
-            Accept: 'application/json',
-         },
-      });
-      res.json().then(res => setWallets(res)).then(setConnectionName(wallets[0].name)).then(setArraySize(wallets.length))
-      if (arraySize > currArraySize) {
-         currArraySize = arraySize;
-         for (let index = 0; index < arraySize; index++) {
-            const credentialsData = wallets[index]
-            const obj = { id: credentialsData.connectionId, title: credentialsData.name, image: credentialsData.imageUrl };
-            setData(add(DATA, obj.id, obj))
-            connectionsData = add(connectionsData, obj.id, obj)
-            ///to make the index with the connectionID
-         }
-      }
-      // //console.log(DATA);
-      if(currArraySize>0)
-         setEmpty(false)
-      else
-         setEmpty(true)
-   }
-
    return (
       <View style={styles.container}>
          {
-            empty?
-            (
-               <View style={styles.welcomeContainer}> 
-                  <Image
-                  source={
-                  __DEV__
-                     ? require('../assets/images/conn.jpg')
-                     : require('../assets/images/robot-prod.png')
-               }
-               style={styles.welcomeImage}/>
-               </View>
-            )
-            :
-            (
-               <SafeAreaView style={styles.container}>
-                  <FlatList
-                     data={DATA}
-                     renderItem={({ item }) => <Item title={item.title} url={item.image} />}
-                     keyExtractor={item => item.id.toString()}
-                     ItemSeparatorComponent={FlatListItemSeparator}
-                  />
-               </SafeAreaView>
-            )
+            empty ?
+               (
+                  <View style={styles.welcomeContainer}>
+                     <Image
+                        source={
+                           __DEV__
+                              ? require('../assets/images/conn.jpg')
+                              : require('../assets/images/robot-prod.png')
+                        }
+                        style={styles.welcomeImage} />
+                  </View>
+               )
+               :
+               (
+                  <SafeAreaView style={styles.container}>
+                     <FlatList
+                        data={connectionsDataArray}
+                        renderItem={({ item }) => <Item title={item.title} url={item.image} />}
+                        keyExtractor={item => item.id.toString()}
+                        ItemSeparatorComponent={FlatListItemSeparator}
+                     />
+                  </SafeAreaView>
+               )
          }
       </View>
    );
@@ -411,14 +329,14 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       marginTop: 10,
       marginBottom: 20,
-    },
-    welcomeImage: {
+   },
+   welcomeImage: {
       width: 150,
       height: 180,
       resizeMode: 'contain',
       marginTop: 100,
       marginLeft: -10,
-    },
+   },
    optionIconContainer: {
       marginRight: 12,
    },
@@ -449,7 +367,6 @@ const styles = StyleSheet.create({
    title: {
       fontSize: 20,
       padding: 5,
-      fontFamily: "Josefin",
    },
    image: {
       width: 50,
