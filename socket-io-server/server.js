@@ -129,6 +129,23 @@ io.on("connection", (socket) => {
     walletID = data;
   });
 
+  socket.on('removeOffer', data => {
+    console.log("offer yetshal")
+    var timesRunOfferedData = 0;
+    intervalOfferedData = setInterval(() => {
+          
+          fetchCredentials(walletID);
+          timesRunOfferedData += 1;
+          console.log(timesRunOfferedData + " remove offer")
+          if(timesRunOfferedData > 5){
+           clearInterval(intervalOfferedData);
+           console.log("Inside remove offer")
+          
+          }
+        //socket.emit("test","ANA AY DATA")
+        socket.emit("CredOfferNotif",connectionDataArray)}, 2000);
+  });
+
   // var timesRunOldCredOffer = 0;
   //       intervalOldCred = setInterval(() => {
   //         fetchVerifications(walletID);
