@@ -16,7 +16,7 @@ export default function DetailsScreen({ route, navigation }) {
   const [masterDegree, setMasterDegree] = React.useState(false);
 
   console.log(Item)
-  React.useEffect(()  =>  {
+  React.useEffect(() => {
 
     const socket = socketIOClient(IP_address);// Change This to your IP Address
     //console.log(socket.connected)
@@ -27,15 +27,15 @@ export default function DetailsScreen({ route, navigation }) {
       console.log("msater de" + data)
       setMasterDegree(data);
       console.log(masterDegree)
-      });
-    
+    });
+
 
     return () => socket.disconnect();
- }, [masterDegree]);
- 
+  }, [masterDegree]);
 
-const htmlContent = 
-`
+
+  const htmlContent =
+    `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -156,16 +156,17 @@ const htmlContent =
 </html>
 `;
 
-const createAndSavePDF = async (html) => {
-  try {
-    //console.log(html)
-    const { uri } = await Print.printToFileAsync({ html });
-    if (Platform.OS === "ios") {
-      await Sharing.shareAsync(uri);
-    } else {
-      const permission = await MediaLibrary.requestPermissionsAsync();
-      if (permission.granted) {
-        await MediaLibrary.createAssetAsync(uri);
+  const createAndSavePDF = async (html) => {
+    try {
+      //console.log(html)
+      const { uri } = await Print.printToFileAsync({ html });
+      if (Platform.OS === "ios") {
+        await Sharing.shareAsync(uri);
+      } else {
+        const permission = await MediaLibrary.requestPermissionsAsync();
+        if (permission.granted) {
+          await MediaLibrary.createAssetAsync(uri);
+        }
       }
     } catch (error) {
       console.error(error);
@@ -181,57 +182,53 @@ const createAndSavePDF = async (html) => {
       console.log(error);
       throw err;
     }
-  } catch (error) {
-    console.error(error);
   }
 };
 
-  console.log("ana fe det"+masterDegree )
+console.log("ana fe det" + masterDegree)
 
-  return (
+return (
 
-    <View style={styles.container}>
-      { masterDegree ?
-  
-      (
-        <View style={styles.container}>
-      <Text style={styles.title}>{name}</Text>
-      <Image source={{ uri: image }} style={styles.image} />
-      <Card title="Masters Degree ">
-        <Text style={styles.paragraph}>Student name: {JSON.stringify(Item.sname)}</Text>
-        <Text style={styles.paragraph}>Cummilative GPA: {JSON.stringify(Item.sgpa)}</Text>
-        <Text style={styles.paragraph}>Graduation Year: {JSON.stringify(Item.syear)}</Text>
-        <Text style={styles.paragraph}>Master Degree GPA: 3.85</Text>
-        <Text style={styles.paragraph}>Master Degree Year: 2020</Text>
-      </Card> 
-      </View>
-      
-      )
-  
-      : 
+  <View style={styles.container}>
+    {masterDegree ?
 
       (
         <View style={styles.container}>
-       
-      <Text style={styles.title}>{name}</Text>
-      <Image source={{ uri: image }} style={styles.image} />
-      <Card title={JSON.stringify(Item.type)} >
-        <Text style={styles.paragraph}>Student name: {JSON.stringify(Item.sname)}</Text>
-        <Text style={styles.paragraph}>Cummilative GPA: {JSON.stringify(Item.sgpa)}</Text>
-        <Text style={styles.paragraph}>Graduation Year: {JSON.stringify(Item.syear)}</Text>
-        <Button
-          title="Download PDF" type="outline" onPress={() => createAndSavePDF(htmlContent)} />
-      </Card>
-      </View>
+          <Text style={styles.title}>{name}</Text>
+          <Image source={{ uri: image }} style={styles.image} />
+          <Card title="Masters Degree ">
+            <Text style={styles.paragraph}>Student name: {JSON.stringify(Item.sname)}</Text>
+            <Text style={styles.paragraph}>Cummilative GPA: {JSON.stringify(Item.sgpa)}</Text>
+            <Text style={styles.paragraph}>Graduation Year: {JSON.stringify(Item.syear)}</Text>
+            <Text style={styles.paragraph}>Master Degree GPA: 3.85</Text>
+            <Text style={styles.paragraph}>Master Degree Year: 2020</Text>
+          </Card>
+        </View>
+
       )
 
-    </View>
+      :
+
+      (
+        <View style={styles.container}>
+
+          <Text style={styles.title}>{name}</Text>
+          <Image source={{ uri: image }} style={styles.image} />
+          <Card title={JSON.stringify(Item.type)} >
+            <Text style={styles.paragraph}>Student name: {JSON.stringify(Item.sname)}</Text>
+            <Text style={styles.paragraph}>Cummilative GPA: {JSON.stringify(Item.sgpa)}</Text>
+            <Text style={styles.paragraph}>Graduation Year: {JSON.stringify(Item.syear)}</Text>
+            <Button
+              title="Download PDF" type="outline" onPress={() => createAndSavePDF(htmlContent)} />
+          </Card>
+        </View>
+      )
+    }
+  </View>
+
+);
 
 
-
-  );
-
-}
 
 const styles = StyleSheet.create({
   container: {
