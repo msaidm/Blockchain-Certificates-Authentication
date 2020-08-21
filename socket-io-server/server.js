@@ -345,13 +345,16 @@ const fetchCredentials = async (walletID) => {
     }
     else if (cred[index].state == "Issued") {
       if (cred[index].values.Type == "Bachelor Degree") {
+    
         const data = cred[index].values
-        const obj = { id: cred[index].credentialId, sname: data.Name, sgpa: data.GPA, syear: data.Year, type: data.Type, connID: cred[index].connectionId, schemaId: cred[index].schemaId }
+        const obj = { id: cred[index].credentialId, sname: data.Name, sgpa: data.GPA, syear: data.Year, type: data.Type, connID: cred[index].connectionId, schemaId: cred[index].schemaId, date: cred[index].issuedAtUtc }
+        
         issuedBachelorCredentials = addConnectionDetails(issuedBachelorCredentials, obj.id, obj);
 
       }
       const data = cred[index].values
-      const obj = { id: cred[index].credentialId, sname: data.Name, sgpa: data.GPA, syear: data.Year, type: data.Type, connID: cred[index].connectionId, schemaId: cred[index].schemaId }
+      const obj = { id: cred[index].credentialId, sname: data.Name, sgpa: data.GPA, syear: data.Year, type: data.Type, connID: cred[index].connectionId, schemaId: cred[index].schemaId, date: cred[index].issuedAtUtc }
+  
       issuedCredentials = addConnectionDetails(issuedCredentials, obj.id, obj);
       //console.log(issuedBachelorCredentials.length + "dah lenghth el issued cred")
       // for (let index2 = 0; index2 < connectionDataArray.length; index2++) {
