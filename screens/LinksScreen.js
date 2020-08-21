@@ -1,15 +1,13 @@
 import * as React from 'react';
-import { Header, Component } from 'react';
-import { StyleSheet, AsyncStorage, Text, View, FlatList, SafeAreaView, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, Text, View, FlatList, SafeAreaView, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { RectButton, ScrollView } from 'react-native-gesture-handler';
+import { RectButton } from 'react-native-gesture-handler';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import arrow from '../assets/images/simple-down-arrow.png';
 import { SearchBar } from 'react-native-elements';
 import { IP_address } from '../constants'
 import socketIOClient from "socket.io-client";
-//import {socket} from "../service/socket";
 
 var dataSize = 0;
 var dataSize2 = 0
@@ -34,26 +32,23 @@ function CredentialsScreen({ navigation }) {
    const [credentials, setCredentials] = React.useState([]);
    const [searchText, setSearchText] = React.useState("");
    const [empty, setEmpty] = React.useState(true);
-   const [masterDegree, setMasterDegree] = React.useState(true);
 
    React.useEffect(() => {
 
       const socket = socketIOClient(IP_address);// Change This to your IP Address
       //console.log(socket.connected)
       socket.on("disconnect", () => {
-         console.log("Cred Client disconnected");
-      });
-
-
-
-
-
+         // console.log("Cred Client disconnected");
+       });
+       
+       socket.emit('loadOldIssu', "walletID")
+       
       socket.on("IssuedCred", async data => {
 
          if (dataSize2 != data.length) {
             setCredentials(data);
-            console.log(credentials)
-            console.log("changing4")
+            // console.log(credentials)
+            // console.log("changing4")
 
             if (data.length > 0)
                setEmpty(false)
@@ -61,7 +56,7 @@ function CredentialsScreen({ navigation }) {
                setEmpty(true)
 
          }
-         console.log(credentials.length)
+         //console.log(credentials.length)
          dataSize2 = data.length;
       });
       if (credentials.length > 0)
@@ -70,7 +65,7 @@ function CredentialsScreen({ navigation }) {
          setEmpty(true)
 
       return () => socket.disconnect();
-   }, [credentials.length]);
+   }, []);
 
 
    // console.log(walletID+"In Credentials Screen")
@@ -173,15 +168,19 @@ function ConnectionsScreen() {
 
       const socket = socketIOClient(IP_address);// Change This to your IP Address
       //console.log(socket.connected)
-      socket.on("disconnect", () => {
-         console.log("Connection Client disconnected");
-      });
-      socket.on("ConnectionsData", async data => {
 
+      socket.emit('loadOldConn', "walletID")
+      //console.log('ba3at eny a load')
+      socket.on("disconnect", () => {
+         //console.log("Connection Client disconnected");
+       });
+      socket.on("ConnectionData", async data => {
+         //console.log("gali new connection")
+        //console.log(data)
 
          if (dataSize != data.length) {
             setConnectionsDataArray(data);
-            console.log("changing3")
+            //console.log("changing3")
 
             if (data.length > 0)
                setEmpty(false)
@@ -189,7 +188,7 @@ function ConnectionsScreen() {
                setEmpty(true)
 
          }
-         console.log(connectionsDataArray.length)
+         //console.log(connectionsDataArray.length)
          dataSize = data.length;
       });
       if (connectionsDataArray.length > 0)
@@ -197,8 +196,8 @@ function ConnectionsScreen() {
       else
          setEmpty(true)
 
-      return () => socket.disconnect();
-   }, [connectionsDataArray]);
+      //return () => socket.disconnect();
+   }, []);
 
 
 

@@ -102,17 +102,19 @@ export default function VerReqDetailsScreen({ route, navigation }) {
         getWalletID()
         //console.log(walletID + " in VerReqDetails")
         // socket.emit('connection', walletID)
+        socket.emit('loadOldIssu', "walletID")
         socket.on("IssuedCred", async data => {
-            // console.log("GOWA EL ISSUEDDD")
-            // console.log("before data " + data.length)
+            console.log("GOWA EL ISSUEDDD")
+            console.log("before data " + data.length)
             // console.log("before original " + dataSize)
             // console.log(data)
 
             if (dataSize < data.length) {
                 setCredentialDataArray(data);
+
                 // console.log(data)
-                //console.log("changing2")
-                // console.log(credentialDataArray)
+                console.log("data array gowa el If ")
+                 console.log(credentialDataArray)
                 if (data.length > 0)
                     setCount(true)
                 else
@@ -133,7 +135,7 @@ export default function VerReqDetailsScreen({ route, navigation }) {
 
 
         return () => socket.disconnect();
-    }, [credentialDataArray]);
+    }, []);
 
     function add(arr, myID, object) {
         // const { length } = arr;
@@ -147,7 +149,7 @@ export default function VerReqDetailsScreen({ route, navigation }) {
 
     // console.log(verArray)
 
-    async function SubmitVerificationData() {
+    async function SubmitVerificationData(walletID) {
         console.log("I ENTER THE SUBMIT FUNCTIONNNN");
         // console.log(verificationId)
         const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/verifications/' + verificationId, {
@@ -168,6 +170,7 @@ export default function VerReqDetailsScreen({ route, navigation }) {
         }
         else if (res.ok) {
             sendAcceptVerificationNotification()
+            navigation.navigate("Root")
         }
         res.json().then(console.log(JSON.stringify(res)))
 
@@ -230,7 +233,7 @@ export default function VerReqDetailsScreen({ route, navigation }) {
                     <Button
                         disabled={isSubmitDisabled(value1)}
                         title="Present"
-                        onPress={() => SubmitVerificationData()}
+                        onPress={() => SubmitVerificationData(walletID)}
                     />
                     <Button
                         title="Decline"

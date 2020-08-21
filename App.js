@@ -16,6 +16,8 @@ import OfferDetailsScreen from './screens/OfferDetailsScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import VerRequestDetails from './screens/VerRequestDetailsScreen';
 import CredsForVers from './screens/CredsForVers';
+import socketIOClient from "socket.io-client";
+
 
 
 const Stack = createStackNavigator();

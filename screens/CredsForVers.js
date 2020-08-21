@@ -11,7 +11,7 @@ import { IP_address } from '../constants'
 export default function CredsForVers({ route, navigation }) {
    const { Values } = route.params;
 
-   const bachelorSchemaId = "WqHxTAtrKbPsEqkhHDEJK:2:Computer Bachelor Degree 3:1.1";
+   const bachelorSchemaId = "WqHxTAtrKbPsEqkhHDEJK:2:Computer Bachelor Degree 6:1.1";
    const BachelorType = "Bachelor Degree";
    const [credentialDataArray, setCredentialDataArray] = React.useState([]);
 
@@ -22,6 +22,8 @@ export default function CredsForVers({ route, navigation }) {
             Creds.push(Values[i])
          }
       }
+      console.log("Choose The Rght CRed")
+      console.log(Creds)
       setCredentialDataArray(Creds)
       return Creds;
    }
@@ -30,8 +32,8 @@ export default function CredsForVers({ route, navigation }) {
    var chosenCred;
    var empty = true;
    const waitFor = 2000;
-   console.log("ana hona")
-   console.log(credentialDataArray)
+   //console.log("ana hona")
+   //console.log(credentialDataArray)
 
    if (credentialDataArray.length > 0) {
       empty = false;
@@ -97,6 +99,8 @@ export default function CredsForVers({ route, navigation }) {
    useInterval(() => {
       // Your custom logic here
       chooseTheRightCred();
+      console.log("gowa el presnt")
+      console.log(credentialDataArray)
    }, waitFor);
 
    return (

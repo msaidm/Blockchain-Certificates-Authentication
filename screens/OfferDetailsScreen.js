@@ -3,6 +3,8 @@ import { StyleSheet, AsyncStorage, Text, View, Button, Image } from 'react-nativ
 import { Card } from 'react-native-elements';
 import { WALLET_ID } from '../constants'
 import { ngrok } from '../constants'
+import socketIOClient from "socket.io-client";
+import { IP_address } from '../constants'
 
 
 export default function OfferDetailsScreen({ route, navigation }) {
@@ -12,7 +14,7 @@ export default function OfferDetailsScreen({ route, navigation }) {
 
   const [walletID, setWalletID] = React.useState();
   //const walletID='CeQq0v5QY9g3c8yqzoTQKQVyc5hbzcnH8';
-
+  const socket = socketIOClient(IP_address);
 
   async function getWalletID() {
     await AsyncStorage.getItem('userinfo').then((data) => {
@@ -23,6 +25,7 @@ export default function OfferDetailsScreen({ route, navigation }) {
       }
     })
   }
+
   getWalletID()
   //console.log(walletID + "In offer details Screen")
 
@@ -60,6 +63,7 @@ export default function OfferDetailsScreen({ route, navigation }) {
       }),
     })
     sendAcceptOfferNotification();
+    socket.emit('removeOffer', "accepted")
     navigation.navigate("Root");
   }
 
