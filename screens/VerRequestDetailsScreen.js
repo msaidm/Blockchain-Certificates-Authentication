@@ -165,6 +165,7 @@ export default function VerReqDetailsScreen({ route, navigation }) {
         else if(res.ok)
         {
             sendAcceptVerificationNotification()
+            navigation.navigate("Root")
         }
         res.json().then(console.log(JSON.stringify(res)))
         
