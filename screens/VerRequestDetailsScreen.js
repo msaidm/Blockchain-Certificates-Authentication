@@ -155,8 +155,8 @@ export default function VerReqDetailsScreen({ route, navigation }) {
         const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/verifications/' + verificationId, {
             method: 'PUT',
             headers: {
-                Authorization: 'Bearer L2JBCYw6UaWWQiRZ3U_k6JHeeIkPCiKyu5aR6gxy4P8',
-                XStreetcredSubscriptionKey: '4ed313b114eb49abbd155ad36137df51',
+                Authorization: 'Bearer DEoY7VS8s4k38xnclVCFdPWYASdZCKc2rufhLlsx4QU',
+                XStreetcredSubscriptionKey: 'd9cce2ec9adb4741b0b85279031d614b',
                 Accept: 'application/json',
                 "Content-Type": 'application/json',
             },
