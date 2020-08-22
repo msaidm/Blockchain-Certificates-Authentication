@@ -77,6 +77,7 @@ class RegisterTab extends Component {
                         onChangeText={(password) => this.setState({ password })}
                         value={this.state.password}
                         containerStyle={styles.formInput}
+                        secureTextEntry={true}
                     />
                     <Input
                         placeholder=" First Name"

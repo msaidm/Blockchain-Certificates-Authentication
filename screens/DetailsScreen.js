@@ -14,7 +14,7 @@ export default function DetailsScreen({ route, navigation }) {
   const { image } = route.params
   const { name } = route.params
   const [masterDegree, setMasterDegree] = React.useState(false);
-
+  console.log(image)
   console.log(Item)
   React.useEffect(() => {
 
@@ -196,7 +196,7 @@ export default function DetailsScreen({ route, navigation }) {
             <Image source={{ uri: image }} style={styles.image} />
             <Card title="Masters Degree ">
               <Text style={styles.paragraph}>Student name: {JSON.stringify(Item.sname)}</Text>
-              <Text style={styles.paragraph}>Cummilative GPA: {JSON.stringify(Item.sgpa)}</Text>
+              <Text style={styles.paragraph}>Cumulative GPA: {JSON.stringify(Item.sgpa)}</Text>
               <Text style={styles.paragraph}>Graduation Year: {JSON.stringify(Item.syear)}</Text>
               <Text style={styles.paragraph}>Master Degree GPA: 3.85</Text>
               <Text style={styles.paragraph}>Master Degree Year: 2020</Text>
@@ -214,7 +214,7 @@ export default function DetailsScreen({ route, navigation }) {
             <Image source={{ uri: image }} style={styles.image} />
             <Card title={JSON.stringify(Item.type)} >
               <Text style={styles.paragraph}>Student name: {JSON.stringify(Item.sname)}</Text>
-              <Text style={styles.paragraph}>Cummilative GPA: {JSON.stringify(Item.sgpa)}</Text>
+              <Text style={styles.paragraph}>Cumulative GPA: {JSON.stringify(Item.sgpa)}</Text>
               <Text style={styles.paragraph}>Graduation Year: {JSON.stringify(Item.syear)}</Text>
               <Button
                 title="Download PDF" type="outline" onPress={() => createAndSavePDF(htmlContent)} />

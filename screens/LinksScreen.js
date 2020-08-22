@@ -10,8 +10,8 @@ import { IP_address } from '../constants'
 import socketIOClient from "socket.io-client";
 
 var dataSize = 0;
-var dataSize2 = 0
-var connectionsData = [];
+var dataSize2=0;
+var dataSize3=0;
 const Tab = createMaterialTopTabNavigator();
 
 FlatListItemSeparator = () => {
@@ -32,6 +32,9 @@ function CredentialsScreen({ navigation }) {
    const [credentials, setCredentials] = React.useState([]);
    const [searchText, setSearchText] = React.useState("");
    const [empty, setEmpty] = React.useState(true);
+   const [connectionsData, setConnectionsData] = React.useState([]);
+
+   //console.log(connectionsDataArray)
 
    React.useEffect(() => {
 
@@ -41,8 +44,7 @@ function CredentialsScreen({ navigation }) {
          // console.log("Cred Client disconnected");
        });
        
-       socket.emit('loadOldIssu', "walletID")
-       
+      socket.emit('loadOldIssu', "walletID") 
       socket.on("IssuedCred", async data => {
 
          if (dataSize2 != data.length) {
@@ -64,6 +66,19 @@ function CredentialsScreen({ navigation }) {
       else
          setEmpty(true)
 
+      socket.emit('loadOldConn2', "walletID")
+      socket.on("ConnectionData", async data => {
+            //console.log("gali new connection")
+            //console.log(data)
+   
+            if (dataSize3 != data.length) {
+               setConnectionsData(data);
+               //console.log("changing3")
+   
+            }
+            //console.log(connectionsData)
+            dataSize3 = data.length;
+         });
       return () => socket.disconnect();
    }, []);
 
@@ -113,7 +128,7 @@ function CredentialsScreen({ navigation }) {
                styles.item,
             ]}
          >
-            <Text style={styles.title}>{objectt.type}</Text>
+            <Text style={styles.title}>College Certificate</Text>
             <Image source={arrow} style={{ width: 20, height: 20, alignSelf: 'flex-end' }} />
          </TouchableOpacity>
       );

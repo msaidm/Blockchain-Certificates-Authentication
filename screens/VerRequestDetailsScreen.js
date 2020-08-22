@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#ecf0f1',
     },
     paragraph: {
-        margin: 24,
+        margin: 22,
         fontSize: 15,
         fontWeight: 'bold',
         textAlign: 'left',

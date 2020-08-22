@@ -20,6 +20,7 @@ const io = socketIo(server);
 
 let intervalOldCred;
 let intervalConnData;
+let intervalConnData2;
 let intervalIssued;
 let intervalVerOffer;
 
@@ -167,7 +168,7 @@ io.on("connection", (socket) => {
   socket.on('loadOldConn', data => {
     console.log("gat")
     var timesRunConnData = 0;
-  intervalConnData = setInterval(() => {
+    intervalConnData = setInterval(() => {
           
           fetchConnections(walletID);
           timesRunConnData += 1;
@@ -175,6 +176,21 @@ io.on("connection", (socket) => {
           if(timesRunConnData > 5){
             console.log("???")
            clearInterval(intervalConnData);
+          }
+        socket.emit("ConnectionData",connectionDetailsArray)}, 2000);
+  });
+
+  socket.on('loadOldConn2', data => {
+    console.log("gat2")
+    var timesRunConnData2 = 0;
+    intervalConnData2 = setInterval(() => {
+          
+          fetchConnections(walletID);
+          timesRunConnData2 += 1;
+          console.log("Connections"+timesRunConnData2)
+          if(timesRunConnData2 > 5){
+            console.log("???")
+           clearInterval(intervalConnData2);
           }
         socket.emit("ConnectionData",connectionDetailsArray)}, 2000);
   });
@@ -196,6 +212,7 @@ io.on("connection", (socket) => {
         socket.emit("IssuedCred",issuedCredentials)}, 3000);
   });
 
+  
   
   //fetchCredentials();
   // if (interval) {
