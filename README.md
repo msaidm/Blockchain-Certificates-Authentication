@@ -10,8 +10,8 @@ It also holds all the issued credentials to that student, and reaceives any new 
 - [ngrok](https://ngrok.com/download)
 
 ## Then run the following commands:
-  expo start <br />
-  Search for the hidden folder ".ngrok2" and add the following to the configuration file <br />
+  -expo start <br />
+  -Search for the hidden folder ".ngrok2" and add the following to the configuration file <br />
 	tunnels: <br />
 			first: <br />
 				addr: 3002 <br />
@@ -26,8 +26,9 @@ It also holds all the issued credentials to that student, and reaceives any new 
 				proto: http <br />
 				bind_tls: false <br />
   
-  Go to the directory where you downloaded ngrok an open terminal and run ./ngrok start --all <br />
-	Finally, go to the project's directory, open terminal and change directory to "socket-io-server", open terminal and run node server.js
+  -Go to the directory where you downloaded ngrok an open terminal and run ./ngrok start --all <br />
+	-Finally, go to the project's directory, open terminal and change directory to "socket-io-server", open terminal and run node server.js <br />
+	-Change the ngrok links in the constants file in the application and change the IP address into your IP adress, you will also need to change the ngrok links in the 2 other projects mentioned below if you want to try the whole Isuuing a credential and verifying scenario.
   
 ## Now you are ready to run the application:
 When first running the application you will find a register page where you register your data only when first using the application. Then you need to press the scan QR code button to connect with any entity.  <br /> 
