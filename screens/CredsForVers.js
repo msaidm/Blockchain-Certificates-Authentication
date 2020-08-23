@@ -44,7 +44,7 @@ export default function CredsForVers({ route, navigation }) {
 
    function whenCredPressed(givenID) {
       chosenCred = givenID
-      navigation.navigate('VerificationRequestDetails', {
+      navigation.navigate('Verification Request Details', {
          ChosenCredID: chosenCred,
       })
 

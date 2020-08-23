@@ -225,7 +225,7 @@ export default function VerReqDetailsScreen({ route, navigation }) {
                 <View style={styles.oneButton}>
                     <Button
                         title="Find a Credential"
-                        onPress={() => navigation.navigate("CredsForVers",
+                        onPress={() => navigation.navigate("Credentials",
                             {
                                 Values: credentialDataArray
                             })}
@@ -239,7 +239,7 @@ export default function VerReqDetailsScreen({ route, navigation }) {
                     />
                     <Button
                         title="Decline"
-                        onPress={() => navigation.navigate("HomeScreen")}
+                        onPress={() => navigation.navigate("Home Screen")}
                     />
                 </View>
 

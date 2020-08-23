@@ -117,7 +117,7 @@ function CredentialsScreen({ navigation }) {
       }
       return (
          <TouchableOpacity
-            onPress={() => navigation.navigate('Details',
+            onPress={() => navigation.navigate('Credential Details',
                {
                   Item: objectt,
                   image: img,

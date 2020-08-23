@@ -156,7 +156,7 @@ export default function HomeScreen({ route, navigation }) {
   function ItemC({ title, url, credentialId }) { //for credential items
     return (
       <TouchableOpacity
-        onPress={() => navigation.navigate('OfferDetails',
+        onPress={() => navigation.navigate('Offer Details',
           {
             img: url,
             name: title,
@@ -182,7 +182,7 @@ export default function HomeScreen({ route, navigation }) {
   function ItemV({ title, url, verificationId, AttReq }) { //for verification items
     return (
       <TouchableOpacity
-        onPress={() => navigation.navigate('VerificationRequestDetails',
+        onPress={() => navigation.navigate('Verification Request Details',
           {
             Item: AttReq,
             img: url,
