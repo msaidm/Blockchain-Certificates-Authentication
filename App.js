@@ -109,11 +109,11 @@ export default function App(props) {
             <Stack.Screen name="Root" component={BottomTabNavigator} />
             <Stack.Screen name="QRScanner" component={QRScanner} />
             <Stack.Screen name="Links" component={LinksScreen}/>
-            <Stack.Screen name="Details" component={DetailsScreen}/>
-            <Stack.Screen name="OfferDetails" component={OfferDetailsScreen}/>
-            <Stack.Screen name="VerificationRequestDetails" component={VerRequestDetails}/>
-            <Stack.Screen name="CredsForVers" component={CredsForVers}/>
-            <Stack.Screen name="HomeScreen" 
+            <Stack.Screen name="Credential Details" component={DetailsScreen}/>
+            <Stack.Screen name="Offer Details" component={OfferDetailsScreen}/>
+            <Stack.Screen name="Verification Request Details" component={VerRequestDetails}/>
+            <Stack.Screen name="Credentials" component={CredsForVers}/>
+            <Stack.Screen name="Home" 
             component={HomeScreen} 
             initialParams={{ text: 'Ya Rab' }}
             />
