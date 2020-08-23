@@ -6,11 +6,28 @@ It also holds all the issued credentials to that student, and reaceives any new 
 
 ## Prerequisites:
 - [npm](https://www.npmjs.com/get-npm)
-- [expo] (https://expo.io/)
+- [expo](https://expo.io/)
+- [ngrok](https://ngrok.com/download)
 
 ## Then run the following commands:
-  expo start 
+  expo start <br />
+  Search for the hidden folder ".ngrok2" and add the following to the configuration file <br />
+	tunnels: <br />
+			first: <br />
+				addr: 3002 <br />
+				proto: http  <br />
+				bind_tls: false <br />
+			second: <br />
+				addr: 5004 <br />
+				proto: http <br />
+				bind_tls: false <br />
+			third: <br />
+				addr: 5002 <br />
+				proto: http <br />
+				bind_tls: false <br />
   
+  Go to the directory where you downloaded ngrok an open terminal and run ./ngrok start --all <br />
+	Finally, go to the project's directory, open terminal and change directory to "socket-io-server", open terminal and run node server.js
   
 ## Now you are ready to run the application:
 When first running the application you will find a register page where you register your data only when first using the application. Then you need to press the scan QR code button to connect with any entity.  <br /> 
