@@ -118,6 +118,31 @@ export default function HomeScreen({ route, navigation }) {
 
     
     });
+
+    // socket.on("removeVer", async data => { 
+    //   console.log("ana gali noftfi eny ashel el verOffer")
+    //   console.log(data)
+
+    //   if (dataSize != data.length) {
+    //     setConnectionDataArray(data);
+
+        
+    //     //console.log(connectionDataArray)
+    //     console.log("changing")
+    //      if (data.length > 0)
+    //       setCount(true)
+    //     else
+    //       setCount(false)
+
+
+    //     dataSize = data.length;
+    //     console.log(socket.connected)
+
+    //   }
+      
+
+    
+    // });
      if (connectionDataArray.length > 0)
       setCount(true)
     else

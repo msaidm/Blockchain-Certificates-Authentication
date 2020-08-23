@@ -23,6 +23,7 @@ let intervalConnData;
 let intervalConnData2;
 let intervalIssued;
 let intervalVerOffer;
+let intervalOfferedVer;
 
 let CredOffer;
 let NewConn;
@@ -130,23 +131,40 @@ io.on("connection", (socket) => {
     walletID = data;
   });
 
-  socket.on('removeOffer', data => {
-    console.log("offer yetshal")
-    var timesRunOfferedData = 0;
-    intervalOfferedData = setInterval(() => {
+  // socket.on('removeOffer', data => {
+  //   console.log("offer yetshal")
+  //   var timesRunOfferedData = 0;
+  //   intervalOfferedData = setInterval(() => {
           
-          fetchCredentials(walletID);
-          timesRunOfferedData += 1;
-          console.log(timesRunOfferedData + " remove offer")
-          if(timesRunOfferedData > 5){
-           clearInterval(intervalOfferedData);
-           console.log("Inside remove offer")
+  //         fetchCredentials(walletID);
+  //         timesRunOfferedData += 1;
+  //         console.log(timesRunOfferedData + " remove offer")
+  //         if(timesRunOfferedData > 5){
+  //          clearInterval(intervalOfferedData);
+  //          console.log("Inside remove offer")
           
-          }
-        //socket.emit("test","ANA AY DATA")
-        socket.emit("CredOfferNotif",connectionDataArray)}, 2000);
-  });
+  //         }
+  //       //socket.emit("test","ANA AY DATA")
+  //       socket.local.emit("CredOfferNotif",connectionDataArray)}, 2000);
+  // });
 
+  // socket.on('removeVerification', data => {
+  //   console.log("ver yetshal")
+  //   console(data)
+  //   var timesRunOfferedVer= 0;
+  //   intervalOfferedVer = setInterval(() => {
+          
+  //         fetchVerifications(walletID);
+  //         timesRunOfferedVer += 1;
+  //         console.log(timesRunOfferedVer + " remove ver")
+  //         if(timesRunOfferedVer > 5){
+  //          clearInterval(intervalOfferedVer);
+  //          console.log("Inside remove ver")
+          
+  //         }
+  //       //socket.emit("test","ANA AY DATA")
+  //       socket.local.emit("removeVer",verDataArray)}, 2000);
+  // });
   // var timesRunOldCredOffer = 0;
   //       intervalOldCred = setInterval(() => {
   //         fetchVerifications(walletID);
@@ -296,6 +314,7 @@ async function fetchVerifications(walletID) {
 
   for (let index = 0; index < ver.length; index++) {
     if (ver[index].state == "Accepted") {
+      console.log("Accepted")
       for (let index3 = 0; index3 < verDataArray.length; index3++) {
         if (verDataArray[index3].verificationId == ver[index].verificationId) {
           verDataArray.splice(index3, 1)

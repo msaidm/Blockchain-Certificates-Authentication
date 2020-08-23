@@ -14,7 +14,7 @@ export default function OfferDetailsScreen({ route, navigation }) {
 
   const [walletID, setWalletID] = React.useState();
   //const walletID='CeQq0v5QY9g3c8yqzoTQKQVyc5hbzcnH8';
-  const socket = socketIOClient(IP_address);
+ // const socket = socketIOClient(IP_address);
 
   async function getWalletID() {
     await AsyncStorage.getItem('userinfo').then((data) => {
@@ -63,7 +63,8 @@ export default function OfferDetailsScreen({ route, navigation }) {
       }),
     })
     sendAcceptOfferNotification();
-    socket.emit('removeOffer', "accepted")
+    //socket.emit('removeOffer', "accepted")
+
     navigation.navigate("Root");
   }
 

@@ -22,7 +22,7 @@ export default function VerReqDetailsScreen({ route, navigation }) {
     // console.log("Printing current Ver ID: "+ verificationId);
     const { ChosenCredID } = route.params;
     //console.log("Printing Chosen Credential ID: " + ChosenCredID);
-
+  //const socket = socketIOClient(IP_address);
     var value1 = "pending credential";
     var value2 = "pending credential";
     var value3 = "pending credential";
@@ -170,8 +170,10 @@ export default function VerReqDetailsScreen({ route, navigation }) {
         }
         else if (res.ok) {
             sendAcceptVerificationNotification()
+            //socket.emit('removeVerification',"accepted")
             navigation.navigate("Root")
         }
+        
         res.json().then(console.log(JSON.stringify(res)))
 
     }
