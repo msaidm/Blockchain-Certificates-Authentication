@@ -6,7 +6,7 @@ const socketIo = require("socket.io");
 const fetch = require('node-fetch');
 
 
-const port = process.env.PORT || 5002;
+const port = process.env.PORT || 5002; //port value for clients to connect on
 const index = require("./index");
 
 const app = express();
@@ -20,24 +20,23 @@ const io = socketIo(server);
 
 let intervalOldCred;
 let intervalConnData;
-let intervalConnData2;
 let intervalIssued;
 let intervalVerOffer;
-let intervalOfferedVer;
 
 let CredOffer;
 let NewConn;
 let NewCredInterval;
 let NewVerInterval;
 
-var connectionDataArray = []
-var verDataArray = []
-var issuedCredentials = [];
-var issuedBachelorCredentials = []
-var connectionDetailsArray = []
+var connectionDataArray = [] //saves the connection details along with the type of request wether it's verification request or credential offer
+var verDataArray = []  //Array where to save in it data required to verified in the verefication requests
+var issuedCredentials = []; //Array to save all credentials of type "Issued"
+var issuedBachelorCredentials = [] //
+var connectionDetailsArray = [] //saves connection details such as it's ID and name and Image.
 let walletID;
 
 
+//Send a notification to application that the student requested to add masters degree to their credentials
 app.post('/webhook', async function (req, res) {
   try {
       //console.log("got webhook" + req + "   type: " + req.body.message_type);
@@ -63,7 +62,7 @@ app.post('/webhook', async function (req, res) {
             console.log("da5lt el cond")
            clearInterval(CredOffer);
           }
-        io.emit("CredOfferNotif",connectionDataArray)}, 3000);
+        io.emit("CredOfferNotif",connectionDataArray)}, 3000); //sends a notification
 
         
         
@@ -131,40 +130,23 @@ io.on("connection", (socket) => {
     walletID = data;
   });
 
-  // socket.on('removeOffer', data => {
-  //   console.log("offer yetshal")
-  //   var timesRunOfferedData = 0;
-  //   intervalOfferedData = setInterval(() => {
+  socket.on('removeOffer', data => {
+    console.log("offer yetshal")
+    var timesRunOfferedData = 0;
+    intervalOfferedData = setInterval(() => {
           
-  //         fetchCredentials(walletID);
-  //         timesRunOfferedData += 1;
-  //         console.log(timesRunOfferedData + " remove offer")
-  //         if(timesRunOfferedData > 5){
-  //          clearInterval(intervalOfferedData);
-  //          console.log("Inside remove offer")
+          fetchCredentials(walletID);
+          timesRunOfferedData += 1;
+          console.log(timesRunOfferedData + " remove offer")
+          if(timesRunOfferedData > 5){
+           clearInterval(intervalOfferedData);
+           console.log("Inside remove offer")
           
-  //         }
-  //       //socket.emit("test","ANA AY DATA")
-  //       socket.local.emit("CredOfferNotif",connectionDataArray)}, 2000);
-  // });
+          }
+        //socket.emit("test","ANA AY DATA")
+        socket.emit("CredOfferNotif",connectionDataArray)}, 2000);
+  });
 
-  // socket.on('removeVerification', data => {
-  //   console.log("ver yetshal")
-  //   console(data)
-  //   var timesRunOfferedVer= 0;
-  //   intervalOfferedVer = setInterval(() => {
-          
-  //         fetchVerifications(walletID);
-  //         timesRunOfferedVer += 1;
-  //         console.log(timesRunOfferedVer + " remove ver")
-  //         if(timesRunOfferedVer > 5){
-  //          clearInterval(intervalOfferedVer);
-  //          console.log("Inside remove ver")
-          
-  //         }
-  //       //socket.emit("test","ANA AY DATA")
-  //       socket.local.emit("removeVer",verDataArray)}, 2000);
-  // });
   // var timesRunOldCredOffer = 0;
   //       intervalOldCred = setInterval(() => {
   //         fetchVerifications(walletID);
@@ -186,7 +168,7 @@ io.on("connection", (socket) => {
   socket.on('loadOldConn', data => {
     console.log("gat")
     var timesRunConnData = 0;
-    intervalConnData = setInterval(() => {
+  intervalConnData = setInterval(() => {
           
           fetchConnections(walletID);
           timesRunConnData += 1;
@@ -194,21 +176,6 @@ io.on("connection", (socket) => {
           if(timesRunConnData > 5){
             console.log("???")
            clearInterval(intervalConnData);
-          }
-        socket.emit("ConnectionData",connectionDetailsArray)}, 2000);
-  });
-
-  socket.on('loadOldConn2', data => {
-    console.log("gat2")
-    var timesRunConnData2 = 0;
-    intervalConnData2 = setInterval(() => {
-          
-          fetchConnections(walletID);
-          timesRunConnData2 += 1;
-          console.log("Connections"+timesRunConnData2)
-          if(timesRunConnData2 > 5){
-            console.log("???")
-           clearInterval(intervalConnData2);
           }
         socket.emit("ConnectionData",connectionDetailsArray)}, 2000);
   });
@@ -230,7 +197,6 @@ io.on("connection", (socket) => {
         socket.emit("IssuedCred",issuedCredentials)}, 3000);
   });
 
-  
   
   //fetchCredentials();
   // if (interval) {
@@ -263,7 +229,10 @@ io.on("connection", (socket) => {
   });
 });
 
-function addConnectionDetails(arr, myID, object) {
+
+//Function checks if the connection received new before adding it to the connection details array
+
+function addConnectionDetails(arr, myID, object) {  
   const found = arr.some(el => el.id == myID);
   if (!found) {
     arr.push(object);
@@ -271,6 +240,8 @@ function addConnectionDetails(arr, myID, object) {
   return arr;
 }
 
+
+//A function that fetch the "verifications" API and add verifications of type "requested" to requestedverification array and add the connection details with the requester to the connectiondetails array to display in the card
 async function fetchVerifications(walletID) {
   var requestedVerifications = []
   var verificationDetails = []
@@ -311,10 +282,9 @@ async function fetchVerifications(walletID) {
       }
     }
   }
-
+  
   for (let index = 0; index < ver.length; index++) {
     if (ver[index].state == "Accepted") {
-      console.log("Accepted")
       for (let index3 = 0; index3 < verDataArray.length; index3++) {
         if (verDataArray[index3].verificationId == ver[index].verificationId) {
           verDataArray.splice(index3, 1)
@@ -324,6 +294,7 @@ async function fetchVerifications(walletID) {
   }
 }
 
+//function that fetch the connections of state "accepted" the app has with any entity and return them in connectionDetailsArray
 async function fetchConnections(walletID) {
 
   const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/connections', {
@@ -347,6 +318,8 @@ async function fetchConnections(walletID) {
     }
   }
 }
+
+//function that fetches the credentials "offered" and place them in offeredCredentials and the credentials of type "Issued" and place them issuedBachelorCredentials array
 const fetchCredentials = async (walletID) => {
   // fetchVerifications();
   // fetchConnections(walletID);

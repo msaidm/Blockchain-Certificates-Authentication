@@ -11,10 +11,11 @@ import { IP_address } from '../constants'
 export default function CredsForVers({ route, navigation }) {
    const { Values } = route.params;
 
-   const bachelorSchemaId = "KP7yEkAopJJK3HFVLmZFyg:2:Computer Bachelor Degree:1.1";
+   const bachelorSchemaId = "KP7yEkAopJJK3HFVLmZFyg:2:Computer Bachelor Degree:1.1"; //restricted schemaID for bachelor degree credentials
    const BachelorType = "Bachelor Degree";
    const [credentialDataArray, setCredentialDataArray] = React.useState([]);
 
+   //returns credentials suitable for this type of verification request 
    async function chooseTheRightCred() {
       var Creds = [];
       for (var i = 0; i < Values.length; i++) {
@@ -41,7 +42,7 @@ export default function CredsForVers({ route, navigation }) {
    }
 
 
-
+//function handling the press of the verification request by navigating to VerRequestDetails screen
    function whenCredPressed(givenID) {
       chosenCred = givenID
       navigation.navigate('Verification Request Details', {
@@ -50,6 +51,8 @@ export default function CredsForVers({ route, navigation }) {
 
 
    }
+   
+   //item to be rendered in the flatlist returned by the screen
    function Item({ name, year, gpa, ID, type }) {
       return (
          <TouchableOpacity
@@ -102,7 +105,8 @@ export default function CredsForVers({ route, navigation }) {
       console.log("gowa el presnt")
       console.log(credentialDataArray)
    }, waitFor);
-
+   
+   //returns a list of available credentials
    return (
       <View style={styles.horizontal}>
          {

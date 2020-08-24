@@ -155,7 +155,7 @@ export default function DetailsScreen({ route, navigation }) {
 </body>
 </html>
 `;
-
+//creating a PDF containing credential details and a QR code linking to the issuer (college) website
   const createAndSavePDF = async (html) => {
     try {
       //console.log(html)

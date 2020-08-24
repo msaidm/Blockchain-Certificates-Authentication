@@ -8,6 +8,7 @@ import { IP_address } from '../constants'
 
 
 export default function OfferDetailsScreen({ route, navigation }) {
+  //receiving the paramters passed
   const { name } = route.params;
   const { img } = route.params;
   const { credentialId } = route.params;
@@ -32,7 +33,7 @@ export default function OfferDetailsScreen({ route, navigation }) {
   //console.log(Item.credentialId);
   // var walletID = WALLET_ID;
 
-
+//send notification to college website with credential offer acceptance (after pressing accept in the   UI)
   async function sendAcceptOfferNotification() {
     const res = await fetch(ngrok + '/webhook', {
       method: 'POST',
@@ -46,7 +47,8 @@ export default function OfferDetailsScreen({ route, navigation }) {
     });
     res.json().then(console.log(JSON.stringify(res)))
   }
-  
+ 
+  //Function that handles the "accept button" by calling the API that accepts the credential offer and return back to homepage
   async function acceptButton(walletID, credentialID) {
     var fetchURLForAcceptInvitaion = 'https://api.streetcred.id/custodian/v1/api/' + walletID + '/credentials/' + credentialID;
     const res = await fetch(fetchURLForAcceptInvitaion, {
@@ -74,7 +76,7 @@ export default function OfferDetailsScreen({ route, navigation }) {
     navigation.navigate("Root");
   }
 
-
+//display the details in a card form
   return (
     <View>
       <Card title="Credential Offer Details">

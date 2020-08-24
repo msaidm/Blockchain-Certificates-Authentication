@@ -26,7 +26,7 @@ export default function HomeScreen({ route, navigation }) {
     })
   }
 
-
+//useEffect is used to keep updating/fetching for changes every 2-3 seconds
   React.useEffect(()  => {
 
    const socket = socketIOClient(IP_address);// Change This to your IP Address
@@ -153,6 +153,8 @@ export default function HomeScreen({ route, navigation }) {
     //return () => socket.disconnect();
   }, [walletID]);
 
+
+  //function that returns the card of the credential offer properly on the UI in homepage
   function ItemC({ title, url, credentialId }) { //for credential items
     return (
       <TouchableOpacity
@@ -179,6 +181,8 @@ export default function HomeScreen({ route, navigation }) {
     );
   }
 
+
+  //function that returns the verification request card properly on the UI in home page
   function ItemV({ title, url, verificationId, AttReq }) { //for verification items
     return (
       <TouchableOpacity
@@ -206,7 +210,7 @@ export default function HomeScreen({ route, navigation }) {
     );
   }
 
-
+//we return a flatlist in the UI which loads items of different types(credential offer or verification request) by checking their type through conditions
   return (
     <View style={styles.container}>
       {count ?
@@ -221,8 +225,9 @@ export default function HomeScreen({ route, navigation }) {
 
                 }
                 else if (item.type == "Verification") {
+                  //the only attributes needed to verify 
                   const atts = { att1: "Name", att2: "Year", att3: "GPA" };
-                  //console.log("Printing the whole Item From Home: ");
+                
                   //console.log(item);
                   return <ItemV title={item.title} url={item.image} verificationId={item.verificationId} AttReq={atts} />;
                 }
