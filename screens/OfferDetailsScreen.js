@@ -17,6 +17,7 @@ export default function OfferDetailsScreen({ route, navigation }) {
   //const walletID='CeQq0v5QY9g3c8yqzoTQKQVyc5hbzcnH8';
  // const socket = socketIOClient(IP_address);
 
+ //gets the ID of the current wallet
   async function getWalletID() {
     await AsyncStorage.getItem('userinfo').then((data) => {
       let dataInfo = JSON.parse(data);

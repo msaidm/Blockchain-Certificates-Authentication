@@ -56,7 +56,7 @@ export default function QRScanner({ navigation }) {
     res.json().then(res => setWallets(res))
 
   }
-
+  // accepting the connection invitation
   async function acceptInvitation(Invitation) {
     let data = new FormData();
     data.append("invitation", Invitation);
@@ -102,7 +102,7 @@ export default function QRScanner({ navigation }) {
     }
     // console.log(wallets)
   }
-
+  //the scan barcode function
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
     splitted = data.split('=');

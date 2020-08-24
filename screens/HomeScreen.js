@@ -16,7 +16,7 @@ export default function HomeScreen({ route, navigation }) {
   const [walletID, setWalletID] = React.useState();
   //const walletID='CeQq0v5QY9g3c8yqzoTQKQVyc5hbzcnH8';
 
-
+  //gets the created wallet id
   async function getWalletID() {
     await AsyncStorage.getItem('userinfo').then((data) => {
       let dataInfo = JSON.parse(data);
@@ -35,7 +35,7 @@ export default function HomeScreen({ route, navigation }) {
 
     console.log(walletID + "in Home")
     if(walletID != null)
-    socket.emit('sendWalletIDOnConnection', walletID)
+    socket.emit('sendWalletIDOnConnection', walletID) //send the wallet id to the server
     socket.on("disconnect", () => {
       console.log("Home Client disconnected");
     });
@@ -44,7 +44,7 @@ export default function HomeScreen({ route, navigation }) {
     socket.on("disconnect", () => {
       console.log("Home Client disconnected");
     });
-    socket.on("oldCredOffers", async data => { 
+    socket.on("oldCredOffers", async data => {   //sets the array that of old credentials upon receiving the signal to be loaded
       console.log("loading old cred")
       //console.log(data)
 
@@ -69,7 +69,7 @@ export default function HomeScreen({ route, navigation }) {
     
     });
 
-    socket.on("CredOfferNotif", async data => { 
+    socket.on("CredOfferNotif", async data => {    //sets the array that of credential offers upon receiving the signal to be loaded
       console.log("ana gali noftfi be cred offer fel home")
       console.log(data)
 
@@ -94,7 +94,7 @@ export default function HomeScreen({ route, navigation }) {
     
     }); 
 
-    socket.on("NewVerOffer", async data => { 
+    socket.on("NewVerOffer", async data => {  //sets the array that of verification offer upon receiving the signal to be loaded
       console.log("ana gali noftfi be ver offer fel home")
       console.log(data)
 
@@ -105,7 +105,7 @@ export default function HomeScreen({ route, navigation }) {
         //console.log(connectionDataArray)
         console.log("changing")
          if (data.length > 0)
-          setCount(true)
+          setCount(true)  
         else
           setCount(false)
 
@@ -143,7 +143,7 @@ export default function HomeScreen({ route, navigation }) {
 
     
     // });
-     if (connectionDataArray.length > 0)
+     if (connectionDataArray.length > 0)  // to load the picture if there is no connections 
       setCount(true)
     else
       setCount(false)

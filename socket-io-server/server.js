@@ -36,19 +36,20 @@ var connectionDetailsArray = [] //saves connection details such as it's ID and n
 let walletID;
 
 
-//Send a notification to application that the student requested to add masters degree to their credentials
+
 app.post('/webhook', async function (req, res) {
   try {
+    // Upon receiving a notification from the COllege website for the master degree offer we send a
+    // notification to application that the student requested to add masters degree to their credentials
       //console.log("got webhook" + req + "   type: " + req.body.message_type);
       if (req.body.message_type === 'MasterDegree_offer') {
             console.log("new Master Degree notif");
             interval = setInterval(() => io.emit("masterDegreeNotif",true), 2000);
-
-            
             console.log("ba3at master deg")
             
       }
-
+       // Upon receiving a notification from the College website for the bachelor degree offer we send a
+      // notification to application that the student requested to credential and add the new offer
       if (req.body.message_type === 'Cred_offer') {
         console.log("new Cred offer notif");
         
@@ -67,7 +68,8 @@ app.post('/webhook', async function (req, res) {
         
         
       } 
-
+      // Upon receiving a notification from the College website for a new connection we send a
+      // notification to application that the student connected with the college and add the new connection
       if (req.body.message_type === 'NewConnection') {
         console.log("NewConnection");
         
@@ -85,6 +87,8 @@ app.post('/webhook', async function (req, res) {
         io.emit("ConnectionData",connectionDetailsArray)}, 3000);  
         
       }
+       // Upon receiving a notification from the College website for a new credential we send a
+      // notification to application that the student has a new credential with the college and add the new credential
 
       if (req.body.message_type === 'NewCred') {
         console.log("NewCred");
@@ -98,6 +102,8 @@ app.post('/webhook', async function (req, res) {
           }
         io.emit("IssuedCred",issuedCredentials)}, 2000);  
       }
+       // Upon receiving a notification from the College website for a new verification request we send a
+      // notification to application that the student has a new verification request with the college and add the new request
 
       if (req.body.message_type === 'NewVer') {
         console.log("NewVer");
@@ -121,10 +127,11 @@ app.post('/webhook', async function (req, res) {
   }
 });
 
-
+//Upon connection to the server this runs
 io.on("connection", (socket) => {
   
   console.log("Client connected");
+  //when the application starts the wallet ID is received 
   socket.on('sendWalletIDOnConnection', data => {
     console.log('wallet Id from the client'+ data);
     walletID = data;
@@ -165,6 +172,7 @@ io.on("connection", (socket) => {
     
   // });
 
+  //to fetch old connections when starting the app and save them into an array and send it to the application to list 
   socket.on('loadOldConn', data => {
     console.log("gat")
     var timesRunConnData = 0;
@@ -179,7 +187,7 @@ io.on("connection", (socket) => {
           }
         socket.emit("ConnectionData",connectionDetailsArray)}, 2000);
   });
-
+  //to fetch old credentials when starting the app and save them into an array and send it to the application to list 
   socket.on('loadOldIssu', data => {
     //console.log("Issued")
     var timesIssuedCred = 0;
@@ -223,7 +231,7 @@ io.on("connection", (socket) => {
         
 
         
-
+  //disconnect client
   socket.on("disconnect", () => {
     console.log("Client disconnected");
   });
@@ -388,7 +396,7 @@ const fetchCredentials = async (walletID) => {
       }
     }
   }
-
+  //removes the credential offer once the student accepts it
   for (let index = 0; index < cred.length; index++) {
     if (cred[index].state == "Issued") {
       // console.log("hena")

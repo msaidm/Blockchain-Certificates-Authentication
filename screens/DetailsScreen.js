@@ -22,7 +22,7 @@ export default function DetailsScreen({ route, navigation }) {
     //console.log(socket.connected)
 
 
-
+    //sets the array that of master data upon receiving the signal to be loaded
     socket.on("masterDegreeNotif", async data => {
       console.log("msater de" + data)
       setMasterDegree(data);
@@ -33,7 +33,7 @@ export default function DetailsScreen({ route, navigation }) {
     return () => socket.disconnect();
   }, [masterDegree]);
 
-
+//html for the pdf
   const htmlContent =
     `
 <!DOCTYPE html>

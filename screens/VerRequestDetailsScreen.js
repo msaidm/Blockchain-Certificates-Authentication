@@ -13,7 +13,8 @@ export default function VerReqDetailsScreen({ route, navigation }) {
     const [credentialDataArray, setCredentialDataArray] = React.useState([]);
     const [count, setCount] = React.useState(true);
     let dataSize = 0;
-    //const walletID = 'CeQq0v5QY9g3c8yqzoTQKQVyc5hbzcnH8';
+
+    //gets the items from previous screen
     const { Item } = route.params;
     const { image } = route.params;
     const { name } = route.params;
@@ -61,7 +62,7 @@ export default function VerReqDetailsScreen({ route, navigation }) {
     // console.log("PRINTING THE SUBMIT ARRAY HEREEEEE");
     //console.log(verificationPolicyCredentialParametersArray);
 
-
+    //to update the values to those of the chosen credential
     function updatingValuesPending() {
         if (ChosenCredID != null && credentialDataArray != null) {
             for (var i = 0; i < credentialDataArray.length; i++) {
@@ -75,6 +76,7 @@ export default function VerReqDetailsScreen({ route, navigation }) {
             }
         }
     }
+    //to disable present button until values are chosen
     function isSubmitDisabled(str) {
         if (str == "pending credential")
             return true;
@@ -102,8 +104,8 @@ export default function VerReqDetailsScreen({ route, navigation }) {
         getWalletID()
         //console.log(walletID + " in VerReqDetails")
         // socket.emit('connection', walletID)
-        socket.emit('loadOldIssu', "walletID")
-        socket.on("IssuedCred", async data => {
+        socket.emit('loadOldIssu', "walletID") //asks server for available issued credentials
+        socket.on("IssuedCred", async data => { //sets the array that of credentials upon receiving the signal to be loaded
             console.log("GOWA EL ISSUEDDD")
             console.log("before data " + data.length)
             // console.log("before original " + dataSize)
@@ -149,7 +151,7 @@ export default function VerReqDetailsScreen({ route, navigation }) {
 
     // console.log(verArray)
 
-    async function SubmitVerificationData(walletID) {
+    async function SubmitVerificationData(walletID) { //presents the data chosen tp the job website
         console.log("I ENTER THE SUBMIT FUNCTIONNNN");
         // console.log(verificationId)
         const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/verifications/' + verificationId, {
@@ -192,7 +194,7 @@ export default function VerReqDetailsScreen({ route, navigation }) {
         res.json().then(console.log(JSON.stringify(res)))
     }
 
-
+    // the ui of the verification details screen
     return (
         <View>
             <Card title="Verification Request Details">

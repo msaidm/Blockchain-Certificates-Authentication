@@ -44,8 +44,8 @@ function CredentialsScreen({ navigation }) {
          // console.log("Cred Client disconnected");
        });
        
-      socket.emit('loadOldIssu', "walletID") 
-      socket.on("IssuedCred", async data => {
+      socket.emit('loadOldIssu', "walletID")  //asks the server to fetch the old issued credentials
+      socket.on("IssuedCred", async data => {  //sets the array that of old credentials upon receiving the signal to be loaded
 
          if (dataSize2 != data.length) {
             setCredentials(data);
@@ -66,8 +66,8 @@ function CredentialsScreen({ navigation }) {
       else
          setEmpty(true)
 
-      socket.emit('loadOldConn2', "walletID")
-      socket.on("ConnectionData", async data => {
+      socket.emit('loadOldConn2', "walletID") //asks the server to fetch connections
+      socket.on("ConnectionData", async data => { //sets the array that of  connections upon receiving the signal to be loaded
             //console.log("gali new connection")
             //console.log(data)
    
@@ -104,7 +104,7 @@ function CredentialsScreen({ navigation }) {
       setCredentials(newData);
    };
 
-
+   // the item of the credential that is clickable to view the details
    function Item({ objectt }) {
       var img, title, masterDegree;
       var connId = objectt.connID;
@@ -184,12 +184,12 @@ function ConnectionsScreen() {
       const socket = socketIOClient(IP_address);// Change This to your IP Address
       //console.log(socket.connected)
 
-      socket.emit('loadOldConn', "walletID")
+      socket.emit('loadOldConn', "walletID") //asks the server to load old connections
       //console.log('ba3at eny a load')
       socket.on("disconnect", () => {
          //console.log("Connection Client disconnected");
        });
-      socket.on("ConnectionData", async data => {
+      socket.on("ConnectionData", async data => { //sets the array that of old connections upon receiving the signal to be loaded
          //console.log("gali new connection")
         //console.log(data)
 
@@ -215,7 +215,7 @@ function ConnectionsScreen() {
    }, []);
 
 
-
+   //the item of the connection name and image
    function Item({ title, url }) {
       return (
          <View style={styles.item}>
@@ -224,7 +224,7 @@ function ConnectionsScreen() {
          </View>
       );
    }
-
+//draws the picture if there are no connections or lists the connectoins if they are not empty
    return (
       <View style={styles.container}>
          {
