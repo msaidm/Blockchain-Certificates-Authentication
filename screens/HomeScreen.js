@@ -14,7 +14,6 @@ export default function HomeScreen({ route, navigation }) {
   const [count, setCount] = React.useState(true);
   //let dataSize = 0;
   const [walletID, setWalletID] = React.useState();
-  //const walletID='CeQq0v5QY9g3c8yqzoTQKQVyc5hbzcnH8';
 
   //gets the created wallet id
   async function getWalletID() {
