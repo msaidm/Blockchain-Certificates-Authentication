@@ -157,8 +157,8 @@ export default function VerReqDetailsScreen({ route, navigation }) {
         const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/verifications/' + verificationId, {
             method: 'PUT',
             headers: {
-                Authorization: 'Bearer DEoY7VS8s4k38xnclVCFdPWYASdZCKc2rufhLlsx4QU',
-                XStreetcredSubscriptionKey: 'd9cce2ec9adb4741b0b85279031d614b',
+                Authorization: 'Bearer GWQuposGwBFIL43tzcfKPTTdEQrSitrqr4TJIsnB0-0',
+                XStreetcredSubscriptionKey: 'e2203803a5d94c5dbb8236544c16edd9',
                 Accept: 'application/json',
                 "Content-Type": 'application/json',
             },
@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#ecf0f1',
     },
     paragraph: {
-        margin: 22,
+        margin: 26,
         fontSize: 15,
         fontWeight: 'bold',
         textAlign: 'left',

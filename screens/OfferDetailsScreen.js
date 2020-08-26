@@ -55,8 +55,8 @@ export default function OfferDetailsScreen({ route, navigation }) {
     const res = await fetch(fetchURLForAcceptInvitaion, {
       method: 'POST',
       headers: {
-        Authorization: 'Bearer DEoY7VS8s4k38xnclVCFdPWYASdZCKc2rufhLlsx4QU',
-        XStreetcredSubscriptionKey: 'd9cce2ec9adb4741b0b85279031d614b',
+        Authorization: 'Bearer GWQuposGwBFIL43tzcfKPTTdEQrSitrqr4TJIsnB0-0',
+        XStreetcredSubscriptionKey: 'e2203803a5d94c5dbb8236544c16edd9',
         Accept: 'application/json',
         "Content-Type": 'application/json',
       },

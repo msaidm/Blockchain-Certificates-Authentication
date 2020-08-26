@@ -20,6 +20,7 @@ const io = socketIo(server);
 
 let intervalOldCred;
 let intervalConnData;
+let intervalConnData2;
 let intervalIssued;
 let intervalVerOffer;
 
@@ -187,6 +188,24 @@ io.on("connection", (socket) => {
           }
         socket.emit("ConnectionData",connectionDetailsArray)}, 2000);
   });
+
+
+
+  socket.on('loadOldConn2', data => {
+    console.log("gat2")
+    var timesRunConnData2 = 0;
+    intervalConnData2 = setInterval(() => {
+
+          fetchConnections(walletID);
+          timesRunConnData2 += 1;
+          console.log("Connections"+timesRunConnData2)
+          if(timesRunConnData2 > 5){
+            console.log("???")
+           clearInterval(intervalConnData2);
+          }
+        socket.emit("ConnectionData",connectionDetailsArray)}, 2000);
+  });
+
   //to fetch old credentials when starting the app and save them into an array and send it to the application to list 
   socket.on('loadOldIssu', data => {
     //console.log("Issued")
@@ -256,8 +275,8 @@ async function fetchVerifications(walletID) {
   const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/verifications', {
     method: 'GET',
     headers: {
-      Authorization: 'Bearer DEoY7VS8s4k38xnclVCFdPWYASdZCKc2rufhLlsx4QU',
-      XStreetcredSubscriptionKey: 'd9cce2ec9adb4741b0b85279031d614b',
+      Authorization: 'Bearer GWQuposGwBFIL43tzcfKPTTdEQrSitrqr4TJIsnB0-0',
+      XStreetcredSubscriptionKey: 'e2203803a5d94c5dbb8236544c16edd9',
       Accept: 'application/json',
     },
   });
@@ -269,8 +288,8 @@ async function fetchVerifications(walletID) {
       const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/connections/' + tempVerConnectionID, {
         method: 'GET',
         headers: {
-          Authorization: 'Bearer DEoY7VS8s4k38xnclVCFdPWYASdZCKc2rufhLlsx4QU',
-          XStreetcredSubscriptionKey: 'd9cce2ec9adb4741b0b85279031d614b',
+          Authorization: 'Bearer GWQuposGwBFIL43tzcfKPTTdEQrSitrqr4TJIsnB0-0',
+          XStreetcredSubscriptionKey: 'e2203803a5d94c5dbb8236544c16edd9',
           Accept: 'application/json',
         },
       });
@@ -308,8 +327,8 @@ async function fetchConnections(walletID) {
   const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/connections', {
     method: 'GET',
     headers: {
-      Authorization: 'Bearer DEoY7VS8s4k38xnclVCFdPWYASdZCKc2rufhLlsx4QU',
-      XStreetcredSubscriptionKey: 'd9cce2ec9adb4741b0b85279031d614b',
+      Authorization: 'Bearer GWQuposGwBFIL43tzcfKPTTdEQrSitrqr4TJIsnB0-0',
+      XStreetcredSubscriptionKey: 'e2203803a5d94c5dbb8236544c16edd9',
       Accept: 'application/json',
     },
   });
@@ -337,8 +356,8 @@ const fetchCredentials = async (walletID) => {
   const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/credentials', {
     method: 'GET',
     headers: {
-      Authorization: 'Bearer DEoY7VS8s4k38xnclVCFdPWYASdZCKc2rufhLlsx4QU',
-      XStreetcredSubscriptionKey: 'd9cce2ec9adb4741b0b85279031d614b',
+      Authorization: 'Bearer GWQuposGwBFIL43tzcfKPTTdEQrSitrqr4TJIsnB0-0',
+      XStreetcredSubscriptionKey: 'e2203803a5d94c5dbb8236544c16edd9',
       Accept: 'application/json',
     },
   });
@@ -351,8 +370,8 @@ const fetchCredentials = async (walletID) => {
       const res = await fetch('https://api.streetcred.id/custodian/v1/api/' + walletID + '/connections/' + tempConnectionID, {
         method: 'GET',
         headers: {
-          Authorization: 'Bearer DEoY7VS8s4k38xnclVCFdPWYASdZCKc2rufhLlsx4QU',
-          XStreetcredSubscriptionKey: 'd9cce2ec9adb4741b0b85279031d614b',
+          Authorization: 'Bearer GWQuposGwBFIL43tzcfKPTTdEQrSitrqr4TJIsnB0-0',
+          XStreetcredSubscriptionKey: 'e2203803a5d94c5dbb8236544c16edd9',
           Accept: 'application/json',
         },
       });
@@ -399,7 +418,7 @@ const fetchCredentials = async (walletID) => {
   //removes the credential offer once the student accepts it
   for (let index = 0; index < cred.length; index++) {
     if (cred[index].state == "Issued") {
-      // console.log("hena")
+       console.log("hena")
       for (let index2 = 0; index2 < connectionDataArray.length; index2++) {
         if (connectionDataArray[index2].credentialId == cred[index].credentialId) {
           connectionDataArray.splice(index2, 1)

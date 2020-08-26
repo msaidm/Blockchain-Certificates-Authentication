@@ -11,7 +11,7 @@ import { IP_address } from '../constants'
 export default function CredsForVers({ route, navigation }) {
    const { Values } = route.params;
 
-   const bachelorSchemaId = "KP7yEkAopJJK3HFVLmZFyg:2:Computer Bachelor Degree:1.1"; //restricted schemaID for bachelor degree credentials
+   const bachelorSchemaId = "Co7EsSM9SbNmYPsFLGF3LE:2:Bachelor Degree:1.0"; //restricted schemaID for bachelor degree credentials
    const BachelorType = "Bachelor Degree";
    const [credentialDataArray, setCredentialDataArray] = React.useState([]);
 
